@@ -133,6 +133,32 @@
             color: #BBBBBB;
         }
 
+        /* Contact Section */
+        #contact {
+            display: none;
+            margin-top: 30px;
+            padding: 30px;
+            background: #1A1A1A;
+            box-shadow: 0px 10px 30px rgba(0, 255, 255, 0.3);
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #contact h2 {
+            color: #39FF14;
+            margin-bottom: 10px;
+        }
+
+        #contact p {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 10px 0;
+            color: #FFFFFF;
+        }
+
         /* Footer */
         footer {
             background: #006B8F;
@@ -154,7 +180,7 @@
     <nav>
         <button onclick="showProducts()">Products</button>
         <button onclick="contactWhatsApp()">Contact Us</button>
-        <button onclick="goToAbout()">About</button>
+        <button onclick="showContact()">About</button>
     </nav>
 
     <input type="text" id="search-bar" onkeyup="searchProducts()" placeholder="Search for products...">
@@ -175,6 +201,12 @@
         </div>
     </section>
 
+    <section id="contact">
+        <h2>Contact Us</h2>
+        <p>📞 +971 58 989 2367</p>
+        <p>📞 +971 56 961 3435</p>
+    </section>
+
     <footer>
         <p>© 2025 Al Awaans Mobile Shop. All Rights Reserved</p>
     </footer>
@@ -182,6 +214,7 @@
     <script>
         function showProducts() {
             document.getElementById("products").style.display = "block";
+            document.getElementById("contact").style.display = "none";
             window.scrollTo({ top: document.getElementById("products").offsetTop - 50, behavior: 'smooth' });
         }
 
@@ -189,17 +222,16 @@
             window.location.href = "https://wa.me/+971589892367";
         }
 
-        function goToAbout() {
-            document.getElementById("products").scrollIntoView({ behavior: 'smooth' });
+        function showContact() {
+            document.getElementById("contact").style.display = "block";
+            document.getElementById("products").style.display = "none";
+            window.scrollTo({ top: document.getElementById("contact").offsetTop - 50, behavior: 'smooth' });
         }
 
         function searchProducts() {
             let input = document.getElementById("search-bar").value.toLowerCase();
-            let products = document.querySelectorAll(".product");
-
-            products.forEach(product => {
-                let productName = product.getAttribute("data-name").toLowerCase();
-                product.style.display = productName.includes(input) ? "block" : "none";
+            document.querySelectorAll(".product").forEach(product => {
+                product.style.display = product.getAttribute("data-name").toLowerCase().includes(input) ? "block" : "none";
             });
         }
     </script>
