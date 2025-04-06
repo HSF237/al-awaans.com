@@ -299,6 +299,14 @@
     <h1>Al Awaans Mobile Shop</h1>
   </header>
 
+  <section id="contact">
+    <h2>Contact Us</h2>
+    <p>Phone: +971 50 123 4567</p>
+    <p>Email: info@alawaansmobileshop.com</p>
+    <p>Location: Al Awaans Mobile Shop, Dubai, UAE</p>
+  </section>
+  
+
   <nav>
     <button onclick="showProducts()">Products</button>
     <button onclick="showContact()">Contact</button>
@@ -683,7 +691,18 @@
       const modal = document.getElementById("product-modal");
       if (e.target === modal) closeModal();
     });
+
+    function showProducts() {
+      document.getElementById("products").style.display = "block";
+      document.getElementById("contact").style.display = "none";
+    }
+  
+    function showContact() {
+      document.getElementById("products").style.display = "none";
+      document.getElementById("contact").style.display = "block";
+    }
   </script>
+  
 
 </body>
 </html>
