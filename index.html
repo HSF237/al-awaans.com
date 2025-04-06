@@ -5,171 +5,170 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Al Awaans Online Shop</title>
     <link rel="website icon" type="png" href="">
-    <style>
-        /* Global Styling */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
-            scroll-behavior: smooth;
-        }
+      <style>
+    /* Global Styling */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Arial', sans-serif;
+      scroll-behavior: smooth;
+    }
 
-        body {
-            background: linear-gradient(135deg, #121212, #1E1E1E);
-            color: #00FFFF;
-            text-align: center;
-        }
+    body {
+      background: #ffffff;
+      color: #b30000;
+      text-align: center;
+    }
 
-        /* Header Styling */
-        header {
-            background: linear-gradient(to right, #00AEEF, #006B8F);
-            color: white;
-            padding: 40px;
-            font-size: 30px;
-            font-weight: bold;
-            text-shadow: 2px 2px 5px rgba(0, 255, 255, 0.5);
-            box-shadow: 0px 5px 20px rgba(0, 255, 255, 0.3);
-        }
+    /* Header Styling */
+    header {
+      background: linear-gradient(to right, #ff0000, #b30000);
+      color: white;
+      padding: 40px;
+      font-size: 30px;
+      font-weight: bold;
+      text-shadow: 2px 2px 5px rgba(255, 0, 0, 0.5);
+      box-shadow: 0px 5px 20px rgba(255, 0, 0, 0.3);
+    }
 
-        /* Navigation */
-        nav {
-            margin: 20px 0;
-        }
+    /* Navigation */
+    nav {
+      margin: 20px 0;
+    }
 
-        button {
-            background: linear-gradient(to right, #00AEEF, #0074B7);
-            color: white;
-            padding: 12px 25px;
-            border: none;
-            margin: 10px;
-            cursor: pointer;
-            font-size: 18px;
-            border-radius: 8px;
-            transition: all 0.4s ease-in-out;
-            box-shadow: 0px 5px 15px rgba(0, 255, 255, 0.3);
-        }
+    button {
+      background: linear-gradient(to right, #ff3333, #cc0000);
+      color: white;
+      padding: 12px 25px;
+      border: none;
+      margin: 10px;
+      cursor: pointer;
+      font-size: 18px;
+      border-radius: 8px;
+      transition: all 0.4s ease-in-out;
+      box-shadow: 0px 5px 15px rgba(255, 0, 0, 0.3);
+    }
 
-        button:hover {
-            background: linear-gradient(to right, #0074B7, #00AEEF);
-            transform: scale(1.1);
-            box-shadow: 0px 10px 20px rgba(0, 255, 255, 0.6);
-        }
+    button:hover {
+      background: linear-gradient(to right, #cc0000, #ff3333);
+      transform: scale(1.1);
+      box-shadow: 0px 10px 20px rgba(255, 0, 0, 0.6);
+    }
 
-        /* Search Bar */
-        #search-bar {
-            padding: 12px;
-            width: 80%;
-            max-width: 400px;
-            font-size: 18px;
-            border: 2px solid #39FF14;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            text-align: center;
-            background: #1E1E1E;
-            color: #00FFFF;
-            transition: all 0.3s ease-in-out;
-        }
+    /* Search Bar */
+    #search-bar {
+      padding: 12px;
+      width: 80%;
+      max-width: 400px;
+      font-size: 18px;
+      border: 2px solid #ff4d4d;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      text-align: center;
+      background: #fff;
+      color: #cc0000;
+      transition: all 0.3s ease-in-out;
+    }
 
-        #search-bar:focus {
-            border-color: #00FF00;
-            box-shadow: 0px 0px 10px rgba(0, 255, 0, 0.7);
-            outline: none;
-        }
+    #search-bar:focus {
+      border-color: #e60000;
+      box-shadow: 0px 0px 10px rgba(255, 0, 0, 0.7);
+      outline: none;
+    }
 
-        /* Product Section */
-#products {
-    margin-top: 30px;
-    padding: 30px;
-    background: #1A1A1A;
-    box-shadow: 0px 10px 30px rgba(0, 255, 255, 0.3);
-    border-radius: 15px;
-    width: 90%;
-    max-width: 1200px;
-    margin-left: auto;
-    margin-right: auto;
-}
+    /* Product Section */
+    #products {
+      margin-top: 30px;
+      padding: 30px;
+      background: #fff0f0;
+      box-shadow: 0px 10px 30px rgba(255, 0, 0, 0.2);
+      border-radius: 15px;
+      width: 90%;
+      max-width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
+    }
 
+    .product-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
 
-        .product-list {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
-        }
+    .product {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      width: 220px;
+      text-align: center;
+      transition: transform 0.4s ease-in-out, box-shadow 0.3s ease-in-out;
+      box-shadow: 0px 5px 15px rgba(255, 0, 0, 0.1);
+      border: 2px solid #ff1a1a;
+    }
 
-        .product {
-            background: #101010;
-            padding: 20px;
-            border-radius: 10px;
-            width: 220px;
-            text-align: center;
-            transition: transform 0.4s ease-in-out, box-shadow 0.3s ease-in-out;
-            box-shadow: 0px 5px 15px rgba(0, 255, 255, 0.2);
-            border: 2px solid #00AEEF;
-        }
+    .product:hover {
+      transform: scale(1.05);
+      box-shadow: 0px 10px 30px rgba(255, 0, 0, 0.4);
+    }
 
-        .product:hover {
-            transform: scale(1.05);
-            box-shadow: 0px 10px 30px rgba(0, 255, 255, 0.5);
-        }
+    .product img {
+      width: 100%;
+      border-radius: 10px;
+      transition: transform 0.3s ease-in-out;
+    }
 
-        .product img {
-            width: 100%;
-            border-radius: 10px;
-            transition: transform 0.3s ease-in-out;
-        }
+    .product:hover img {
+      transform: scale(1.1);
+    }
 
-        .product:hover img {
-            transform: scale(1.1);
-        }
+    .product h3 {
+      margin-top: 10px;
+      color: #cc0000;
+    }
 
-        .product h3 {
-            margin-top: 10px;
-            color: #39FF14;
-        }
+    .product p {
+      font-size: 16px;
+      color: #333;
+    }
 
-        .product p {
-            font-size: 16px;
-            color: #BBBBBB;
-        }
+    /* Contact Section */
+    #contact {
+      display: none;
+      margin-top: 30px;
+      padding: 30px;
+      background: #fff0f0;
+      box-shadow: 0px 10px 30px rgba(255, 0, 0, 0.2);
+      border-radius: 15px;
+      width: 90%;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
 
-        /* Contact Section */
-        #contact {
-            display: none;
-            margin-top: 30px;
-            padding: 30px;
-            background: #1A1A1A;
-            box-shadow: 0px 10px 30px rgba(0, 255, 255, 0.3);
-            border-radius: 15px;
-            width: 90%;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
+    #contact h2 {
+      color: #cc0000;
+      margin-bottom: 10px;
+    }
 
-        #contact h2 {
-            color: #39FF14;
-            margin-bottom: 10px;
-        }
+    #contact p {
+      font-size: 20px;
+      font-weight: bold;
+      margin: 10px 0;
+      color: #000;
+    }
 
-        #contact p {
-            font-size: 20px;
-            font-weight: bold;
-            margin: 10px 0;
-            color: #FFFFFF;
-        }
-
-        /* Footer */
-        footer {
-            background: #006B8F;
-            color: white;
-            padding: 15px;
-            margin-top: 20px;
-            font-size: 16px;
-            box-shadow: 0px -5px 15px rgba(0, 255, 255, 0.3);
-        }
-    </style>
+    /* Footer */
+    footer {
+      background: #b30000;
+      color: white;
+      padding: 15px;
+      margin-top: 20px;
+      font-size: 16px;
+      box-shadow: 0px -5px 15px rgba(255, 0, 0, 0.3);
+    }
+  </style>
 </head>
 <body>
 
