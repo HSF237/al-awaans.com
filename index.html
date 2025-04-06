@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Al Awaans Online Shop</title>
-    <link rel="website icon" type="png" href="">
-      <style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Al Awaans Mobile Shop</title>
+  <style>
     /* Global Styling */
     * {
       margin: 0;
@@ -169,212 +168,595 @@
       box-shadow: 0px -5px 15px rgba(255, 0, 0, 0.3);
     }
   </style>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0; padding: 0;
+      background: red;
+    }
+
+    header {
+      background-color: #333;
+      color: white;
+      padding: 10px;
+      text-align: center;
+    }
+
+    nav {
+      display: flex;
+      justify-content: center;
+      background-color: #444;
+    }
+
+    nav button {
+      background: none;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+
+    #search-bar {
+      width: 80%;
+      padding: 10px;
+      margin: 10px auto;
+      display: block;
+      font-size: 16px;
+    }
+
+    #products {
+      display: none;
+      padding: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .product {
+      background: whitesmoke;
+      border-radius: 10px;
+      padding: 15px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      width: 200px;
+    }
+
+    .product img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+
+    .product h3 {
+      margin: 10px 0 5px;
+    }
+
+    .product p {
+      margin: 0 0 10px;
+    }
+
+    .product button {
+      background-color: #008CBA;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #contact {
+      display: none;
+      padding: 20px;
+      text-align: center;
+    }
+
+    #product-modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #product-modal .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 600px;
+      width: 90%;
+      position: relative;
+      text-align: center;
+    }
+
+    #modal-images {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      margin-bottom: 10px;
+    }
+
+    #modal-images img {
+      width: 100px;
+      border-radius: 8px;
+    }
+
+    .close-btn {
+      position: absolute;
+      right: 15px;
+      top: 10px;
+      font-size: 24px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
 
-    <header>
-        <h1>Al Awaans Mobile Shop</h1>
-        <p>Your One-Stop Mobile Shop in Abu Dhabi<br>Shabiya-11</p>
-    </header>
+  <header>
+    <h1>Al Awaans Mobile Shop</h1>
+  </header>
 
-    <nav>
-        <button onclick="showProducts()">Products</button>
-        <button onclick="contactWhatsApp()">Contact Us</button>
-        <button onclick="showContact()">About</button>
-    </nav>
+  <nav>
+    <button onclick="showProducts()">Products</button>
+    <button onclick="showContact()">Contact</button>
+  </nav>
 
-    <input type="text" id="search-bar" onkeyup="searchProducts()" placeholder="Search for products...">
+  <input type="text" id="search-bar" onkeyup="searchProducts()" placeholder="Search for products..." />
 
-    <section id="products">
-        <h2>Available Products</h2>
-        <div class="product-list" id="product-container">
-            <div class="product" data-name="Apple watch series 9">
-                <img src="9.webp" alt="">
-                <h3>Apple watch series 9</h3>
-                <p>AED 3,666.33</p>
-            </div>
-            <div class="product" data-name="Samung galaxy watch 6">
-                <img src="6.webp" alt="">
-                <h3>Samung galaxy watch 6</h3>
-                <p>AED 3,299.33</p>
-            </div>
-            <div class="product" data-name="xiaomi smart band 8">
-                <img src="smart.webp" alt="">
-                <h3>xiaomi smart band 8</h3>
-                <p>AED 3,666.33</p>
-            </div>
-            <div class="product" data-name="Google pixel watch 2">
-                <img src="2.webp" alt="">
-                <h3>Google pixel watch 2</h3>
-                <p>AED 3,299.33</p>
-            </div>
-            <div class="product" data-name="xiaomi 14 ultra">
-                <img src="14.jpeg" alt="">
-                <h3>xiaomi 14 ultra</h3>
-                <p>AED 3,666.33</p>
-            </div>
-            <div class="product" data-name="Realme gt 5pro">
-                <img src="5.jpeg" alt="">
-                <h3>Realme gt 5pro</h3>
-                <p>	AED 3,299.33</p>
-            </div>
-            <div class="product" data-name="vivo X100 pro">
-                <img src="100.jpeg" alt="">
-                <h3>vivo X100 pro</h3>
-                <p>	AED 3,666.33</p>
-            </div>
-            <div class="product" data-name="Asus Rog phone 8">
-                <img src="asus.jpeg" alt="">
-                <h3>Asus Rog phone 8</h3>
-                <p>	AED 3,299.33</p>
-            </div>
-            <div class="product" data-name="Redmi pad pro 5g">
-                <img src="5g.webp" alt="">
-                <h3>Redmi pad pro 5g</h3>
-                <p>AED 3,666.33</p>
-            </div>
-            <div class="product" data-name="Apple ipad (10th generation)">
-                <img src="ipad.webp" alt="">
-                <h3>Apple ipad (10th generation)</h3>
-                <p>AED 3,299.33</p>
-            </div>
-                        <div class="product" data-name="Xiaomi pad 6">
-                <img src="pad6.webp" alt="">
-                <h3>Xiaomi pad 6</h3>
-                <p>AED 3,666.33</p>
-            </div>
-            <div class="product" data-name="Xiaomi pad 7">
-                <img src="pad7.webp" alt="">
-                <h3>Xiaomi pad 7</h3>
-                <p>AED 3,299.33</p>
-            </div>
-            <div class="product" data-name="iPhone 14">
-                <img src="15promax.webp" alt="">
-                <h3>iPhone 14</h3>
-                <p>AED 3,666.33</p>
-            </div>
-            <div class="product" data-name="Samsung Galaxy S22">
-                <img src="22.webp" alt="">
-                <h3>Samsung Galaxy S22</h3>
-                <p>AED 3,299.33</p>
-            </div>
-            <div class="product" data-name="iPhone 14 Pro">
-                <img src="15promax.webp" alt="">
-                <h3>iPhone 14 Pro</h3>
-                <p>AED 3,666.33</p>
-            </div>
-            <div class="product" data-name="Samsung Galaxy S22 ultra">
-                <img src="22ultra.jpeg" alt="">
-                <h3>Samsung Galaxy S22 Ultra</h3>
-                <p>AED 3,299.33</p>
-            </div>
-            <div class="product" data-name="iPhone 14 Pro Max">
-                <img src="15promax.webp" alt="">
-                <h3>iPhone 14 Pro Max</h3>
-                <p>	AED 3,666.33</p>
-            </div>
-            <div class="product" data-name="Samsung Galaxy S23">
-                <img src="23.webp" alt="">
-                <h3>Samsung Galaxy S23</h3>
-                <p>	AED 3,299.33</p>
-            </div>
-            <div class="product" data-name="iPhone 15">
-                <img src="15promax.webp" alt="">
-                <h3>iPhone 15</h3>
-                <p>AED 3,666.33</p>
-            </div>
-            <div class="product" data-name="Samsung Galaxy S23 Ultra">
-                <img src="23ultra.webp" alt="">
-                <h3>Samsung Galaxy S23 Ultra</h3>
-                <p>AED 3,299.33</p>
-            </div>
-                        <div class="product" data-name="iPhone 15 Pro">
-                <img src="15promax.webp" alt="">
-                <h3>iPhone 15 Pro </h3>
-                <p>AED 3,666.33</p>
-            </div>
-            <div class="product" data-name="Samsung Galaxy S24">
-                <img src="24.webp" alt="">
-                <h3>Samsung Galaxy S24</h3>
-                <p>AED 3,299.33</p>
-            </div>
-            <div class="product" data-name="iPhone 15 Pro Max">
-                <img src="15promax.webp" alt="">
-                <h3>iPhone 15 Pro Max</h3>
-                <p>AED 3,666.33</p>
-            </div>
-            <div class="product" data-name="Samsung Galaxy S24 Ultra">
-                <img src="24ultra.webp" alt="">
-                <h3>Samsung Galaxy S24 Ultra</h3>
-                <p>AED 3,299.33</p>
-            </div>
-            <div class="product" data-name="iPhone 16">
-                <img src="16.webp" alt="">
-                <h3>iPhone 16</h3>
-                <p>AED 3,666.33</p>
-            </div>
-            <div class="product" data-name="Samsung Galaxy S25">
-                <img src="25.webp" alt="">
-                <h3>Samsung Galaxy S25</h3>
-                <p>AED 3,299.33</p>
-            </div>
-            <div class="product" data-name="iPhone 16 Pro">
-                <img src="16pro.webp" alt="">
-                <h3>iPhone 16 Pro</h3>
-                <p>AED 3,666.33</p>
-            </div>
-            <div class="product" data-name="Samsung galaxy S25 ultra">
-                <img src="25ultra.webp" alt="">
-                <h3>Samsung galaxy S25 ultra</h3>
-                <p>AED 3,299.33</p>
-            </div>
-            <div class="product" data-name="iPhone 16 Pro Max">
-                <img src="16promax.webp" alt="">
-                <h3>iPhone 16 Pro Max</h3>
-                <p>AED 3,299.33</p>
-            </div>
-            <div class="product" data-name="Redmi pad SE">
-                <img src="SE.webp" alt="">
-                <h3>Redmi pad SE</h3>
-                <p>	AED 3,299.33</p>
-            </div>
-        </div>
-    </section>
+  <section id="products">
+    <!-- Sample Product -->
+    <div class="product"
+      data-name="iPhone 16 Pro Max"
+      data-price="AED 3,299.33"
+      data-images="16promax.webp,16_1.webp,16_2.webp"
+      data-description="Latest iPhone with A18 Bionic chip and triple camera system.">
+      <img src="16promax.webp" alt="iPhone 16 Pro Max" />
+      <h3>iPhone 16 Pro Max</h3>
+      <p>AED 3,299.33</p>
+      <button onclick="openModal(this)">Know More</button>
+    </div>
+    <div class="product"
+    data-name="iPhone 16 Pro Max"
+    data-price="AED 3,299.33"
+    data-images="16promax.webp,16_1.webp,16_2.webp"
+    data-description="Latest iPhone with A18 Bionic chip and triple camera system.">
+    <img src="16promax.webp" alt="iPhone 16 Pro Max" />
+    <h3>iPhone 16 Pro Max</h3>
+    <p>AED 3,299.33</p>
+    <button onclick="openModal(this)">Know More</button>
+  </div>
+  <div class="product"
+  data-name="iPhone 16 Pro Max"
+  data-price="AED 3,299.33"
+  data-images="16promax.webp,16_1.webp,16_2.webp"
+  data-description="Latest iPhone with A18 Bionic chip and triple camera system.">
+  <img src="16promax.webp" alt="iPhone 16 Pro Max" />
+  <h3>iPhone 16 Pro Max</h3>
+  <p>AED 3,299.33</p>
+  <button onclick="openModal(this)">Know More</button>
+</div>
+<div class="product"
+data-name="iPhone 16 Pro Max"
+data-price="AED 3,299.33"
+data-images="16promax.webp,16_1.webp,16_2.webp"
+data-description="Latest iPhone with A18 Bionic chip and triple camera system.">
+<img src="16promax.webp" alt="iPhone 16 Pro Max" />
+<h3>iPhone 16 Pro Max</h3>
+<p>AED 3,299.33</p>
+<button onclick="openModal(this)">Know More</button>
+</div>
+<div class="product"
+data-name="iPhone 16 Pro Max"
+data-price="AED 3,299.33"
+data-images="16promax.webp,16_1.webp,16_2.webp"
+data-description="Latest iPhone with A18 Bionic chip and triple camera system.">
+<img src="16promax.webp" alt="iPhone 16 Pro Max" />
+<h3>iPhone 16 Pro Max</h3>
+<p>AED 3,299.33</p>
+<button onclick="openModal(this)">Know More</button>
+</div>
+<div class="product"
+data-name="iPhone 16 Pro Max"
+data-price="AED 3,299.33"
+data-images="16promax.webp,16_1.webp,16_2.webp"
+data-description="Latest iPhone with A18 Bionic chip and triple camera system.">
+<img src="16promax.webp" alt="iPhone 16 Pro Max" />
+<h3>iPhone 16 Pro Max</h3>
+<p>AED 3,299.33</p>
+<button onclick="openModal(this)">Know More</button>
+</div>
+<div class="product"
+data-name="iPhone 16 Pro Max"
+data-price="AED 3,299.33"
+data-images="16promax.webp,16_1.webp,16_2.webp"
+data-description="Latest iPhone with A18 Bionic chip and triple camera system.">
+<img src="16promax.webp" alt="iPhone 16 Pro Max" />
+<h3>iPhone 16 Pro Max</h3>
+<p>AED 3,299.33</p>
+<button onclick="openModal(this)">Know More</button>
+</div>
+<div class="product"
+data-name="iPhone 16 Pro Max"
+data-price="AED 3,299.33"
+data-images="16promax.webp,16_1.webp,16_2.webp"
+data-description="Latest iPhone with A18 Bionic chip and triple camera system.">
+<img src="16promax.webp" alt="iPhone 16 Pro Max" />
+<h3>iPhone 16 Pro Max</h3>
+<p>AED 3,299.33</p>
+<button onclick="openModal(this)">Know More</button>
+</div>
+<div class="product"
+data-name="iPhone 16 Pro Max"
+data-price="AED 3,299.33"
+data-images="16promax.webp,16_1.webp,16_2.webp"
+data-description="Latest iPhone with A18 Bionic chip and triple camera system.">
+<img src="16promax.webp" alt="iPhone 16 Pro Max" />
+<h3>iPhone 16 Pro Max</h3>
+<p>AED 3,299.33</p>
+<button onclick="openModal(this)">Know More</button>
+</div>
+<div class="product"
+data-name="iPhone 16 Pro Max"
+data-price="AED 3,299.33"
+data-images="16promax.webp,16_1.webp,16_2.webp"
+data-description="Latest iPhone with A18 Bionic chip and triple camera system.">
+<img src="16promax.webp" alt="iPhone 16 Pro Max" />
+<h3>iPhone 16 Pro Max</h3>
+<p>AED 3,299.33</p>
+<button onclick="openModal(this)">Know More</button>
+</div>
+<div class="product"
+data-name="iPhone 16 Pro Max"
+data-price="AED 3,299.33"
+data-images="16promax.webp,16_1.webp,16_2.webp"
+data-description="Latest iPhone with A18 Bionic chip and triple camera system.">
+<img src="16promax.webp" alt="iPhone 16 Pro Max" />
+<h3>iPhone 16 Pro Max</h3>
+<p>AED 3,299.33</p>
+<button onclick="openModal(this)">Know More</button>
+</div>
+<div class="product"
+data-name="iPhone 16 Pro Max"
+data-price="AED 3,299.33"
+data-images="16promax.webp,16_1.webp,16_2.webp"
+data-description="Latest iPhone with A18 Bionic chip and triple camera system.">
+<img src="16promax.webp" alt="iPhone 16 Pro Max" />
+<h3>iPhone 16 Pro Max</h3>
+<p>AED 3,299.33</p>
+<button onclick="openModal(this)">Know More</button>
+</div>
+<var>    <div class="product"
+    data-name="iPhone 16 Pro Max"
+    data-price="AED 3,299.33"
+    data-images="16promax.webp,16_1.webp,16_2.webp"
+    data-description="Latest iPhone with A18 Bionic chip and triple camera system.">
+    <img src="16promax.webp" alt="iPhone 16 Pro Max" />
+    <h3>iPhone 16 Pro Max</h3>
+    <p>AED 3,299.33</p>
+    <button onclick="openModal(this)">Know More</button>
+  </div>
+</var>
+<div class="product"
+data-name="iPhone 16 Pro Max"
+data-price="AED 3,299.33"
+data-images="16promax.webp,16_1.webp,16_2.webp"
+data-description="Latest iPhone with A18 Bionic chip and triple camera system.">
+<img src="16promax.webp" alt="iPhone 16 Pro Max" />
+<h3>iPhone 16 Pro Max</h3>
+<p>AED 3,299.33</p>
+<button onclick="openModal(this)">Know More</button>
+</div>
+<div class="product"
+data-name="iPhone 16 Pro Max"
+data-price="AED 3,299.33"
+data-images="16promax.webp,16_1.webp,16_2.webp"
+data-description="Latest iPhone with A18 Bionic chip and triple camera system.">
+<img src="16promax.webp" alt="iPhone 16 Pro Max" />
+<h3>iPhone 16 Pro Max</h3>
+<p>AED 3,299.33</p>
+<button onclick="openModal(this)">Know More</button>
+</div>
+<div class="product"
+data-name="iPhone 16 Pro Max"
+data-price="AED 3,299.33"
+data-images="16promax.webp,16_1.webp,16_2.webp"
+data-description="Latest iPhone with A18 Bionic chip and triple camera system.">
+<img src="16promax.webp" alt="iPhone 16 Pro Max" />
+<h3>iPhone 16 Pro Max</h3>
+<p>AED 3,299.33</p>
+<button onclick="openModal(this)">Know More</button>
+</div>
+<div class="product"
+data-name="iPhone 16 Pro Max"
+data-price="AED 3,299.33"
+data-images="16promax.webp,16_1.webp,16_2.webp"
+data-description="Latest iPhone with A18 Bionic chip and triple camera system.">
+<img src="16promax.webp" alt="iPhone 16 Pro Max" />
+<h3>iPhone 16 Pro Max</h3>
+<p>AED 3,299.33</p>
+<button onclick="openModal(this)">Know More</button>
+</div>
+<div class="product"
+data-name="iPhone 16 Pro Max"
+data-price="AED 3,299.33"
+data-images="16promax.webp,16_1.webp,16_2.webp"
+data-description="Latest iPhone with A18 Bionic chip and triple camera system.">
+<img src="16promax.webp" alt="iPhone 16 Pro Max" />
+<h3>iPhone 16 Pro Max</h3>
+<p>AED 3,299.33</p>
+<button onclick="openModal(this)">Know More</button>
+</div>
+<div class="product"
+data-name="iPhone 16 Pro Max"
+data-price="AED 3,299.33"
+data-images="16promax.webp,16_1.webp,16_2.webp"
+data-description="Latest iPhone with A18 Bionic chip and triple camera system.">
+<img src="16promax.webp" alt="iPhone 16 Pro Max" />
+<h3>iPhone 16 Pro Max</h3>
+<p>AED 3,299.33</p>
+<button onclick="openModal(this)">Know More</button>
+</div>
+<div class="product"
+data-name="iPhone 16 Pro Max"
+data-price="AED 3,299.33"
+data-images="16promax.webp,16_1.webp,16_2.webp"
+data-description="Latest iPhone with A18 Bionic chip and triple camera system.">
+<img src="16promax.webp" alt="iPhone 16 Pro Max" />
+<h3>iPhone 16 Pro Max</h3>
+<p>AED 3,299.33</p>
+<button onclick="openModal(this)">Know More</button>
+</div>
+<div class="product"
+data-name="iPhone 16 Pro Max"
+data-price="AED 3,299.33"
+data-images="16promax.webp,16_1.webp,16_2.webp"
+data-description="Latest iPhone with A18 Bionic chip and triple camera system.">
+<img src="16promax.webp" alt="iPhone 16 Pro Max" />
+<h3>iPhone 16 Pro Max</h3>
+<p>AED 3,299.33</p>
+<button onclick="openModal(this)">Know More</button>
+</div>
+<div class="product"
+data-name="iPhone 16 Pro Max"
+data-price="AED 3,299.33"
+data-images="16promax.webp,16_1.webp,16_2.webp"
+data-description="Latest iPhone with A18 Bionic chip and triple camera system.">
+<img src="16promax.webp" alt="iPhone 16 Pro Max" />
+<h3>iPhone 16 Pro Max</h3>
+<p>AED 3,299.33</p>
+<button onclick="openModal(this)">Know More</button>
+</div>
+<div class="product"
+data-name="iPhone 16 Pro Max"
+data-price="AED 3,299.33"
+data-images="16promax.webp,16_1.webp,16_2.webp"
+data-description="Latest iPhone with A18 Bionic chip and triple camera system.">
+<img src="16promax.webp" alt="iPhone 16 Pro Max" />
+<h3>iPhone 16 Pro Max</h3>
+<p>AED 3,299.33</p>
+<button onclick="openModal(this)">Know More</button>
+</div>
+<div class="product"
+data-name="iPhone 16 Pro Max"
+data-price="AED 3,299.33"
+data-images="16promax.webp,16_1.webp,16_2.webp"
+data-description="Latest iPhone with A18 Bionic chip and triple camera system.">
+<img src="16promax.webp" alt="iPhone 16 Pro Max" />
+<h3>iPhone 16 Pro Max</h3>
+<p>AED 3,299.33</p>
+<button onclick="openModal(this)">Know More</button>
+</div>
+<div class="product"
+data-name="iPhone 16 Pro Max"
+data-price="AED 3,299.33"
+data-images="16promax.webp,16_1.webp,16_2.webp"
+data-description="Latest iPhone with A18 Bionic chip and triple camera system.">
+<img src="16promax.webp" alt="iPhone 16 Pro Max" />
+<h3>iPhone 16 Pro Max</h3>
+<p>AED 3,299.33</p>
+<button onclick="openModal(this)">Know More</button>
+</div>
+<div class="product"
+data-name="iPhone 16 Pro Max"
+data-price="AED 3,299.33"
+data-images="16promax.webp,16_1.webp,16_2.webp"
+data-description="Latest iPhone with A18 Bionic chip and triple camera system.">
+<img src="16promax.webp" alt="iPhone 16 Pro Max" />
+<h3>iPhone 16 Pro Max</h3>
+<p>AED 3,299.33</p>
+<button onclick="openModal(this)">Know More</button>
+</div>
+<div class="product"
+data-name="iPhone 16 Pro Max"
+data-price="AED 3,299.33"
+data-images="16promax.webp,16_1.webp,16_2.webp"
+data-description="Latest iPhone with A18 Bionic chip and triple camera system.">
+<img src="16promax.webp" alt="iPhone 16 Pro Max" />
+<h3>iPhone 16 Pro Max</h3>
+<p>AED 3,299.33</p>
+<button onclick="openModal(this)">Know More</button>
+</div>
+<div class="product"
+data-name="iPhone 16 Pro Max"
+data-price="AED 3,299.33"
+data-images="16promax.webp,16_1.webp,16_2.webp"
+data-description="Latest iPhone with A18 Bionic chip and triple camera system.">
+<img src="16promax.webp" alt="iPhone 16 Pro Max" />
+<h3>iPhone 16 Pro Max</h3>
+<p>AED 3,299.33</p>
+<button onclick="openModal(this)">Know More</button>
+</div>
+<div class="product"
+data-name="iPhone 16 Pro Max"
+data-price="AED 3,299.33"
+data-images="16promax.webp,16_1.webp,16_2.webp"
+data-description="Latest iPhone with A18 Bionic chip and triple camera system.">
+<img src="16promax.webp" alt="iPhone 16 Pro Max" />
+<h3>iPhone 16 Pro Max</h3>
+<p>AED 3,299.33</p>
+<button onclick="openModal(this)">Know More</button>
+</div>
+<div class="product"
+data-name="iPhone 16 Pro Max"
+data-price="AED 3,299.33"
+data-images="16promax.webp,16_1.webp,16_2.webp"
+data-description="Latest iPhone with A18 Bionic chip and triple camera system.">
+<img src="16promax.webp" alt="iPhone 16 Pro Max" />
+<h3>iPhone 16 Pro Max</h3>
+<p>AED 3,299.33</p>
+<button onclick="openModal(this)">Know More</button>
+</div>
+<div class="product"
+data-name="iPhone 16 Pro Max"
+data-price="AED 3,299.33"
+data-images="16promax.webp,16_1.webp,16_2.webp"
+data-description="Latest iPhone with A18 Bionic chip and triple camera system.">
+<img src="16promax.webp" alt="iPhone 16 Pro Max" />
+<h3>iPhone 16 Pro Max</h3>
+<p>AED 3,299.33</p>
+<button onclick="openModal(this)">Know More</button>
+</div>
+<div class="product"
+data-name="iPhone 16 Pro Max"
+data-price="AED 3,299.33"
+data-images="16promax.webp,16_1.webp,16_2.webp"
+data-description="Latest iPhone with A18 Bionic chip and triple camera system.">
+<img src="16promax.webp" alt="iPhone 16 Pro Max" />
+<h3>iPhone 16 Pro Max</h3>
+<p>AED 3,299.33</p>
+<button onclick="openModal(this)">Know More</button>
+</div>
+<div class="product"
+data-name="iPhone 16 Pro Max"
+data-price="AED 3,299.33"
+data-images="16promax.webp,16_1.webp,16_2.webp"
+data-description="Latest iPhone with A18 Bionic chip and triple camera system.">
+<img src="16promax.webp" alt="iPhone 16 Pro Max" />
+<h3>iPhone 16 Pro Max</h3>
+<p>AED 3,299.33</p>
+<button onclick="openModal(this)">Know More</button>
+</div>
+<div class="product"
+data-name="iPhone 16 Pro Max"
+data-price="AED 3,299.33"
+data-images="16promax.webp,16_1.webp,16_2.webp"
+data-description="Latest iPhone with A18 Bionic chip and triple camera system.">
+<img src="16promax.webp" alt="iPhone 16 Pro Max" />
+<h3>iPhone 16 Pro Max</h3>
+<p>AED 3,299.33</p>
+<button onclick="openModal(this)">Know More</button>
+</div>
+<div class="product"
+data-name="iPhone 16 Pro Max"
+data-price="AED 3,299.33"
+data-images="16promax.webp,16_1.webp,16_2.webp"
+data-description="Latest iPhone with A18 Bionic chip and triple camera system.">
+<img src="16promax.webp" alt="iPhone 16 Pro Max" />
+<h3>iPhone 16 Pro Max</h3>
+<p>AED 3,299.33</p>
+<button onclick="openModal(this)">Know More</button>
+</div>
+<div class="product"
+data-name="iPhone 16 Pro Max"
+data-price="AED 3,299.33"
+data-images="16promax.webp,16_1.webp,16_2.webp"
+data-description="Latest iPhone with A18 Bionic chip and triple camera system.">
+<img src="16promax.webp" alt="iPhone 16 Pro Max" />
+<h3>iPhone 16 Pro Max</h3>
+<p>AED 3,299.33</p>
+<button onclick="openModal(this)">Know More</button>
+</div>
+<div class="product"
+data-name="iPhone 16 Pro Max"
+data-price="AED 3,299.33"
+data-images="16promax.webp,16_1.webp,16_2.webp"
+data-description="Latest iPhone with A18 Bionic chip and triple camera system.">
+<img src="16promax.webp" alt="iPhone 16 Pro Max" />
+<h3>iPhone 16 Pro Max</h3>
+<p>AED 3,299.33</p>
+<button onclick="openModal(this)">Know More</button>
+</div>
 
-    <section id="contact">
-        <h2>Contact Us</h2>
-        <p>📞 +971 58 989 2367</p>
-        <p>📞 +971 56 961 3435</p>
-    </section>
+    <!-- Add more products below with same structure -->
+  </section>
 
-    <footer>
-        <p>© 2025 Al Awaans Mobile Shop. All Rights Reserved</p>
-    </footer>
+  <section id="contact">
+    <h2>Contact Us</h2>
+    <p>📞 +971 58 989 2367</p>
+    <p>📍 Visit our showroom or message us directly!</p>
+    <button onclick="contactWhatsApp()">Message on WhatsApp</button>
+  </section>
 
-    <script>
-        function showProducts() {
-            document.getElementById("products").style.display = "block";
-            document.getElementById("contact").style.display = "none";
-            window.scrollTo({ top: document.getElementById("products").offsetTop - 50, behavior: 'smooth' });
-        }
+  <!-- Product Modal -->
+  <div id="product-modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal()">&times;</span>
+      <h2 id="modal-title"></h2>
+      <div id="modal-images"></div>
+      <p id="modal-price" style="font-size: 18px; font-weight: bold;"></p>
+      <p id="modal-description" style="font-size: 15px;"></p>
+    </div>
+  </div>
 
-        function contactWhatsApp() {
-            window.location.href = "https://wa.me/+971589892367";
-        }
+  <script>
+    function showProducts() {
+      document.getElementById("products").style.display = "flex";
+      document.getElementById("contact").style.display = "none";
+      window.scrollTo({ top: document.getElementById("products").offsetTop - 50, behavior: 'smooth' });
+    }
 
-        function showContact() {
-            document.getElementById("contact").style.display = "block";
-            document.getElementById("products").style.display = "none";
-            window.scrollTo({ top: document.getElementById("contact").offsetTop - 50, behavior: 'smooth' });
-        }
+    function showContact() {
+      document.getElementById("products").style.display = "none";
+      document.getElementById("contact").style.display = "block";
+      window.scrollTo({ top: document.getElementById("contact").offsetTop - 50, behavior: 'smooth' });
+    }
 
-        function searchProducts() {
-            let input = document.getElementById("search-bar").value.toLowerCase();
-            document.querySelectorAll(".product").forEach(product => {
-                product.style.display = product.getAttribute("data-name").toLowerCase().includes(input) ? "block" : "none";
-            });
-        }
-    </script>
+    function contactWhatsApp() {
+      window.location.href = "https://wa.me/+971589892367";
+    }
+
+    function searchProducts() {
+      let input = document.getElementById("search-bar").value.toLowerCase();
+      document.querySelectorAll(".product").forEach(product => {
+        const name = product.getAttribute("data-name").toLowerCase();
+        product.style.display = name.includes(input) ? "block" : "none";
+      });
+    }
+
+    function openModal(button) {
+      const product = button.closest(".product");
+      const title = product.getAttribute("data-name");
+      const price = product.getAttribute("data-price");
+      const description = product.getAttribute("data-description");
+      const images = product.getAttribute("data-images").split(",");
+
+      document.getElementById("modal-title").textContent = title;
+      document.getElementById("modal-price").textContent = price;
+      document.getElementById("modal-description").textContent = description;
+
+      const imageContainer = document.getElementById("modal-images");
+      imageContainer.innerHTML = "";
+      images.forEach(src => {
+        let img = document.createElement("img");
+        img.src = src.trim();
+        imageContainer.appendChild(img);
+      });
+
+      document.getElementById("product-modal").style.display = "flex";
+    }
+
+    function closeModal() {
+      document.getElementById("product-modal").style.display = "none";
+    }
+
+    window.addEventListener("click", function(e) {
+      const modal = document.getElementById("product-modal");
+      if (e.target === modal) closeModal();
+    });
+  </script>
 
 </body>
 </html>
