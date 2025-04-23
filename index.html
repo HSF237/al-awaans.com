@@ -593,61 +593,6 @@
 </div>
 
 <div class="product"
-  data-name="G shock Casio"
-  data-price="AED 0000"
-  data-images=",,"
-  data-description="Unbreakable style meets unstoppable performance. G-Shock by Casio built to endure designed to impress.
-">
-  <img src="25ultra.webp" alt="">
-  <h3>G shock Casio</h3>
-  <p>AED 0000</p>
-  <button onclick="openModal(this)">Know More</button>
-</div>
-<div class="product"
-  data-name="G shock Casio"
-  data-price="AED 0000"
-  data-images="25ultra.webp,s25ultra1.jpg,"
-  data-description="Unbreakable style meets unstoppable performance. G-Shock by Casio built to endure designed to impress.
-">
-  <img src="25ultra.webp" alt="">
-  <h3>G shock Casio</h3>
-  <p>AED 0000</p>
-  <button onclick="openModal(this)">Know More</button>
-</div>
-<div class="product"
-  data-name="G shock Casio"
-  data-price="AED 0000"
-  data-images="25ultra.webp,s25ultra1.jpg,s25ultra2.avif"
-  data-description="Unbreakable style meets unstoppable performance. G-Shock by Casio built to endure designed to impress.
-">
-  <img src="25ultra.webp" alt="">
-  <h3>G shock Casio</h3>
-  <p>AED 0000</p>
-  <button onclick="openModal(this)">Know More</button>
-</div>
-<div class="product"
-  data-name="G shock Casio"
-  data-price="AED 0000"
-  data-images="25ultra.webp,s25ultra1.jpg,s25ultra2.avif"
-  data-description="Unbreakable style meets unstoppable performance. G-Shock by Casio built to endure designed to impress.
-">
-  <img src="25ultra.webp" alt="">
-  <h3>G shock Casio</h3>
-  <p>AED 0000</p>
-  <button onclick="openModal(this)">Know More</button>
-</div>
-<div class="product"
-  data-name="G shock Casio"
-  data-price="AED 0000"
-  data-images="25ultra.webp,s25ultra1.jpg,s25ultra2.avif"
-  data-description="Unbreakable style meets unstoppable performance. G-Shock by Casio built to endure designed to impress.
-">
-  <img src="25ultra.webp" alt="">
-  <h3>G shock Casio</h3>
-  <p>AED 0000</p>
-  <button onclick="openModal(this)">Know More</button>
-</div>
-      <div class="product"
   data-name="Samsung Galaxy S25 Ultra"
   data-price="AED 0000"
   data-images="25ultra.webp,s25ultra1.jpg,s25ultra2.avif"
@@ -709,4 +654,47 @@
 
     function searchProducts() {
       let input = document.getElementById("search-bar").value.toLowerCase();
-      document.querySelectorAll(".p
+      document.querySelectorAll(".product").forEach(product => {
+        const name = product.getAttribute("data-name").toLowerCase();
+        product.style.display = name.includes(input) ? "block" : "none";
+      });
+    }
+
+    function openModal(button) {
+      const product = button.closest(".product");
+      const title = product.getAttribute("data-name");
+      const price = product.getAttribute("data-price");
+      const description = product.getAttribute("data-description");
+      const images = product.getAttribute("data-images").split(",");
+
+      document.getElementById("modal-title").textContent = title;
+      document.getElementById("modal-price").textContent = price;
+      document.getElementById("modal-description").textContent = description;
+
+      const imageContainer = document.getElementById("modal-images");
+      imageContainer.innerHTML = "";
+      images.forEach(src => {
+        let img = document.createElement("img");
+        img.src = src.trim();
+        imageContainer.appendChild(img);
+      });
+
+      document.getElementById("product-modal").style.display = "flex";
+    }
+
+    function closeModal() {
+      document.getElementById("product-modal").style.display = "none";
+    }
+
+    window.addEventListener("click", function(e) {
+      const modal = document.getElementById("product-modal");
+      if (e.target === modal) closeModal();
+    });
+
+    function showProducts() {
+      document.getElementById("products").style.display = "block";
+      document.getElementById("contact").style.display = "none";
+    }
+  
+    function showContact() {
+      document.getElementById("products")
