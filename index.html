@@ -1,609 +1,569 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Al Awaans Online Shop</title>
- <style>
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Arial', sans-serif;
-    scroll-behavior: smooth;
-  }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Al Awaans Online Shop</title>
+    <link rel="website icon" type="png" href="">
+      <style>
+    /* Global Styling */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Arial', sans-serif;
+      scroll-behavior: smooth;
+    }
 
-  body {
-    background: #ffffff;
-    color: #b30000;
-    text-align: center;
-  }
+    body {
+      background: #ffffff;
+      color: #b30000;
+      text-align: center;
+    }
 
-  header {
-    background: linear-gradient(to right, #ff0000, #b30000);
-    color: white;
-    padding: 40px;
-    font-size: 30px;
-    font-weight: bold;
-    text-shadow: 2px 2px 5px rgba(255, 0, 0, 0.5);
-    box-shadow: 0px 5px 20px rgba(255, 0, 0, 0.3);
-  }
+    /* Header Styling */
+    header {
+      background: linear-gradient(to right, #ff0000, #b30000);
+      color: white;
+      padding: 40px;
+      font-size: 30px;
+      font-weight: bold;
+      text-shadow: 2px 2px 5px rgba(255, 0, 0, 0.5);
+      box-shadow: 0px 5px 20px rgba(255, 0, 0, 0.3);
+    }
 
-  nav {
-    display: flex;
-    justify-content: center;
-    background-color: #444;
-  }
+    /* Navigation */
+    nav {
+      margin: 20px 0;
+    }
 
-  nav button {
-    background: none;
-    border: none;
-    color: white;
-    padding: 10px 20px;
-    cursor: pointer;
-    font-size: 18px;
-  }
+    button {
+      background: linear-gradient(to right, #ff3333, #cc0000);
+      color: white;
+      padding: 12px 25px;
+      border: none;
+      margin: 10px;
+      cursor: pointer;
+      font-size: 18px;
+      border-radius: 8px;
+      transition: all 0.4s ease-in-out;
+      box-shadow: 0px 5px 15px rgba(255, 0, 0, 0.3);
+    }
 
-  button:hover {
-    background: linear-gradient(to right, #cc0000, #ff3333);
-    transform: scale(1.1);
-    box-shadow: 0px 10px 20px rgba(255, 0, 0, 0.6);
-  }
+    button:hover {
+      background: linear-gradient(to right, #cc0000, #ff3333);
+      transform: scale(1.1);
+      box-shadow: 0px 10px 20px rgba(255, 0, 0, 0.6);
+    }
 
-  #search-bar {
-    padding: 12px;
-    width: 80%;
-    max-width: 400px;
-    font-size: 18px;
-    border: 2px solid #ff4d4d;
-    border-radius: 5px;
-    margin: 20px auto;
-    display: block;
-    text-align: center;
-    background: #fff;
-    color: #cc0000;
-    transition: all 0.3s ease-in-out;
-  }
+    /* Search Bar */
+    #search-bar {
+      padding: 12px;
+      width: 80%;
+      max-width: 400px;
+      font-size: 18px;
+      border: 2px solid #ff4d4d;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      text-align: center;
+      background: #fff;
+      color: #cc0000;
+      transition: all 0.3s ease-in-out;
+    }
 
-  #search-bar:focus {
-    border-color: #e60000;
-    box-shadow: 0px 0px 10px rgba(255, 0, 0, 0.7);
-    outline: none;
-  }
+    #search-bar:focus {
+      border-color: #e60000;
+      box-shadow: 0px 0px 10px rgba(255, 0, 0, 0.7);
+      outline: none;
+    }
 
-  #products {
-    padding: 30px;
-    background: #fff0f0;
-    box-shadow: 0px 10px 30px rgba(255, 0, 0, 0.2);
-    border-radius: 15px;
-    width: 90%;
-    max-width: 1200px;
-    margin: 30px auto;
-  }
+    /* Product Section */
+    #products {
+      margin-top: 30px;
+      padding: 30px;
+      background: #fff0f0;
+      box-shadow: 0px 10px 30px rgba(255, 0, 0, 0.2);
+      border-radius: 15px;
+      width: 90%;
+      max-width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
+    }
 
-  .product-list {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
-  }
+    .product-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
 
-  .product {
-    background: #ffffff;
-    padding: 20px;
-    border-radius: 10px;
-    width: 220px;
-    text-align: center;
-    transition: transform 0.4s ease-in-out, box-shadow 0.3s ease-in-out;
-    box-shadow: 0px 5px 15px rgba(255, 0, 0, 0.1);
-    border: 2px solid #ff1a1a;
-  }
+    .product {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      width: 220px;
+      text-align: center;
+      transition: transform 0.4s ease-in-out, box-shadow 0.3s ease-in-out;
+      box-shadow: 0px 5px 15px rgba(255, 0, 0, 0.1);
+      border: 2px solid #ff1a1a;
+    }
 
-  .product:hover {
-    transform: scale(1.05);
-    box-shadow: 0px 10px 30px rgba(255, 0, 0, 0.4);
-  }
+    .product:hover {
+      transform: scale(1.05);
+      box-shadow: 0px 10px 30px rgba(255, 0, 0, 0.4);
+    }
 
-  .product img {
-    width: 100%;
-    border-radius: 10px;
-    transition: transform 0.3s ease-in-out;
-  }
+    .product img {
+      width: 100%;
+      border-radius: 10px;
+      transition: transform 0.3s ease-in-out;
+    }
 
-  .product:hover img {
-    transform: scale(1.1);
-  }
+    .product:hover img {
+      transform: scale(1.1);
+    }
 
-  .product h3 {
-    margin-top: 10px;
-    color: #cc0000;
-  }
+    .product h3 {
+      margin-top: 10px;
+      color: #cc0000;
+    }
 
-  .product p {
-    font-size: 16px;
-    color: #333;
-  }
+    .product p {
+      font-size: 16px;
+      color: #333;
+    }
 
-  #contact {
-    display: none;
-    margin-top: 30px;
-    padding: 30px;
-    background: #fff0f0;
-    box-shadow: 0px 10px 30px rgba(255, 0, 0, 0.2);
-    border-radius: 15px;
-    width: 90%;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-  }
+    /* Contact Section */
+    #contact {
+      display: none;
+      margin-top: 30px;
+      padding: 30px;
+      background: #fff0f0;
+      box-shadow: 0px 10px 30px rgba(255, 0, 0, 0.2);
+      border-radius: 15px;
+      width: 90%;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
 
-  #contact h2 {
-    color: #cc0000;
-    margin-bottom: 10px;
-  }
+    #contact h2 {
+      color: #cc0000;
+      margin-bottom: 10px;
+    }
 
-  #contact p {
-    font-size: 20px;
-    font-weight: bold;
-    margin: 10px 0;
-    color: #000;
-  }
+    #contact p {
+      font-size: 20px;
+      font-weight: bold;
+      margin: 10px 0;
+      color: #000;
+    }
 
-  footer {
-    background: #b30000;
-    color: white;
-    padding: 15px;
-    margin-top: 20px;
-    font-size: 16px;
-    box-shadow: 0px -5px 15px rgba(255, 0, 0, 0.3);
-  }
-
-  #product-modal {
-    display: none;
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
-    z-index: 1000;
-    justify-content: center;
-    align-items: center;
-  }
-
-  #product-modal .modal-content {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    max-width: 600px;
-    width: 90%;
-    position: relative;
-    text-align: center;
-  }
-
-  #modal-images {
-    display: flex;
-    gap: 10px;
-    overflow-x: auto;
-    margin-bottom: 10px;
-  }
-
-  #modal-images img {
-    width: 100px;
-    border-radius: 8px;
-  }
-
-  .close-btn {
-    position: absolute;
-    right: 15px;
-    top: 10px;
-    font-size: 24px;
-    cursor: pointer;
-  }
-</style>
-
+    /* Footer */
+    footer {
+      background: #b30000;
+      color: white;
+      padding: 15px;
+      margin-top: 20px;
+      font-size: 16px;
+      box-shadow: 0px -5px 15px rgba(255, 0, 0, 0.3);
+    }
+  </style>
 </head>
 <body>
 
-  <header>
-    <h1>Al Awaans online Shop</h1>
-  </header>
+    <header>
+        <h1>Al Awaans Mobile Shop</h1>
+        <p>Your One-Stop Mobile Shop in Abu Dhabi<br>Shabiya-11</p>
+    </header>
 
-  <section id="contact">
-    <h2>Contact Us</h2>
-    <p>Phone: +971569613435 or +971 58 989 2367</p>
-    <p>Location: Leens mobile shop Shabiya 11 Musafah Abu Dhabi</p>
-  </section>
+    <nav>
+        <button onclick="showProducts()">Products</button>
+        <button onclick="contactWhatsApp()">Contact Us</button>
+        <button onclick="showContact()">About</button>
+    </nav>
+
+    <input type="text" id="search-bar" onkeyup="searchProducts()" placeholder="Search for products...">
+
+    <section id="products">
+      <h2>Available Products</h2>
+      <div class="product-list" id="product-container">
+    
+        <div class="product"
+          data-name="Apple Watch Series 9"
+          data-price="AED 0000"
+          data-images="9.webp,applewatchback.webp,applwtchsrs9side-view.jpg"
+          data-description="Advanced health and fitness tracking smartwatch by Apple.">
+          <img src="9.webp" alt="Apple Watch Series 9" />
+          <h3>Apple Watch Series 9</h3>
+          <p>AED 0000</p>
+          <button onclick="openModal(this)">Know More</button>
+        </div>
+    
+        <div class="product"
+          data-name="Samsung Galaxy Watch 6"
+          data-price="AED 0000"
+          data-images="6.webp,samwatch6side.webp,galaxywatch6back.webp"
+          data-description="Smartwatch with advanced health tracking by Samsung.">
+          <img src="6.webp" alt="Samsung Galaxy Watch 6" />
+          <h3>Samsung Galaxy Watch 6</h3>
+          <p>AED 0000</p>
+          <button onclick="openModal(this)">Know More</button>
+        </div>
+    
+        <div class="product"
+          data-name="Xiaomi Smart Band 8"
+          data-price="AED 0000"
+          data-images="smart.webp,xiaomiwatch.png,xiaomiwatchback.png"
+          data-description="Affordable and stylish fitness band with many features.">
+          <img src="smart.webp" alt="Xiaomi Smart Band 8" />
+          <h3>Xiaomi Smart Band 8</h3>
+          <p>AED 0000</p>
+          <button onclick="openModal(this)">Know More</button>
+        </div>
+    
+        <div class="product"
+          data-name="Google Pixel Watch 2"
+          data-price="AED 0000"
+          data-images="2.webp,pixelwatch2.png,pixelwatchback.webp"
+          data-description="Google’s smartwatch with Fitbit integration.">
+          <img src="2.webp" alt="Google Pixel Watch 2" />
+          <h3>Google Pixel Watch 2</h3>
+          <p>AED 0000</p>
+          <button onclick="openModal(this)">Know More</button>
+        </div>
+    
+        <div class="product"
+          data-name="Xiaomi 14 Ultra"
+          data-price="AED 0000"
+          data-images="14.jpeg,xiaomi14ultra.avif,xiaomi14ultraback.png"
+          data-description="Xiaomi’s flagship phone with Leica camera and powerful specs.">
+          <img src="14.jpeg" alt="Xiaomi 14 Ultra" />
+          <h3>Xiaomi 14 Ultra</h3>
+          <p>AED 0000</p>
+          <button onclick="openModal(this)">Know More</button>
+        </div>
+    
+        <div class="product"
+          data-name="Realme GT 5 Pro"
+          data-price="AED 0000"
+          data-images="5.jpeg,gt5pro.avif,gt5proback.webp"
+          data-description="Powerful Realme flagship with cutting-edge features.">
+          <img src="5.jpeg" alt="Realme GT 5 Pro" />
+          <h3>Realme GT 5 Pro</h3>
+          <p>AED 0000</p>
+          <button onclick="openModal(this)">Know More</button>
+        </div>
+    
+        <div class="product"
+          data-name="Vivo X100 Pro"
+          data-price="AED 0000"
+          data-images="100.jpeg,x100pro.webp,x100proback.webp"
+          data-description="Photography-focused premium smartphone by Vivo.">
+          <img src="100.jpeg" alt="Vivo X100 Pro" />
+          <h3>Vivo X100 Pro</h3>
+          <p>AED 0000</p>
+          <button onclick="openModal(this)">Know More</button>
+        </div>
+    
+        <div class="product"
+          data-name="Asus ROG Phone 8"
+          data-price="AED 0000"
+          data-images="asus.jpeg,rogphone.jpg,rogphoneback.jpg"
+          data-description="Gaming smartphone with RGB lighting and top-tier specs.">
+          <img src="asus.jpeg" alt="Asus ROG Phone 8" />
+          <h3>Asus ROG Phone 8</h3>
+          <p>AED 0000</p>
+          <button onclick="openModal(this)">Know More</button>
+        </div>
+    
+        <div class="product"
+          data-name="Redmi Pad Pro 5G"
+          data-price="AED 0000"
+          data-images="5g.webp,redmipad.avif,redmipadback.png"
+          data-description="Affordable tablet with 5G support and large display.">
+          <img src="5g.webp" alt="Redmi Pad Pro 5G" />
+          <h3>Redmi Pad Pro 5G</h3>
+          <p>AED 0000</p>
+          <button onclick="openModal(this)">Know More</button>
+        </div>
+    
+        <div class="product"
+          data-name="Apple iPad (10th Generation)"
+          data-price="AED 0000"
+          data-images="ipad.webp,ipad.jpeg,ipad.webp"
+          data-description="Latest iPad with improved performance and new design.">
+          <img src="ipad.webp" alt="Apple iPad (10th Generation)" />
+          <h3>Apple iPad (10th Generation)</h3>
+          <p>AED 0000</p>
+          <button onclick="openModal(this)">Know More</button>
+        </div>
   
-
-  <nav>
-    <button onclick="showProducts()">Products</button>
-    <button onclick="showContact()">Contact</button>
-  </nav>
-
-  <input type="text" id="search-bar" onkeyup="searchProducts()" placeholder="Search for products..." />
-
-  <section id="products">
-    <h2>Available Products</h2>
-    <div class="product-list" id="product-container">
-  
-      <div class="product"
-        data-name="Apple Watch Series 9"
-        data-price="AED 0000"
-        data-images="9.webp,applewatchback.webp,applwtchsrs9side-view.jpg"
-        data-description="Advanced health and fitness tracking smartwatch by Apple.">
-        <img src="9.webp" alt="Apple Watch Series 9" />
-        <h3>Apple Watch Series 9</h3>
-        <p>AED 0000</p>
-        <button onclick="openModal(this)">Know More</button>
-      </div>
-  
-      <div class="product"
-        data-name="Samsung Galaxy Watch 6"
-        data-price="AED 0000"
-        data-images="6.webp,samwatch6side.webp,galaxywatch6back.webp"
-        data-description="Smartwatch with advanced health tracking by Samsung.">
-        <img src="6.webp" alt="Samsung Galaxy Watch 6" />
-        <h3>Samsung Galaxy Watch 6</h3>
-        <p>AED 0000</p>
-        <button onclick="openModal(this)">Know More</button>
-      </div>
-  
-      <div class="product"
-        data-name="Xiaomi Smart Band 8"
-        data-price="AED 0000"
-        data-images="smart.webp,xiaomiwatch.png,xiaomiwatchback.png"
-        data-description="Affordable and stylish fitness band with many features.">
-        <img src="smart.webp" alt="Xiaomi Smart Band 8" />
-        <h3>Xiaomi Smart Band 8</h3>
-        <p>AED 0000</p>
-        <button onclick="openModal(this)">Know More</button>
-      </div>
-  
-      <div class="product"
-        data-name="Google Pixel Watch 2"
-        data-price="AED 0000"
-        data-images="2.webp,pixelwatch2.png,pixelwatchback.webp"
-        data-description="Google’s smartwatch with Fitbit integration.">
-        <img src="2.webp" alt="Google Pixel Watch 2" />
-        <h3>Google Pixel Watch 2</h3>
-        <p>AED 0000</p>
-        <button onclick="openModal(this)">Know More</button>
-      </div>
-  
-      <div class="product"
-        data-name="Xiaomi 14 Ultra"
-        data-price="AED 0000"
-        data-images="14.jpeg,xiaomi14ultra.avif,xiaomi14ultraback.png"
-        data-description="Xiaomi’s flagship phone with Leica camera and powerful specs.">
-        <img src="14.jpeg" alt="Xiaomi 14 Ultra" />
-        <h3>Xiaomi 14 Ultra</h3>
-        <p>AED 0000</p>
-        <button onclick="openModal(this)">Know More</button>
-      </div>
-  
-      <div class="product"
-        data-name="Realme GT 5 Pro"
-        data-price="AED 0000"
-        data-images="5.jpeg,gt5pro.avif,gt5proback.webp"
-        data-description="Powerful Realme flagship with cutting-edge features.">
-        <img src="5.jpeg" alt="Realme GT 5 Pro" />
-        <h3>Realme GT 5 Pro</h3>
-        <p>AED 0000</p>
-        <button onclick="openModal(this)">Know More</button>
-      </div>
-  
-      <div class="product"
-        data-name="Vivo X100 Pro"
-        data-price="AED 0000"
-        data-images="100.jpeg,x100pro.webp,x100proback.webp"
-        data-description="Photography-focused premium smartphone by Vivo.">
-        <img src="100.jpeg" alt="Vivo X100 Pro" />
-        <h3>Vivo X100 Pro</h3>
-        <p>AED 0000</p>
-        <button onclick="openModal(this)">Know More</button>
-      </div>
-  
-      <div class="product"
-        data-name="Asus ROG Phone 8"
-        data-price="AED 0000"
-        data-images="asus.jpeg,rogphone.jpg,rogphoneback.jpg"
-        data-description="Gaming smartphone with RGB lighting and top-tier specs.">
-        <img src="asus.jpeg" alt="Asus ROG Phone 8" />
-        <h3>Asus ROG Phone 8</h3>
-        <p>AED 0000</p>
-        <button onclick="openModal(this)">Know More</button>
-      </div>
-  
-      <div class="product"
-        data-name="Redmi Pad Pro 5G"
-        data-price="AED 0000"
-        data-images="5g.webp,redmipad.avif,redmipadback.png"
-        data-description="Affordable tablet with 5G support and large display.">
-        <img src="5g.webp" alt="Redmi Pad Pro 5G" />
-        <h3>Redmi Pad Pro 5G</h3>
-        <p>AED 0000</p>
-        <button onclick="openModal(this)">Know More</button>
-      </div>
-  
-      <div class="product"
-        data-name="Apple iPad (10th Generation)"
-        data-price="AED 0000"
-        data-images="ipad.webp,ipad.jpeg,ipad.webp"
-        data-description="Latest iPad with improved performance and new design.">
-        <img src="ipad.webp" alt="Apple iPad (10th Generation)" />
-        <h3>Apple iPad (10th Generation)</h3>
-        <p>AED 0000</p>
-        <button onclick="openModal(this)">Know More</button>
-      </div>
-
-      <div class="product"
-  data-name="Xiaomi Pad 6"
-  data-price="AED 0000"
-  data-images="pad6.webp,xiaomipad6.jpg,xiaomipad6back.jpg"
-  data-description="High-performance tablet by Xiaomi with a sleek display.">
-  <img src="pad6.webp" alt="Xiaomi Pad 6">
-  <h3>Xiaomi Pad 6</h3>
-  <p>AED 0000</p>
-  <button onclick="openModal(this)">Know More</button>
-</div>
-
-<div class="product"
-  data-name="Xiaomi Pad 7"
-  data-price="AED 0000"
-  data-images="pad7.webp,xiaomipad7back.jpg,xiaomipad7.webp"
-  data-description="Next-gen Xiaomi tablet with enhanced features.">
-  <img src="pad7.webp" alt="Xiaomi Pad 7">
-  <h3>Xiaomi Pad 7</h3>
-  <p>AED 0000</p>
-  <button onclick="openModal(this)">Know More</button>
-</div>
-
-<div class="product"
-  data-name="iPhone 14"
-  data-price="AED 0000"
-  data-images="15promax.webp,iphone14.jpg,iphone142.webp"
-  data-description="Apple iPhone 14 with great performance and camera.">
-  <img src="15promax.webp" alt="iPhone 14">
-  <h3>iPhone 14</h3>
-  <p>AED 0000</p>
-  <button onclick="openModal(this)">Know More</button>
-</div>
-
-<div class="product"
-  data-name="Samsung Galaxy S22"
-  data-price="AED 0000"
-  data-images="22.webp,galaxys22.webp,galaxys222.webp"
-  data-description="Compact flagship phone with powerful performance.">
-  <img src="22.webp" alt="Samsung Galaxy S22">
-  <h3>Samsung Galaxy S22</h3>
-  <p>AED 0000</p>
-  <button onclick="openModal(this)">Know More</button>
-</div>
-
-<div class="product"
-  data-name="iPhone 14 Pro"
-  data-price="AED 0000"
-  data-images="15promax.webp,iphone14pro.png,iphone14pro2.jpg"
-  data-description="Enhanced performance and Pro camera system.">
-  <img src="15promax.webp" alt="iPhone 14 Pro">
-  <h3>iPhone 14 Pro</h3>
-  <p>AED 0000</p>
-  <button onclick="openModal(this)">Know More</button>
-</div>
-
-<div class="product"
-  data-name="Samsung Galaxy S22 Ultra"
-  data-price="AED 0000"
-  data-images="22ultra.jpeg,s22ultra.jpg,s22ultra2.jpg"
-  data-description="S Pen support and powerful zoom camera.">
-  <img src="22ultra.jpeg" alt="Samsung Galaxy S22 Ultra">
-  <h3>Samsung Galaxy S22 Ultra</h3>
-  <p>AED 0000</p>
-  <button onclick="openModal(this)">Know More</button>
-</div>
-
-<div class="product"
-  data-name="iPhone 14 Pro Max"
-  data-price="AED 0000"
-  data-images="15promax.webp,14promax.webp,14promax2.avif"
-  data-description="Apple's largest and most powerful iPhone 14.">
-  <img src="15promax.webp" alt="iPhone 14 Pro Max">
-  <h3>iPhone 14 Pro Max</h3>
-  <p>AED 0000</p>
-  <button onclick="openModal(this)">Know More</button>
-</div>
-
-<div class="product"
-  data-name="Samsung Galaxy S23"
-  data-price="AED 0000"
-  data-images="23.webp,s23sam2.webp,s23sam.avif"
-  data-description="Latest S-series phone with improved chipset.">
-  <img src="23.webp" alt="Samsung Galaxy S23">
-  <h3>Samsung Galaxy S23</h3>
-  <p>AED 0000</p>
-  <button onclick="openModal(this)">Know More</button>
-</div>
-
-<div class="product"
-  data-name="iPhone 15"
-  data-price="AED 0000"
-  data-images="15promax.webp,15promax.webp,15promax2.webp"
-  data-description="New design and better camera with Dynamic Island.">
-  <img src="15promax.webp" alt="iPhone 15">
-  <h3>iPhone 15</h3>
-  <p>AED 0000</p>
-  <button onclick="openModal(this)">Know More</button>
-</div>
-
-<div class="product"
-  data-name="Samsung Galaxy S23 Ultra"
-  data-price="AED 0000"
-  data-images="23ultra.webp,s23ultra.jpg,s23ultra2.webp"
-  data-description="200MP camera with long battery and great performance.">
-  <img src="23ultra.webp" alt="Samsung Galaxy S23 Ultra">
-  <h3>Samsung Galaxy S23 Ultra</h3>
-  <p>AED 0000</p>
-  <button onclick="openModal(this)">Know More</button>
-</div>
-
-<div class="product"
-  data-name="iPhone 15 Pro"
-  data-price="AED 0000"
-  data-images="15promax.webp,15promax.jpg,15promax2.webp"
-  data-description="Lightweight titanium frame with A17 Pro chip.">
-  <img src="15promax.webp" alt="iPhone 15 Pro">
-  <h3>iPhone 15 Pro</h3>
-  <p>AED 0000</p>
-  <button onclick="openModal(this)">Know More</button>
-</div>
-
-<div class="product"
-  data-name="Samsung Galaxy S24"
-  data-price="AED 0000"
-  data-images="24.webp,s241.webp,s242.webp"
-  data-description="AI-powered Galaxy phone with enhanced battery life.">
-  <img src="24.webp" alt="Samsung Galaxy S24">
-  <h3>Samsung Galaxy S24</h3>
-  <p>AED 0000</p>
-  <button onclick="openModal(this)">Know More</button>
-</div>
-
-<div class="product"
-  data-name="iPhone 15 Pro Max"
-  data-price="AED 0000"
-  data-images="15promax.webp,15promax.jpg,15promax2.webp"
-  data-description="Apple's best iPhone with periscope zoom and titanium body.">
-  <img src="15promax.webp" alt="iPhone 15 Pro Max">
-  <h3>iPhone 15 Pro Max</h3>
-  <p>AED 0000</p>
-  <button onclick="openModal(this)">Know More</button>
-</div>
-
-<div class="product"
-  data-name="Samsung Galaxy S24 Ultra"
-  data-price="AED 0000"
-  data-images="24ultra.webp,s24ultra.jpg,s24ultra2.jpeg"
-  data-description="Top-tier Galaxy Ultra with S Pen and AI camera.">
-  <img src="24ultra.webp" alt="Samsung Galaxy S24 Ultra">
-  <h3>Samsung Galaxy S24 Ultra</h3>
-  <p>AED 0000</p>
-  <button onclick="openModal(this)">Know More</button>
-</div>
-
-<div class="product"
-  data-name="Samsung Galaxy S25"
-  data-price="AED 0000"
-  data-images="25.webp,s251.jpg,s252.jpg"
-  data-description="Futuristic phone design and improved thermal control.">
-  <img src="25.webp" alt="Samsung Galaxy S25">
-  <h3>Samsung Galaxy S25</h3>
-  <p>AED 0000</p>
-  <button onclick="openModal(this)">Know More</button>
-</div>
-
-<div class="product"
-  data-name="Samsung Galaxy S25 Ultra"
-  data-price="AED 0000"
-  data-images="25ultra.webp,s25ultra1.jpg,s25ultra2.avif"
-  data-description="Next-gen Galaxy Ultra with AI, zoom and gaming performance.">
-  <img src="25ultra.webp" alt="Samsung Galaxy S25 Ultra">
-  <h3>Samsung Galaxy S25 Ultra</h3>
-  <p>AED 0000</p>
-  <button onclick="openModal(this)">Know More</button>
-</div>
-
-<div class="product"
-  data-name="Redmi Pad SE"
-  data-price="AED 0000"
-  data-images="SE.webp,redpadse1.jpg,redpadse2.png"
-  data-description="Budget tablet with big display and long battery.">
-  <img src="SE.webp" alt="Redmi Pad SE">
-  <h3>Redmi Pad SE</h3>
-  <p>AED 0000</p>
-  <button onclick="openModal(this)">Know More</button>
-</div>
-
-      
-  
-
-  <section id="contact">
-    <h2>Contact Us</h2>
-    <p>📞 +971 58 989 2367</p>
-    <p>📍 Visit our showroom or message us directly!</p>
-    <button onclick="contactWhatsApp()">Message on WhatsApp</button>
-  </section>
-
-  <!-- Product Modal -->
-  <div id="product-modal">
-    <div class="modal-content">
-      <span class="close-btn" onclick="closeModal()">&times;</span>
-      <h2 id="modal-title"></h2>
-      <div id="modal-images"></div>
-      <p id="modal-price" style="font-size: 18px; font-weight: bold;"></p>
-      <p id="modal-description" style="font-size: 15px;"></p>
-    </div>
+        <div class="product"
+    data-name="Xiaomi Pad 6"
+    data-price="AED 0000"
+    data-images="pad6.webp,xiaomipad6.jpg,xiaomipad6back.jpg"
+    data-description="High-performance tablet by Xiaomi with a sleek display.">
+    <img src="pad6.webp" alt="Xiaomi Pad 6">
+    <h3>Xiaomi Pad 6</h3>
+    <p>AED 0000</p>
+    <button onclick="openModal(this)">Know More</button>
   </div>
-
-  <script>
-    function showProducts() {
-      document.getElementById("products").style.display = "flex";
-      document.getElementById("contact").style.display = "none";
-      window.scrollTo({ top: document.getElementById("products").offsetTop - 50, behavior: 'smooth' });
-    }
-
-    function showContact() {
-      document.getElementById("products").style.display = "none";
-      document.getElementById("contact").style.display = "block";
-      window.scrollTo({ top: document.getElementById("contact").offsetTop - 50, behavior: 'smooth' });
-    }
-
-    function contactWhatsApp() {
-      window.location.href = "https://wa.me/+971589892367";
-    }
-
-    function searchProducts() {
-      let input = document.getElementById("search-bar").value.toLowerCase();
-      document.querySelectorAll(".product").forEach(product => {
-        const name = product.getAttribute("data-name").toLowerCase();
-        product.style.display = name.includes(input) ? "block" : "none";
-      });
-    }
-
-    function openModal(button) {
-      const product = button.closest(".product");
-      const title = product.getAttribute("data-name");
-      const price = product.getAttribute("data-price");
-      const description = product.getAttribute("data-description");
-      const images = product.getAttribute("data-images").split(",");
-
-      document.getElementById("modal-title").textContent = title;
-      document.getElementById("modal-price").textContent = price;
-      document.getElementById("modal-description").textContent = description;
-
-      const imageContainer = document.getElementById("modal-images");
-      imageContainer.innerHTML = "";
-      images.forEach(src => {
-        let img = document.createElement("img");
-        img.src = src.trim();
-        imageContainer.appendChild(img);
-      });
-
-      document.getElementById("product-modal").style.display = "flex";
-    }
-
-    function closeModal() {
-      document.getElementById("product-modal").style.display = "none";
-    }
-
-    window.addEventListener("click", function(e) {
-      const modal = document.getElementById("product-modal");
-      if (e.target === modal) closeModal();
-    });
-
-    function showProducts() {
-      document.getElementById("products").style.display = "block";
-      document.getElementById("contact").style.display = "none";
-    }
   
-    function showContact() {
-      document.getElementById("products")
-  <script>
+  <div class="product"
+    data-name="Xiaomi Pad 7"
+    data-price="AED 0000"
+    data-images="pad7.webp,xiaomipad7back.jpg,xiaomipad7.webp"
+    data-description="Next-gen Xiaomi tablet with enhanced features.">
+    <img src="pad7.webp" alt="Xiaomi Pad 7">
+    <h3>Xiaomi Pad 7</h3>
+    <p>AED 0000</p>
+    <button onclick="openModal(this)">Know More</button>
+  </div>
+  
+  <div class="product"
+    data-name="iPhone 14"
+    data-price="AED 0000"
+    data-images="15promax.webp,iphone14.jpg,iphone142.webp"
+    data-description="Apple iPhone 14 with great performance and camera.">
+    <img src="15promax.webp" alt="iPhone 14">
+    <h3>iPhone 14</h3>
+    <p>AED 0000</p>
+    <button onclick="openModal(this)">Know More</button>
+  </div>
+  
+  <div class="product"
+    data-name="Samsung Galaxy S22"
+    data-price="AED 0000"
+    data-images="22.webp,galaxys22.webp,galaxys222.webp"
+    data-description="Compact flagship phone with powerful performance.">
+    <img src="22.webp" alt="Samsung Galaxy S22">
+    <h3>Samsung Galaxy S22</h3>
+    <p>AED 0000</p>
+    <button onclick="openModal(this)">Know More</button>
+  </div>
+  
+  <div class="product"
+    data-name="iPhone 14 Pro"
+    data-price="AED 0000"
+    data-images="15promax.webp,iphone14pro.png,iphone14pro2.jpg"
+    data-description="Enhanced performance and Pro camera system.">
+    <img src="15promax.webp" alt="iPhone 14 Pro">
+    <h3>iPhone 14 Pro</h3>
+    <p>AED 0000</p>
+    <button onclick="openModal(this)">Know More</button>
+  </div>
+  
+  <div class="product"
+    data-name="Samsung Galaxy S22 Ultra"
+    data-price="AED 0000"
+    data-images="22ultra.jpeg,s22ultra.jpg,s22ultra2.jpg"
+    data-description="S Pen support and powerful zoom camera.">
+    <img src="22ultra.jpeg" alt="Samsung Galaxy S22 Ultra">
+    <h3>Samsung Galaxy S22 Ultra</h3>
+    <p>AED 0000</p>
+    <button onclick="openModal(this)">Know More</button>
+  </div>
+  
+  <div class="product"
+    data-name="iPhone 14 Pro Max"
+    data-price="AED 0000"
+    data-images="15promax.webp,14promax.webp,14promax2.avif"
+    data-description="Apple's largest and most powerful iPhone 14.">
+    <img src="15promax.webp" alt="iPhone 14 Pro Max">
+    <h3>iPhone 14 Pro Max</h3>
+    <p>AED 0000</p>
+    <button onclick="openModal(this)">Know More</button>
+  </div>
+  
+  <div class="product"
+    data-name="Samsung Galaxy S23"
+    data-price="AED 0000"
+    data-images="23.webp,s23sam2.webp,s23sam.avif"
+    data-description="Latest S-series phone with improved chipset.">
+    <img src="23.webp" alt="Samsung Galaxy S23">
+    <h3>Samsung Galaxy S23</h3>
+    <p>AED 0000</p>
+    <button onclick="openModal(this)">Know More</button>
+  </div>
+  
+  <div class="product"
+    data-name="iPhone 15"
+    data-price="AED 0000"
+    data-images="15promax.webp,15promax.webp,15promax2.webp"
+    data-description="New design and better camera with Dynamic Island.">
+    <img src="15promax.webp" alt="iPhone 15">
+    <h3>iPhone 15</h3>
+    <p>AED 0000</p>
+    <button onclick="openModal(this)">Know More</button>
+  </div>
+  
+  <div class="product"
+    data-name="Samsung Galaxy S23 Ultra"
+    data-price="AED 0000"
+    data-images="23ultra.webp,s23ultra.jpg,s23ultra2.webp"
+    data-description="200MP camera with long battery and great performance.">
+    <img src="23ultra.webp" alt="Samsung Galaxy S23 Ultra">
+    <h3>Samsung Galaxy S23 Ultra</h3>
+    <p>AED 0000</p>
+    <button onclick="openModal(this)">Know More</button>
+  </div>
+  
+  <div class="product"
+    data-name="iPhone 15 Pro"
+    data-price="AED 0000"
+    data-images="15promax.webp,15promax.jpg,15promax2.webp"
+    data-description="Lightweight titanium frame with A17 Pro chip.">
+    <img src="15promax.webp" alt="iPhone 15 Pro">
+    <h3>iPhone 15 Pro</h3>
+    <p>AED 0000</p>
+    <button onclick="openModal(this)">Know More</button>
+  </div>
+  
+  <div class="product"
+    data-name="Samsung Galaxy S24"
+    data-price="AED 0000"
+    data-images="24.webp,s241.webp,s242.webp"
+    data-description="AI-powered Galaxy phone with enhanced battery life.">
+    <img src="24.webp" alt="Samsung Galaxy S24">
+    <h3>Samsung Galaxy S24</h3>
+    <p>AED 0000</p>
+    <button onclick="openModal(this)">Know More</button>
+  </div>
+  
+  <div class="product"
+    data-name="iPhone 15 Pro Max"
+    data-price="AED 0000"
+    data-images="15promax.webp,15promax.jpg,15promax2.webp"
+    data-description="Apple's best iPhone with periscope zoom and titanium body.">
+    <img src="15promax.webp" alt="iPhone 15 Pro Max">
+    <h3>iPhone 15 Pro Max</h3>
+    <p>AED 0000</p>
+    <button onclick="openModal(this)">Know More</button>
+  </div>
+  
+  <div class="product"
+    data-name="Samsung Galaxy S24 Ultra"
+    data-price="AED 0000"
+    data-images="24ultra.webp,s24ultra.jpg,s24ultra2.jpeg"
+    data-description="Top-tier Galaxy Ultra with S Pen and AI camera.">
+    <img src="24ultra.webp" alt="Samsung Galaxy S24 Ultra">
+    <h3>Samsung Galaxy S24 Ultra</h3>
+    <p>AED 0000</p>
+    <button onclick="openModal(this)">Know More</button>
+  </div>
+  
+  <div class="product"
+    data-name="Samsung Galaxy S25"
+    data-price="AED 0000"
+    data-images="25.webp,s251.jpg,s252.jpg"
+    data-description="Futuristic phone design and improved thermal control.">
+    <img src="25.webp" alt="Samsung Galaxy S25">
+    <h3>Samsung Galaxy S25</h3>
+    <p>AED 0000</p>
+    <button onclick="openModal(this)">Know More</button>
+  </div>
+  
+  <div class="product"
+    data-name="Samsung Galaxy S25 Ultra"
+    data-price="AED 0000"
+    data-images="25ultra.webp,s25ultra1.jpg,s25ultra2.avif"
+    data-description="Next-gen Galaxy Ultra with AI, zoom and gaming performance.">
+    <img src="25ultra.webp" alt="Samsung Galaxy S25 Ultra">
+    <h3>Samsung Galaxy S25 Ultra</h3>
+    <p>AED 0000</p>
+    <button onclick="openModal(this)">Know More</button>
+  </div>
+  
+  <div class="product"
+    data-name="Redmi Pad SE"
+    data-price="AED 0000"
+    data-images="SE.webp,redpadse1.jpg,redpadse2.png"
+    data-description="Budget tablet with big display and long battery.">
+    <img src="SE.webp" alt="Redmi Pad SE">
+    <h3>Redmi Pad SE</h3>
+    <p>AED 0000</p>
+    <button onclick="openModal(this)">Know More</button>
+  </div>
+    </section>
+
+    <section id="contact">
+        <h2>Contact Us</h2>
+        <p>📞 +971 58 989 2367</p>
+        <p>📞 +971 56 961 3435</p>
+    </section>
+
+    <footer>
+        <p>© 2025 Al Awaans Mobile Shop. All Rights Reserved</p>
+    </footer>
+
+    <script>
+        function showProducts() {
+            document.getElementById("products").style.display = "block";
+            document.getElementById("contact").style.display = "none";
+            window.scrollTo({ top: document.getElementById("products").offsetTop - 50, behavior: 'smooth' });
+        }
+
+        function contactWhatsApp() {
+            window.location.href = "https://wa.me/+971589892367";
+        }
+
+        function showContact() {
+            document.getElementById("contact").style.display = "block";
+            document.getElementById("products").style.display = "none";
+            window.scrollTo({ top: document.getElementById("contact").offsetTop - 50, behavior: 'smooth' });
+        }
+
+        function searchProducts() {
+            let input = document.getElementById("search-bar").value.toLowerCase();
+            document.querySelectorAll(".product").forEach(product => {
+                product.style.display = product.getAttribute("data-name").toLowerCase().includes(input) ? "block" : "none";
+            });
+        }
+    </script>
+    <!-- Modal Section -->
+<div id="product-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:999; justify-content:center; align-items:center;">
+  <div style="background:#fff; padding:30px; border-radius:10px; max-width:600px; width:90%; position:relative; text-align:left;">
+    <span onclick="closeModal()" style="position:absolute; top:10px; right:20px; font-size:24px; cursor:pointer; color:#b30000;">&times;</span>
+    <h2 id="modal-title" style="color:#b30000;"></h2>
+    <div id="modal-images" style="margin: 15px 0;"></div>
+    <p id="modal-price" style="font-size:18px; font-weight:bold; color:#333;"></p>
+    <p id="modal-description" style="font-size:16px; color:#555;"></p>
+  </div>
+</div>
+
+<script>
+function openModal(button) {
+  const product = button.closest('.product');
+  const name = product.dataset.name;
+  const price = product.dataset.price;
+  const description = product.dataset.description;
+  const images = product.dataset.images.split(',');
+
+  document.getElementById('modal-title').textContent = name;
+  document.getElementById('modal-price').textContent = price;
+  document.getElementById('modal-description').textContent = description;
+
+  const imageContainer = document.getElementById('modal-images');
+  imageContainer.innerHTML = '';
+
+  images.forEach(img => {
+    const image = document.createElement('img');
+    image.src = img.trim();
+    image.style.width = '100px';
+    image.style.marginRight = '10px';
+    image.style.borderRadius = '5px';
+    imageContainer.appendChild(image);
+  });
+
+  document.getElementById('product-modal').style.display = 'flex';
+}
+
+function closeModal() {
+  document.getElementById('product-modal').style.display = 'none';
+}
+</script>
+
+
+</body>
+</html>
