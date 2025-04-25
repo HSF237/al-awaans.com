@@ -295,6 +295,14 @@
 </head>
 <body>
 
+  <section id="contact">
+    <h2>Contact Us</h2>
+    <p>Email:alawaanshop@gmail.com</p>
+    <p>Phone: +971-50-123-4567</p>
+    <p>Address: Al Awaans Mobile Shop, Dubai</p>
+  </section>
+  
+
   <header>
     <h1>Al Awaans Mobile Shop</h1>
   </header>
@@ -609,13 +617,12 @@
 
       
   
-
-  <section id="contact">
-    <h2>Contact Us</h2>
-    <p>📞 +971 58 989 2367</p>
-    <p>📍 Visit our showroom or message us directly!</p>
-    <button onclick="contactWhatsApp()">Message on WhatsApp</button>
-  </section>
+<section id="contact">
+  <h2>Contact Us</h2>
+  <p>Phone: +971 50 123 4567</p>
+  <p>Email:alawaansmobileshop@gmail.com</p>
+  <p>Location: Al Awaans Mobile Shop, Dubai, UAE</p>
+</section>
 
   <!-- Product Modal -->
   <div id="product-modal">
@@ -695,12 +702,59 @@
     document.getElementById("contact").style.display = "block";
   }
 </script>
-<section id="contact">
-  <h2>Contact Us</h2>
-  <p>Phone: +971 50 123 4567</p>
-  <p>Email:alawaansmobileshop@gmail.com</p>
-  <p>Location: Al Awaans Mobile Shop, Dubai, UAE</p>
-</section>
+<script>
+  function showProducts() {
+    document.getElementById("products").style.display = "block";
+    document.getElementById("contact").style.display = "none";
+  }
+
+  function showContact() {
+    document.getElementById("products").style.display = "none";
+    document.getElementById("contact").style.display = "block";
+  }
+
+  function searchProducts() {
+    const input = document.getElementById("search-bar").value.toLowerCase();
+    const products = document.querySelectorAll(".product");
+
+    products.forEach(product => {
+      const name = product.querySelector("h3").innerText.toLowerCase();
+      if (name.includes(input)) {
+        product.style.display = "block";
+      } else {
+        product.style.display = "none";
+      }
+    });
+  }
+
+  function openModal(button) {
+    const product = button.closest(".product");
+    const name = product.getAttribute("data-name");
+    const price = product.getAttribute("data-price");
+    const image = product.getAttribute("data-images");
+    const description = product.getAttribute("data-description");
+
+    let modalHTML = `
+      <div class="modal-content">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <h2>${name}</h2>
+        <p><strong>Price:</strong> ${price}</p>
+        <img src="${image}" style="width: 100%; border-radius: 10px;" />
+        <p>${description}</p>
+      </div>
+    `;
+
+    const modal = document.getElementById("product-modal");
+    modal.innerHTML = modalHTML;
+    modal.style.display = "flex";
+  }
+
+  function closeModal() {
+    document.getElementById("product-modal").style.display = "none";
+  }
+</script>
+
+
 
 
 
