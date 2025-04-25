@@ -4,294 +4,202 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Al Awaans Online Shop</title>
-  <style>
-    /* Global Styling */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Arial', sans-serif;
-      scroll-behavior: smooth;
-    }
+ <style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+    scroll-behavior: smooth;
+  }
 
-    body {
-      background: #ffffff;
-      color: #b30000;
-      text-align: center;
-    }
+  body {
+    background: #ffffff;
+    color: #b30000;
+    text-align: center;
+  }
 
-    /* Header Styling */
-    header {
-      background: linear-gradient(to right, #ff0000, #b30000);
-      color: white;
-      padding: 40px;
-      font-size: 30px;
-      font-weight: bold;
-      text-shadow: 2px 2px 5px rgba(255, 0, 0, 0.5);
-      box-shadow: 0px 5px 20px rgba(255, 0, 0, 0.3);
-    }
+  header {
+    background: linear-gradient(to right, #ff0000, #b30000);
+    color: white;
+    padding: 40px;
+    font-size: 30px;
+    font-weight: bold;
+    text-shadow: 2px 2px 5px rgba(255, 0, 0, 0.5);
+    box-shadow: 0px 5px 20px rgba(255, 0, 0, 0.3);
+  }
 
-    /* Navigation */
-    nav {
-      margin: 20px 0;
-    }
+  nav {
+    display: flex;
+    justify-content: center;
+    background-color: #444;
+  }
 
-    button {
-      background: linear-gradient(to right, #ff3333, #cc0000);
-      color: white;
-      padding: 12px 25px;
-      border: none;
-      margin: 10px;
-      cursor: pointer;
-      font-size: 18px;
-      border-radius: 8px;
-      transition: all 0.4s ease-in-out;
-      box-shadow: 0px 5px 15px rgba(255, 0, 0, 0.3);
-    }
+  nav button {
+    background: none;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 18px;
+  }
 
-    button:hover {
-      background: linear-gradient(to right, #cc0000, #ff3333);
-      transform: scale(1.1);
-      box-shadow: 0px 10px 20px rgba(255, 0, 0, 0.6);
-    }
+  button:hover {
+    background: linear-gradient(to right, #cc0000, #ff3333);
+    transform: scale(1.1);
+    box-shadow: 0px 10px 20px rgba(255, 0, 0, 0.6);
+  }
 
-    /* Search Bar */
-    #search-bar {
-      padding: 12px;
-      width: 80%;
-      max-width: 400px;
-      font-size: 18px;
-      border: 2px solid #ff4d4d;
-      border-radius: 5px;
-      margin-bottom: 20px;
-      text-align: center;
-      background: #fff;
-      color: #cc0000;
-      transition: all 0.3s ease-in-out;
-    }
+  #search-bar {
+    padding: 12px;
+    width: 80%;
+    max-width: 400px;
+    font-size: 18px;
+    border: 2px solid #ff4d4d;
+    border-radius: 5px;
+    margin: 20px auto;
+    display: block;
+    text-align: center;
+    background: #fff;
+    color: #cc0000;
+    transition: all 0.3s ease-in-out;
+  }
 
-    #search-bar:focus {
-      border-color: #e60000;
-      box-shadow: 0px 0px 10px rgba(255, 0, 0, 0.7);
-      outline: none;
-    }
+  #search-bar:focus {
+    border-color: #e60000;
+    box-shadow: 0px 0px 10px rgba(255, 0, 0, 0.7);
+    outline: none;
+  }
 
-    /* Product Section */
-    #products {
-      margin-top: 30px;
-      padding: 30px;
-      background: #fff0f0;
-      box-shadow: 0px 10px 30px rgba(255, 0, 0, 0.2);
-      border-radius: 15px;
-      width: 90%;
-      max-width: 1200px;
-      margin-left: auto;
-      margin-right: auto;
-    }
+  #products {
+    padding: 30px;
+    background: #fff0f0;
+    box-shadow: 0px 10px 30px rgba(255, 0, 0, 0.2);
+    border-radius: 15px;
+    width: 90%;
+    max-width: 1200px;
+    margin: 30px auto;
+  }
 
-    .product-list {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 20px;
-    }
+  .product-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+  }
 
-    .product {
-      background: #ffffff;
-      padding: 20px;
-      border-radius: 10px;
-      width: 220px;
-      text-align: center;
-      transition: transform 0.4s ease-in-out, box-shadow 0.3s ease-in-out;
-      box-shadow: 0px 5px 15px rgba(255, 0, 0, 0.1);
-      border: 2px solid #ff1a1a;
-    }
+  .product {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    width: 220px;
+    text-align: center;
+    transition: transform 0.4s ease-in-out, box-shadow 0.3s ease-in-out;
+    box-shadow: 0px 5px 15px rgba(255, 0, 0, 0.1);
+    border: 2px solid #ff1a1a;
+  }
 
-    .product:hover {
-      transform: scale(1.05);
-      box-shadow: 0px 10px 30px rgba(255, 0, 0, 0.4);
-    }
+  .product:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 10px 30px rgba(255, 0, 0, 0.4);
+  }
 
-    .product img {
-      width: 100%;
-      border-radius: 10px;
-      transition: transform 0.3s ease-in-out;
-    }
+  .product img {
+    width: 100%;
+    border-radius: 10px;
+    transition: transform 0.3s ease-in-out;
+  }
 
-    .product:hover img {
-      transform: scale(1.1);
-    }
+  .product:hover img {
+    transform: scale(1.1);
+  }
 
-    .product h3 {
-      margin-top: 10px;
-      color: #cc0000;
-    }
+  .product h3 {
+    margin-top: 10px;
+    color: #cc0000;
+  }
 
-    .product p {
-      font-size: 16px;
-      color: #333;
-    }
+  .product p {
+    font-size: 16px;
+    color: #333;
+  }
 
-    /* Contact Section */
-    #contact {
-      display: none;
-      margin-top: 30px;
-      padding: 30px;
-      background: #fff0f0;
-      box-shadow: 0px 10px 30px rgba(255, 0, 0, 0.2);
-      border-radius: 15px;
-      width: 90%;
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
-    }
+  #contact {
+    display: none;
+    margin-top: 30px;
+    padding: 30px;
+    background: #fff0f0;
+    box-shadow: 0px 10px 30px rgba(255, 0, 0, 0.2);
+    border-radius: 15px;
+    width: 90%;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
 
-    #contact h2 {
-      color: #cc0000;
-      margin-bottom: 10px;
-    }
+  #contact h2 {
+    color: #cc0000;
+    margin-bottom: 10px;
+  }
 
-    #contact p {
-      font-size: 20px;
-      font-weight: bold;
-      margin: 10px 0;
-      color: #000;
-    }
+  #contact p {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 10px 0;
+    color: #000;
+  }
 
-    /* Footer */
-    footer {
-      background: #b30000;
-      color: white;
-      padding: 15px;
-      margin-top: 20px;
-      font-size: 16px;
-      box-shadow: 0px -5px 15px rgba(255, 0, 0, 0.3);
-    }
-  </style>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0; padding: 0;
-      background: red;
-    }
+  footer {
+    background: #b30000;
+    color: white;
+    padding: 15px;
+    margin-top: 20px;
+    font-size: 16px;
+    box-shadow: 0px -5px 15px rgba(255, 0, 0, 0.3);
+  }
 
-    header {
-      background-color: #333;
-      color: white;
-      padding: 10px;
-      text-align: center;
-    }
+  #product-modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+  }
 
-    nav {
-      display: flex;
-      justify-content: center;
-      background-color: #444;
-    }
+  #product-modal .modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 600px;
+    width: 90%;
+    position: relative;
+    text-align: center;
+  }
 
-    nav button {
-      background: none;
-      border: none;
-      color: white;
-      padding: 10px 20px;
-      cursor: pointer;
-    }
+  #modal-images {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    margin-bottom: 10px;
+  }
 
-    #search-bar {
-      width: 80%;
-      padding: 10px;
-      margin: 10px auto;
-      display: block;
-      font-size: 16px;
-    }
+  #modal-images img {
+    width: 100px;
+    border-radius: 8px;
+  }
 
-    #products {
-      display: none;
-      padding: 20px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      justify-content: center;
-    }
+  .close-btn {
+    position: absolute;
+    right: 15px;
+    top: 10px;
+    font-size: 24px;
+    cursor: pointer;
+  }
+</style>
 
-    .product {
-      background: whitesmoke;
-      border-radius: 10px;
-      padding: 15px;
-      text-align: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      width: 200px;
-    }
-
-    .product img {
-      width: 100%;
-      height: auto;
-      border-radius: 8px;
-    }
-
-    .product h3 {
-      margin: 10px 0 5px;
-    }
-
-    .product p {
-      margin: 0 0 10px;
-    }
-
-    .product button {
-      background-color: #008CBA;
-      color: white;
-      border: none;
-      padding: 8px 15px;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    #contact {
-      display: none;
-      padding: 20px;
-      text-align: center;
-    }
-
-    #product-modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background-color: rgba(0, 0, 0, 0.8);
-      z-index: 1000;
-      justify-content: center;
-      align-items: center;
-    }
-
-    #product-modal .modal-content {
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      max-width: 600px;
-      width: 90%;
-      position: relative;
-      text-align: center;
-    }
-
-    #modal-images {
-      display: flex;
-      gap: 10px;
-      overflow-x: auto;
-      margin-bottom: 10px;
-    }
-
-    #modal-images img {
-      width: 100px;
-      border-radius: 8px;
-    }
-
-    .close-btn {
-      position: absolute;
-      right: 15px;
-      top: 10px;
-      font-size: 24px;
-      cursor: pointer;
-    }
-  </style>
 </head>
 <body>
 
