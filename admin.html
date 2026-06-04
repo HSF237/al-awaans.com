@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Al Awaans — Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <!-- Firebase compat SDK (free, no subscription needed) -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #080808;
+      --surface:    #101010;
+      --surface-2:  #181818;
+      --surface-3:  #222;
+      --gold:       #C49A38;
+      --gold-dim:   rgba(196,154,56,0.1);
+      --gold-border:rgba(196,154,56,0.25);
+      --text:       #F0F0F0;
+      --text-2:     #888;
+      --text-3:     #444;
+      --border:     rgba(255,255,255,0.07);
+      --red:        #e05252;
+      --red-dim:    rgba(224,82,82,0.1);
+      --green:      #52c07a;
+      --radius:     10px;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+    a { text-decoration: none; color: inherit; }
+    button { font-family: inherit; cursor: pointer; border: none; }
+    input, textarea, select { font-family: inherit; }
+
+    /* ── SHARED FIELD STYLES ── */
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label { font-size: 0.75rem; font-weight: 600; color: var(--text-2); letter-spacing: 0.3px; }
+    .field input, .field textarea, .field select {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      color: var(--text);
+      font-size: 0.875rem;
+      outline: none;
+      transition: border-color .2s;
+      width: 100%;
+    }
+    .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--gold-border); }
+    .field input::placeholder, .field textarea::placeholder { color: var(--text-3); }
+    .field select option { background: var(--surface-2); color: var(--text); }
+    .field textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+
+    /* ── BUTTONS ── */
+    .btn { display: inline-flex; align-items: center; gap: 7px; font-weight: 600; border-radius: var(--radius); transition: all .2s; cursor: pointer; border: none; font-family: inherit; white-space: nowrap; }
+    .btn-gold  { background: var(--gold); color: #000; padding: 10px 20px; font-size: 0.875rem; }
+    .btn-gold:hover  { background: #D4AA48; transform: translateY(-1px); }
+    .btn-ghost { background: transparent; color: var(--text-2); padding: 10px 18px; font-size: 0.875rem; border: 1px solid var(--border); }
+    .btn-ghost:hover { border-color: rgba(255,255,255,0.2); color: var(--text); }
+    .btn-red   { background: var(--red-dim); color: var(--red); padding: 7px 14px; font-size: 0.8rem; border: 1px solid rgba(224,82,82,0.25); }
+    .btn-red:hover { background: rgba(224,82,82,0.2); }
+    .btn-edit  { background: var(--gold-dim); color: var(--gold); padding: 7px 14px; font-size: 0.8rem; border: 1px solid var(--gold-border); }
+    .btn-edit:hover { background: rgba(196,154,56,0.18); }
+    .btn-sm { padding: 6px 12px; font-size: 0.78rem; }
+
+    /* ════════════════════════════════════
+       LOGIN PAGE
+    ════════════════════════════════════ */
+    #page-login {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background:
+        radial-gradient(ellipse 70% 50% at 50% 0%, rgba(196,154,56,0.1) 0%, transparent 60%);
+    }
+
+    .login-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 40px 36px;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .login-logo {
+      font-size: 1.5rem;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      margin-bottom: 4px;
+    }
+    .login-logo span { color: var(--gold); }
+    .login-subtitle {
+      font-size: 0.78rem;
+      color: var(--text-3);
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 32px;
+    }
+
+    .login-form { display: flex; flex-direction: column; gap: 16px; }
+
+    .login-error {
+      background: var(--red-dim);
+      border: 1px solid rgba(224,82,82,0.3);
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      font-size: 0.82rem;
+      color: var(--red);
+      display: none;
+    }
+    .login-error.visible { display: block; }
+
+    /* ════════════════════════════════════
+       ADMIN DASHBOARD
+    ════════════════════════════════════ */
+    #page-admin { display: none; }
+
+    .admin-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: 60px;
+      background: rgba(8,8,8,0.92);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      gap: 16px;
+    }
+    .admin-nav-logo { font-size: 1.05rem; font-weight: 900; }
+    .admin-nav-logo span { color: var(--gold); }
+    .admin-nav-badge {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      background: var(--gold-dim);
+      color: var(--gold);
+      padding: 3px 8px;
+      border-radius: 4px;
+      border: 1px solid var(--gold-border);
+    }
+    .admin-nav-spacer { flex: 1; }
+
+    .admin-main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 24px 80px;
+    }
+
+    /* Stats */
+    .stats-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+    }
+    .stat-chip {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 120px;
+    }
+    .stat-chip .num { font-size: 1.6rem; font-weight: 800; letter-spacing: -1px; color: var(--gold); }
+    .stat-chip .lbl { font-size: 0.7rem; color: var(--text-3); text-transform: uppercase; letter-spacing: 1px; }
+
+    /* Toolbar */
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .toolbar h2 { font-size: 1rem; font-weight: 700; }
+
+    .toolbar-right { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+    /* Filter */
+    .cat-filter { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+    .cat-btn {
+      padding: 6px 14px;
+      border-radius: 100px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-2);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      transition: all .2s;
+      cursor: pointer;
+    }
+    .cat-btn:hover { color: var(--text); }
+    .cat-btn.active { background: var(--gold); color: #000; border-color: var(--gold); }
+
+    /* Product table */
+    .product-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .product-table th {
+      font-size: 0.68rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text-3);
+      padding: 0 16px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .product-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+      font-size: 0.875rem;
+    }
+    .product-table tr:last-child td { border-bottom: none; }
+    .product-table tr:hover td { background: rgba(255,255,255,0.015); }
+
+    .td-thumb {
+      width: 48px; height: 48px;
+      border-radius: 8px;
+      object-fit: cover;
+      background: var(--surface-2);
+    }
+    .td-thumb-placeholder {
+      width: 48px; height: 48px;
+      border-radius: 8px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-3);
+      font-size: 1rem;
+    }
+    .td-name { font-weight: 600; max-width: 220px; }
+    .td-cat {
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--gold);
+      background: var(--gold-dim);
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+    .td-badge {
+      display: inline-block;
+      font-size: 0.62rem;
+      font-weight: 700;
+      background: var(--gold);
+      color: #000;
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+    .td-actions { display: flex; gap: 8px; }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 24px;
+      color: var(--text-3);
+    }
+    .empty-state p { font-size: 0.88rem; margin-top: 8px; }
+
+    /* Seed banner */
+    .seed-banner {
+      background: var(--gold-dim);
+      border: 1px solid var(--gold-border);
+      border-radius: var(--radius);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .seed-banner p { font-size: 0.85rem; color: var(--text-2); }
+    .seed-banner strong { color: var(--text); }
+
+    /* ════════════════════════════════════
+       MODAL (ADD / EDIT)
+    ════════════════════════════════════ */
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      z-index: 500;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      backdrop-filter: blur(4px);
+    }
+    .overlay.open { display: flex; }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 540px;
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: modalIn .25s cubic-bezier(0.22,1,0.36,1);
+    }
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.94) translateY(12px); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .modal-header h2 { font-size: 1rem; font-weight: 700; }
+    .modal-close-btn {
+      width: 30px; height: 30px;
+      background: var(--surface-2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-2);
+      cursor: pointer;
+      border: none;
+      transition: color .2s, background .2s;
+    }
+    .modal-close-btn:hover { color: var(--text); background: var(--surface-3); }
+
+    .modal-body { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+    .modal-body .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+    .modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .form-hint {
+      font-size: 0.72rem;
+      color: var(--text-3);
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+
+    .save-error {
+      background: var(--red-dim);
+      border: 1px solid rgba(224,82,82,0.25);
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 0.8rem;
+      color: var(--red);
+      display: none;
+    }
+    .save-error.visible { display: block; }
+
+    /* ── CONFIRM DIALOG ── */
+    .confirm-modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      width: 100%;
+      max-width: 380px;
+      padding: 28px 24px;
+      text-align: center;
+      animation: modalIn .25s cubic-bezier(0.22,1,0.36,1);
+    }
+    .confirm-modal h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+    .confirm-modal p  { font-size: 0.85rem; color: var(--text-2); margin-bottom: 24px; line-height: 1.6; }
+    .confirm-modal .actions { display: flex; gap: 10px; justify-content: center; }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--surface-3);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 10px 20px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--text);
+      z-index: 9999;
+      transition: transform .35s cubic-bezier(0.22,1,0.36,1);
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+    .toast.success { border-color: rgba(82,192,122,0.3); background: rgba(82,192,122,0.12); color: var(--green); }
+    .toast.error   { border-color: rgba(224,82,82,0.3); background: rgba(224,82,82,0.1); color: var(--red); }
+
+    /* Spinner */
+    .spinner {
+      width: 18px; height: 18px;
+      border: 2px solid var(--border);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 600px) {
+      .login-card { padding: 32px 24px; }
+      .admin-main { padding: 20px 16px 60px; }
+      .product-table th:nth-child(4),
+      .product-table td:nth-child(4) { display: none; }
+      .modal-body .row2 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══ LOGIN PAGE ══ -->
+  <div id="page-login">
+    <div class="login-card">
+      <p class="login-logo"><span>Al </span>Awaans</p>
+      <p class="login-subtitle">Admin Portal</p>
+
+      <form class="login-form" id="login-form">
+        <div id="login-error" class="login-error"></div>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="login-email" placeholder="admin@example.com" required autocomplete="username" />
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input type="password" id="login-pwd" placeholder="••••••••" required autocomplete="current-password" />
+        </div>
+        <button type="submit" class="btn btn-gold" id="login-btn" style="width:100%;justify-content:center;margin-top:4px">
+          Sign In
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ══ ADMIN DASHBOARD ══ -->
+  <div id="page-admin">
+
+    <header class="admin-nav">
+      <span class="admin-nav-logo"><span>Al </span>Awaans</span>
+      <span class="admin-nav-badge">Admin</span>
+      <div class="admin-nav-spacer"></div>
+      <a href="index.html" target="_blank" class="btn btn-ghost btn-sm">View Store</a>
+      <button class="btn btn-ghost btn-sm" id="logout-btn">Sign Out</button>
+    </header>
+
+    <div class="admin-main">
+
+      <!-- Stats -->
+      <div class="stats-row" id="stats-row">
+        <div class="stat-chip"><span class="num" id="stat-total">0</span><span class="lbl">Total</span></div>
+        <div class="stat-chip"><span class="num" id="stat-phones">0</span><span class="lbl">Phones</span></div>
+        <div class="stat-chip"><span class="num" id="stat-watches">0</span><span class="lbl">Watches</span></div>
+        <div class="stat-chip"><span class="num" id="stat-tablets">0</span><span class="lbl">Tablets</span></div>
+        <div class="stat-chip"><span class="num" id="stat-acc">0</span><span class="lbl">Accessories</span></div>
+      </div>
+
+      <!-- Seed banner (hidden after first product added) -->
+      <div class="seed-banner" id="seed-banner" style="display:none">
+        <p><strong>Store is empty.</strong> Add products manually or seed with all default Al Awaans products at once.</p>
+        <button class="btn btn-gold btn-sm" id="seed-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+          Seed Default Products
+        </button>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <h2 id="admin-section-title">All Products</h2>
+        <div class="toolbar-right">
+          <button class="btn btn-gold" id="add-btn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            Add Product
+          </button>
+        </div>
+      </div>
+
+      <!-- Category filter -->
+      <div class="cat-filter">
+        <button class="cat-btn active" data-cat="all">All</button>
+        <button class="cat-btn" data-cat="smartphones">Smartphones</button>
+        <button class="cat-btn" data-cat="smartwatches">Smartwatches</button>
+        <button class="cat-btn" data-cat="tablets">Tablets</button>
+        <button class="cat-btn" data-cat="accessories">Accessories</button>
+      </div>
+
+      <!-- Product list -->
+      <div style="overflow-x:auto">
+        <table class="product-table">
+          <thead>
+            <tr>
+              <th style="width:60px"></th>
+              <th>Product</th>
+              <th>Category</th>
+              <th>Badge</th>
+              <th style="width:140px"></th>
+            </tr>
+          </thead>
+          <tbody id="product-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ ADD / EDIT MODAL ══ -->
+  <div class="overlay" id="form-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="form-title">Add Product</h2>
+        <button class="modal-close-btn" id="form-close">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="save-error" class="save-error"></div>
+        <div class="field">
+          <label>Product Name *</label>
+          <input type="text" id="f-name" placeholder="e.g. iPhone 16 Pro Max" required />
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label>Category *</label>
+            <select id="f-cat">
+              <option value="smartphones">Smartphones</option>
+              <option value="smartwatches">Smartwatches</option>
+              <option value="tablets">Tablets</option>
+              <option value="accessories">Accessories</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Badge <span style="color:var(--text-3);font-weight:400">(optional)</span></label>
+            <input type="text" id="f-badge" placeholder='e.g. "New" or "Sale"' />
+          </div>
+        </div>
+        <div class="field">
+          <label>Description *</label>
+          <textarea id="f-desc" placeholder="Brief product description…"></textarea>
+        </div>
+        <div class="field">
+          <label>Image URLs</label>
+          <textarea id="f-imgs" placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.webp" style="min-height:100px"></textarea>
+          <p class="form-hint">One URL per line. Use direct image links (jpg, webp, png). First URL is shown as the thumbnail.<br>Tip: right-click any image online → "Copy image address".</p>
+        </div>
+        <div class="field">
+          <label>Sort Order <span style="color:var(--text-3);font-weight:400">(lower = shown first)</span></label>
+          <input type="number" id="f-order" placeholder="e.g. 10" value="99" min="0" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="form-cancel">Cancel</button>
+        <button class="btn btn-gold" id="form-save">
+          <span id="save-label">Save Product</span>
+          <span id="save-spinner" style="display:none" class="spinner"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ DELETE CONFIRM ══ -->
+  <div class="overlay" id="delete-overlay">
+    <div class="confirm-modal">
+      <h3>Delete Product?</h3>
+      <p id="delete-name-display">This will permanently remove this product from the store.</p>
+      <div class="actions">
+        <button class="btn btn-ghost" id="delete-cancel">Cancel</button>
+        <button class="btn btn-red" id="delete-confirm-btn">
+          <span id="del-label">Delete</span>
+          <span id="del-spinner" style="display:none" class="spinner"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TOAST ══ -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ════════════════════════════════════════════════════════
+    //  FIREBASE CONFIG — paste your config from Firebase Console
+    //  console.firebase.google.com → Project Settings → Web App
+    // ════════════════════════════════════════════════════════
+    const firebaseConfig = {
+      apiKey:            "PASTE_YOUR_API_KEY",
+      authDomain:        "PASTE_YOUR_AUTH_DOMAIN",
+      projectId:         "PASTE_YOUR_PROJECT_ID",
+      storageBucket:     "PASTE_YOUR_STORAGE_BUCKET",
+      messagingSenderId: "PASTE_YOUR_MESSAGING_SENDER_ID",
+      appId:             "PASTE_YOUR_APP_ID"
+    }
+    // ════════════════════════════════════════════════════════
+
+    firebase.initializeApp(firebaseConfig)
+    const auth = firebase.auth()
+    const db   = firebase.firestore()
+
+    // ── STATE ──────────────────────────────────────────────
+    let products     = []
+    let editingId    = null
+    let deleteId     = null
+    let adminFilter  = 'all'
+
+    // ── AUTH STATE ─────────────────────────────────────────
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        document.getElementById('page-login').style.display = 'none'
+        document.getElementById('page-admin').style.display = 'block'
+        loadProducts()
+      } else {
+        document.getElementById('page-login').style.display = 'flex'
+        document.getElementById('page-admin').style.display = 'none'
+      }
+    })
+
+    // ── LOGIN ──────────────────────────────────────────────
+    document.getElementById('login-form').addEventListener('submit', async e => {
+      e.preventDefault()
+      const errEl = document.getElementById('login-error')
+      const btn   = document.getElementById('login-btn')
+      errEl.classList.remove('visible')
+      btn.textContent = 'Signing in…'
+      btn.disabled = true
+      try {
+        await auth.signInWithEmailAndPassword(
+          document.getElementById('login-email').value,
+          document.getElementById('login-pwd').value
+        )
+      } catch (err) {
+        const msgs = {
+          'auth/user-not-found':   'No account found with that email.',
+          'auth/wrong-password':   'Incorrect password.',
+          'auth/invalid-email':    'Please enter a valid email address.',
+          'auth/too-many-requests':'Too many attempts. Please try again later.',
+          'auth/invalid-credential': 'Incorrect email or password.',
+        }
+        errEl.textContent = msgs[err.code] || 'Login failed. Check your credentials.'
+        errEl.classList.add('visible')
+        btn.textContent = 'Sign In'
+        btn.disabled = false
+      }
+    })
+
+    // ── LOGOUT ─────────────────────────────────────────────
+    document.getElementById('logout-btn').addEventListener('click', () => auth.signOut())
+
+    // ── LOAD PRODUCTS ──────────────────────────────────────
+    async function loadProducts() {
+      try {
+        const snap = await db.collection('products').orderBy('sortOrder').get()
+        products = snap.docs.map(d => ({ _id: d.id, ...d.data() }))
+        updateStats()
+        renderTable()
+        checkSeedBanner()
+      } catch (err) {
+        console.error(err)
+        showToast('Failed to load products.', 'error')
+      }
+    }
+
+    // ── STATS ──────────────────────────────────────────────
+    function updateStats() {
+      document.getElementById('stat-total').textContent   = products.length
+      document.getElementById('stat-phones').textContent  = products.filter(p => p.cat === 'smartphones').length
+      document.getElementById('stat-watches').textContent = products.filter(p => p.cat === 'smartwatches').length
+      document.getElementById('stat-tablets').textContent = products.filter(p => p.cat === 'tablets').length
+      document.getElementById('stat-acc').textContent     = products.filter(p => p.cat === 'accessories').length
+    }
+
+    // ── SEED BANNER ────────────────────────────────────────
+    function checkSeedBanner() {
+      document.getElementById('seed-banner').style.display = products.length === 0 ? 'flex' : 'none'
+    }
+
+    // ── RENDER TABLE ───────────────────────────────────────
+    const CAT_LABEL = { smartphones:'Smartphone', smartwatches:'Smartwatch', tablets:'Tablet', accessories:'Accessory' }
+
+    function renderTable() {
+      const list = adminFilter === 'all' ? products : products.filter(p => p.cat === adminFilter)
+      const tbody = document.getElementById('product-tbody')
+      const title = { all:'All Products', smartphones:'Smartphones', smartwatches:'Smartwatches', tablets:'Tablets', accessories:'Accessories' }
+      document.getElementById('admin-section-title').textContent = `${title[adminFilter]} (${list.length})`
+
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><p>No products in this category.</p></div></td></tr>`
+        return
+      }
+
+      tbody.innerHTML = list.map(p => {
+        const thumb = p.imgs && p.imgs[0]
+          ? `<img class="td-thumb" src="${p.imgs[0]}" alt="${p.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" /><div class="td-thumb-placeholder" style="display:none">📷</div>`
+          : `<div class="td-thumb-placeholder">📷</div>`
+        return `
+        <tr>
+          <td>${thumb}</td>
+          <td class="td-name">${p.name}</td>
+          <td><span class="td-cat">${CAT_LABEL[p.cat] || p.cat}</span></td>
+          <td>${p.badge ? `<span class="td-badge">${p.badge}</span>` : '<span style="color:var(--text-3);font-size:0.78rem">—</span>'}</td>
+          <td>
+            <div class="td-actions">
+              <button class="btn btn-edit btn-sm" onclick="openEdit('${p._id}')">Edit</button>
+              <button class="btn btn-red  btn-sm" onclick="openDelete('${p._id}','${p.name.replace(/'/g,"\\'")}')">Delete</button>
+            </div>
+          </td>
+        </tr>`
+      }).join('')
+    }
+
+    // ── CATEGORY FILTER TABS ───────────────────────────────
+    document.querySelector('.cat-filter').addEventListener('click', e => {
+      const btn = e.target.closest('[data-cat]')
+      if (!btn) return
+      adminFilter = btn.dataset.cat
+      document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'))
+      btn.classList.add('active')
+      renderTable()
+    })
+
+    // ── ADD / EDIT MODAL ───────────────────────────────────
+    function openAdd() {
+      editingId = null
+      document.getElementById('form-title').textContent = 'Add Product'
+      document.getElementById('save-label').textContent = 'Save Product'
+      document.getElementById('f-name').value  = ''
+      document.getElementById('f-cat').value   = 'smartphones'
+      document.getElementById('f-badge').value = ''
+      document.getElementById('f-desc').value  = ''
+      document.getElementById('f-imgs').value  = ''
+      document.getElementById('f-order').value = 99
+      document.getElementById('save-error').classList.remove('visible')
+      document.getElementById('form-overlay').classList.add('open')
+    }
+
+    function openEdit(id) {
+      const p = products.find(x => x._id === id)
+      if (!p) return
+      editingId = id
+      document.getElementById('form-title').textContent = 'Edit Product'
+      document.getElementById('save-label').textContent = 'Save Changes'
+      document.getElementById('f-name').value  = p.name  || ''
+      document.getElementById('f-cat').value   = p.cat   || 'smartphones'
+      document.getElementById('f-badge').value = p.badge || ''
+      document.getElementById('f-desc').value  = p.desc  || ''
+      document.getElementById('f-imgs').value  = (p.imgs || []).join('\n')
+      document.getElementById('f-order').value = p.sortOrder ?? 99
+      document.getElementById('save-error').classList.remove('visible')
+      document.getElementById('form-overlay').classList.add('open')
+    }
+
+    function closeForm() {
+      document.getElementById('form-overlay').classList.remove('open')
+      editingId = null
+    }
+
+    document.getElementById('add-btn').addEventListener('click', openAdd)
+    document.getElementById('form-close').addEventListener('click', closeForm)
+    document.getElementById('form-cancel').addEventListener('click', closeForm)
+    document.getElementById('form-overlay').addEventListener('click', e => {
+      if (e.target === document.getElementById('form-overlay')) closeForm()
+    })
+
+    document.getElementById('form-save').addEventListener('click', async () => {
+      const name  = document.getElementById('f-name').value.trim()
+      const cat   = document.getElementById('f-cat').value
+      const badge = document.getElementById('f-badge').value.trim()
+      const desc  = document.getElementById('f-desc').value.trim()
+      const imgs  = document.getElementById('f-imgs').value.split('\n').map(s => s.trim()).filter(Boolean)
+      const order = parseInt(document.getElementById('f-order').value) || 99
+      const errEl = document.getElementById('save-error')
+
+      if (!name || !desc) {
+        errEl.textContent = 'Name and description are required.'
+        errEl.classList.add('visible')
+        return
+      }
+
+      errEl.classList.remove('visible')
+      document.getElementById('save-label').style.display = 'none'
+      document.getElementById('save-spinner').style.display = 'inline-block'
+      document.getElementById('form-save').disabled = true
+
+      const data = { name, cat, badge: badge || null, desc, imgs, sortOrder: order, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }
+
+      try {
+        if (editingId) {
+          await db.collection('products').doc(editingId).update(data)
+          showToast('Product updated.', 'success')
+        } else {
+          data.createdAt = firebase.firestore.FieldValue.serverTimestamp()
+          await db.collection('products').add(data)
+          showToast('Product added.', 'success')
+        }
+        closeForm()
+        await loadProducts()
+      } catch (err) {
+        errEl.textContent = 'Failed to save: ' + err.message
+        errEl.classList.add('visible')
+      } finally {
+        document.getElementById('save-label').style.display = 'inline'
+        document.getElementById('save-spinner').style.display = 'none'
+        document.getElementById('form-save').disabled = false
+      }
+    })
+
+    // ── DELETE ─────────────────────────────────────────────
+    function openDelete(id, name) {
+      deleteId = id
+      document.getElementById('delete-name-display').textContent = `"${name}" will be permanently removed from the store.`
+      document.getElementById('delete-overlay').classList.add('open')
+    }
+
+    document.getElementById('delete-cancel').addEventListener('click', () => {
+      document.getElementById('delete-overlay').classList.remove('open')
+      deleteId = null
+    })
+
+    document.getElementById('delete-confirm-btn').addEventListener('click', async () => {
+      if (!deleteId) return
+      document.getElementById('del-label').style.display = 'none'
+      document.getElementById('del-spinner').style.display = 'inline-block'
+      document.getElementById('delete-confirm-btn').disabled = true
+      try {
+        await db.collection('products').doc(deleteId).delete()
+        showToast('Product deleted.', 'success')
+        document.getElementById('delete-overlay').classList.remove('open')
+        deleteId = null
+        await loadProducts()
+      } catch (err) {
+        showToast('Delete failed: ' + err.message, 'error')
+      } finally {
+        document.getElementById('del-label').style.display = 'inline'
+        document.getElementById('del-spinner').style.display = 'none'
+        document.getElementById('delete-confirm-btn').disabled = false
+      }
+    })
+
+    // ── SEED DEFAULT PRODUCTS ──────────────────────────────
+    const BASE = 'https://hsf237.github.io/al-awaans.com/'
+    const SEED = [
+      { name:'iPhone 16 Pro Max',      cat:'smartphones',  badge:'New',  imgs:[BASE+'16promax.webp'],                                          desc:"Apple's most powerful iPhone. A18 Pro chip, titanium build, 48 MP camera with 5× periscope zoom, and a 6.9″ Super Retina XDR display.", sortOrder:1 },
+      { name:'iPhone 16 Pro',          cat:'smartphones',  badge:'New',  imgs:[BASE+'16pro.webp'],                                             desc:"A18 Pro chip, titanium frame, Action Button, and a versatile triple-camera system in a compact pro form factor.",                    sortOrder:2 },
+      { name:'iPhone 16',              cat:'smartphones',  badge:'New',  imgs:[BASE+'16.webp'],                                                desc:"A18 chip, Camera Control button, and up to 2× optical zoom. The latest standard iPhone in a refined aluminium design.",               sortOrder:3 },
+      { name:'Samsung Galaxy S25 Ultra',cat:'smartphones', badge:null,   imgs:[BASE+'s25ultra1.jpg'],                                          desc:"Snapdragon 8 Elite, built-in S Pen, 200 MP camera, and AI-powered features across every app.",                                       sortOrder:4 },
+      { name:'Samsung Galaxy S25',     cat:'smartphones',  badge:null,   imgs:[BASE+'s251.jpg',BASE+'s252.jpg'],                               desc:"Snapdragon 8 Elite power in a slim design. Galaxy AI, refined triple camera, and a vivid 6.2″ display.",                            sortOrder:5 },
+      { name:'iPhone 15 Pro Max',      cat:'smartphones',  badge:null,   imgs:[BASE+'15promax.webp',BASE+'15promax.jpg',BASE+'15promax2.webp'], desc:"Titanium body, A17 Pro chip, and a 5× optical zoom periscope camera.",                                                           sortOrder:6 },
+      { name:'Samsung Galaxy S24 Ultra',cat:'smartphones', badge:null,   imgs:[BASE+'s24ultra.jpg',BASE+'s24ultra2.jpeg'],                     desc:"Snapdragon 8 Gen 3, titanium frame, 200 MP camera with 10× optical zoom, and an integrated S Pen.",                               sortOrder:7 },
+      { name:'Samsung Galaxy S24',     cat:'smartphones',  badge:null,   imgs:[BASE+'s241.webp',BASE+'s242.webp'],                             desc:"Snapdragon 8 Gen 3, Galaxy AI features, and a bright 6.2″ Dynamic AMOLED display.",                                               sortOrder:8 },
+      { name:'iPhone 15 Pro',          cat:'smartphones',  badge:null,   imgs:[BASE+'15proios.webp',BASE+'15proios2.png'],                     desc:"Lightweight titanium frame, A17 Pro chip, Action Button, and a 48 MP triple-camera system.",                                       sortOrder:9 },
+      { name:'Samsung Galaxy S23 Ultra',cat:'smartphones', badge:null,   imgs:[BASE+'s23ultra.jpg',BASE+'s23ultra2.webp'],                     desc:"200 MP camera, built-in S Pen, Snapdragon 8 Gen 2, and a massive 5000 mAh battery.",                                               sortOrder:10 },
+      { name:'Samsung Galaxy S23',     cat:'smartphones',  badge:null,   imgs:[BASE+'s23sam.avif',BASE+'s23sam2.webp'],                        desc:"Snapdragon 8 Gen 2, 50 MP triple camera, and all-day battery in a premium glass build.",                                            sortOrder:11 },
+      { name:'iPhone 14 Pro Max',      cat:'smartphones',  badge:null,   imgs:[BASE+'14promax.webp',BASE+'14promax2.avif'],                    desc:"Dynamic Island, A16 Bionic, Always-On display, and a 48 MP main camera with Photonic Engine.",                                      sortOrder:12 },
+      { name:'Samsung Galaxy S22 Ultra',cat:'smartphones', badge:null,   imgs:[BASE+'s22ultra.jpg',BASE+'s22ultra2.jpg'],                      desc:"S Pen in the body, Exynos 2200 with AMD GPU, and a 108 MP camera with 10× zoom.",                                                  sortOrder:13 },
+      { name:'Samsung Galaxy S22',     cat:'smartphones',  badge:null,   imgs:[BASE+'galaxys22.webp',BASE+'galaxys222.webp'],                  desc:"Bright 6.1″ display, Exynos 2200, and a refined triple-camera array.",                                                           sortOrder:14 },
+      { name:'iPhone 14 Pro',          cat:'smartphones',  badge:null,   imgs:[BASE+'iphone14pro.png',BASE+'iphone14pro2.jpg'],                desc:"First iPhone with Dynamic Island and Always-On display. A16 Bionic and a 48 MP main camera.",                                       sortOrder:15 },
+      { name:'iPhone 14',              cat:'smartphones',  badge:null,   imgs:[BASE+'iphone14.jpg',BASE+'iphone142.webp'],                     desc:"A15 Bionic, Crash Detection, Emergency SOS via satellite, and an impressive dual-camera system.",                                  sortOrder:16 },
+      { name:'Xiaomi 14 Ultra',        cat:'smartphones',  badge:null,   imgs:[BASE+'14.jpeg'],                                                desc:"Co-engineered with Leica. A 1-inch sensor quad-camera, Snapdragon 8 Gen 3, and a stunning AMOLED display.",                         sortOrder:17 },
+      { name:'Realme GT 5 Pro',        cat:'smartphones',  badge:null,   imgs:[BASE+'gt5pro.avif',BASE+'gt5proback.webp'],                     desc:"Snapdragon 8 Gen 3, 240 W super-fast charging, 50 MP Sony camera, and a 144 Hz display.",                                          sortOrder:18 },
+      { name:'Vivo X100 Pro',          cat:'smartphones',  badge:null,   imgs:[BASE+'100.jpeg'],                                               desc:"Zeiss optics, 50 MP 1-inch sensor, Dimensity 9300, and 100 W FlashCharge.",                                                       sortOrder:19 },
+      { name:'ASUS ROG Phone 8',       cat:'smartphones',  badge:null,   imgs:[BASE+'rogphone.jpg',BASE+'rogphoneback.jpg'],                   desc:"Snapdragon 8 Gen 3, 165 Hz AMOLED, 65 W charging, and AeroActive Cooler support.",                                                  sortOrder:20 },
+      { name:'Apple Watch Series 9',   cat:'smartwatches', badge:null,   imgs:[BASE+'9.webp',BASE+'applewatchback.webp',BASE+'applwtchsrs9side-view.jpg'], desc:"Double Tap gesture, S9 chip, always-on Retina display, blood oxygen, ECG, and up to 18 h battery.", sortOrder:21 },
+      { name:'Samsung Galaxy Watch 6', cat:'smartwatches', badge:null,   imgs:[BASE+'6.webp',BASE+'galaxywatch6back.webp'],                    desc:"Sapphire crystal glass, advanced sleep coaching, body composition analysis, and Wear OS 4.",                                         sortOrder:22 },
+      { name:'Google Pixel Watch 2',   cat:'smartwatches', badge:null,   imgs:[BASE+'pixelwatch2.png',BASE+'pixelwatchback.webp'],             desc:"Fitbit health tracking, continuous heart rate monitoring, safety check, and Google on your wrist.",                                 sortOrder:23 },
+      { name:'Apple iPad (10th Gen)',  cat:'tablets',      badge:null,   imgs:[BASE+'ipad.webp',BASE+'ipad.jpeg',BASE+'ipadback.webp'],        desc:"A14 Bionic, 10.9″ Liquid Retina display, USB-C, landscape front camera, and Apple Pencil compatibility.",                          sortOrder:24 },
+      { name:'Redmi Pad Pro 5G',       cat:'tablets',      badge:null,   imgs:[BASE+'5g.webp'],                                                desc:"5G, Snapdragon 7s Gen 2, a 12.1″ 144 Hz display, and a 10 000 mAh battery.",                                                       sortOrder:25 },
+      { name:'Xiaomi Pad 7',           cat:'tablets',      badge:null,   imgs:[BASE+'pad7.webp'],                                              desc:"Snapdragon 7+ Gen 3, 144 Hz 11.2″ display, Dolby Vision, built for work and entertainment.",                                        sortOrder:26 },
+      { name:'Xiaomi Pad 6',           cat:'tablets',      badge:null,   imgs:[BASE+'pad6.webp'],                                              desc:"Snapdragon 870, 11″ 144 Hz display, Dolby Vision, and quad speakers.",                                                            sortOrder:27 },
+      { name:'Redmi Pad SE',           cat:'tablets',      badge:null,   imgs:[BASE+'SE.webp',BASE+'redpadse1.jpg',BASE+'redpadse2.png'],       desc:"Budget-friendly 11″ tablet with 90 Hz display, Snapdragon 680, and 8000 mAh battery.",                                            sortOrder:28 },
+      { name:'Redmi Pad',              cat:'tablets',      badge:null,   imgs:[BASE+'redmipad.avif',BASE+'redmipadback.png'],                   desc:"Helio G99, 10.61″ 90 Hz display, 8000 mAh battery, and quad Dolby Atmos speakers.",                                               sortOrder:29 },
+      { name:'G-Shock Casio — Model 1',cat:'accessories',  badge:null,   imgs:[BASE+'InShot_20250423_100918852.jpg'],                          desc:"Unbreakable style meets unstoppable performance. Shock-resistant, water-resistant, built to endure.",                              sortOrder:30 },
+      { name:'G-Shock Casio — Model 2',cat:'accessories',  badge:null,   imgs:[BASE+'InShot_20250423_100828737.jpg'],                          desc:"Classic G-Shock toughness with a bold design. 200 M water resistance and solar power.",                                            sortOrder:31 },
+      { name:'G-Shock Casio — Model 3',cat:'accessories',  badge:null,   imgs:[BASE+'InShot_20250423_100848015.jpg'],                          desc:"Full-auto LED, shock-resistant structure, and world time for 48 cities.",                                                          sortOrder:32 },
+      { name:'G-Shock Casio — Model 4',cat:'accessories',  badge:null,   imgs:[BASE+'InShot_20250423_100931622.jpg'],                          desc:"Built for outdoor adventures. Altimeter, barometer, thermometer, and compass.",                                                    sortOrder:33 },
+      { name:'G-Shock Casio — Model 5',cat:'accessories',  badge:null,   imgs:[BASE+'InShot_20250423_100945930.jpg'],                          desc:"Limited-edition colourway. 200 M water resistance, 5-year battery, and iconic square case.",                                        sortOrder:34 },
+    ]
+
+    document.getElementById('seed-btn').addEventListener('click', async () => {
+      const btn = document.getElementById('seed-btn')
+      btn.disabled = true
+      btn.textContent = 'Seeding…'
+      try {
+        const batch = db.batch()
+        SEED.forEach(p => {
+          const ref = db.collection('products').doc()
+          batch.set(ref, { ...p, createdAt: firebase.firestore.FieldValue.serverTimestamp(), updatedAt: firebase.firestore.FieldValue.serverTimestamp() })
+        })
+        await batch.commit()
+        showToast(`${SEED.length} products added to your store!`, 'success')
+        await loadProducts()
+      } catch (err) {
+        showToast('Seed failed: ' + err.message, 'error')
+        btn.disabled = false
+        btn.textContent = 'Seed Default Products'
+      }
+    })
+
+    // ── TOAST ──────────────────────────────────────────────
+    let toastTimer
+    function showToast(msg, type = '') {
+      const t = document.getElementById('toast')
+      t.textContent = msg
+      t.className = 'toast' + (type ? ' ' + type : '')
+      t.classList.add('show')
+      clearTimeout(toastTimer)
+      toastTimer = setTimeout(() => t.classList.remove('show'), 3000)
+    }
+
+    // ── KEYBOARD ───────────────────────────────────────────
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        closeForm()
+        document.getElementById('delete-overlay').classList.remove('open')
+      }
+    })
+  </script>
+</body>
+</html>

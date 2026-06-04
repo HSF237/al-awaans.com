@@ -8,6 +8,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <!-- Firebase compat SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
   <style>
     /* ── RESET & ROOT ── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -489,6 +494,11 @@
     .footer-info a { color: var(--text-2); transition: color .2s; }
     .footer-info a:hover { color: var(--gold); }
     .footer-copy { font-size: 0.72rem; color: var(--text-3); margin-top: 16px; }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.4; }
+    }
   </style>
 </head>
 <body>
@@ -609,8 +619,24 @@
   </footer>
 
   <script>
-    // ── PRODUCT DATA ──────────────────────────────────────────────
-    const PRODUCTS = [
+    // ════════════════════════════════════════════════════════
+    //  FIREBASE CONFIG — must match admin.html config
+    // ════════════════════════════════════════════════════════
+    const firebaseConfig = {
+      apiKey:            "PASTE_YOUR_API_KEY",
+      authDomain:        "PASTE_YOUR_AUTH_DOMAIN",
+      projectId:         "PASTE_YOUR_PROJECT_ID",
+      storageBucket:     "PASTE_YOUR_STORAGE_BUCKET",
+      messagingSenderId: "PASTE_YOUR_MESSAGING_SENDER_ID",
+      appId:             "PASTE_YOUR_APP_ID"
+    }
+    // ════════════════════════════════════════════════════════
+
+    firebase.initializeApp(firebaseConfig)
+    const db = firebase.firestore()
+
+    // ── PRODUCT DATA (loaded from Firestore) ─────────────────────
+    const PRODUCTS_PLACEHOLDER = [
       // SMARTPHONES
       { id: 1,  cat: 'smartphones', badge: 'New',  name: 'iPhone 16 Pro Max',      imgs: ['16promax.webp'],                         desc: "Apple's most powerful iPhone. A18 Pro chip, titanium build, 48 MP main camera with 5× periscope zoom, and an immersive 6.9″ Super Retina XDR display." },
       { id: 2,  cat: 'smartphones', badge: 'New',  name: 'iPhone 16 Pro',          imgs: ['16pro.webp'],                            desc: "A18 Pro chip, titanium frame, Action Button, and a versatile triple-camera system in a compact pro form factor." },
@@ -663,17 +689,42 @@
     }
 
     // ── STATE ────────────────────────────────────────────────────
+    let PRODUCTS       = []
     let activeCategory = 'all'
     let searchQuery    = ''
     let activeProduct  = null
     let galleryIndex   = 0
 
-    // ── INIT ─────────────────────────────────────────────────────
-    function init() {
+    // ── LOAD FROM FIRESTORE ──────────────────────────────────────
+    async function loadProducts() {
+      renderLoading()
+      try {
+        const snap = await db.collection('products').orderBy('sortOrder').get()
+        PRODUCTS = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+      } catch (err) {
+        // Firestore not configured yet — fall back to placeholder data
+        PRODUCTS = PRODUCTS_PLACEHOLDER.map(p => ({ ...p, id: String(p.id) }))
+      }
       updateCounts()
       render()
+    }
 
-      // filter buttons
+    function renderLoading() {
+      const grid = document.getElementById('grid')
+      grid.innerHTML = Array(8).fill(0).map(() => `
+        <div class="card" style="pointer-events:none">
+          <div class="card-img" style="background:var(--surface-2);animation:pulse 1.4s ease infinite"></div>
+          <div class="card-body">
+            <div style="height:10px;width:60%;background:var(--surface-2);border-radius:4px;animation:pulse 1.4s ease infinite"></div>
+            <div style="height:14px;width:85%;background:var(--surface-2);border-radius:4px;margin-top:8px;animation:pulse 1.4s ease infinite"></div>
+          </div>
+        </div>`).join('')
+    }
+
+    // ── INIT ─────────────────────────────────────────────────────
+    function init() {
+      loadProducts()
+
       document.getElementById('filter-bar').addEventListener('click', e => {
         const btn = e.target.closest('[data-cat]')
         if (!btn) return
@@ -685,13 +736,11 @@
         render()
       })
 
-      // search
       document.getElementById('search').addEventListener('input', e => {
         searchQuery = e.target.value.trim().toLowerCase()
         render()
       })
 
-      // modal close
       document.getElementById('modal-close').addEventListener('click', closeModal)
       document.getElementById('modal-overlay').addEventListener('click', e => {
         if (e.target === document.getElementById('modal-overlay')) closeModal()
@@ -700,7 +749,6 @@
         if (e.key === 'Escape') closeModal()
       })
 
-      // gallery nav
       document.getElementById('gallery-prev').addEventListener('click', () => setGallery(galleryIndex - 1))
       document.getElementById('gallery-next').addEventListener('click', () => setGallery(galleryIndex + 1))
     }
@@ -730,8 +778,6 @@
     function render() {
       const list = filtered()
       const grid = document.getElementById('grid')
-
-      // section header
       const catNames = { all: 'All Products', smartphones: 'Smartphones', smartwatches: 'Smartwatches', tablets: 'Tablets', accessories: 'Accessories' }
       document.getElementById('section-title').textContent = searchQuery
         ? `Search: "${document.getElementById('search').value}"`
@@ -739,18 +785,18 @@
       document.getElementById('result-count').textContent = list.length + ' item' + (list.length !== 1 ? 's' : '')
 
       if (list.length === 0) {
-        grid.innerHTML = `<div class="empty"><p>No products found.</p><p>Try a different search term or category.</p></div>`
+        grid.innerHTML = `<div class="empty"><p>No products found.</p><p>Try a different search or category.</p></div>`
         return
       }
 
       grid.innerHTML = list.map(p => `
-        <div class="card" onclick="openModal(${p.id})" role="button" tabindex="0">
+        <div class="card" onclick="openModal('${p.id}')" role="button" tabindex="0">
           <div class="card-img">
-            <img src="${p.imgs[0]}" alt="${p.name}" loading="lazy" />
+            <img src="${p.imgs && p.imgs[0] ? p.imgs[0] : ''}" alt="${p.name}" loading="lazy" />
             ${p.badge ? `<span class="card-badge">${p.badge}</span>` : ''}
           </div>
           <div class="card-body">
-            <span class="card-cat">${CAT_LABEL[p.cat]}</span>
+            <span class="card-cat">${CAT_LABEL[p.cat] || p.cat}</span>
             <p class="card-name">${p.name}</p>
             <div class="card-btn">
               View Details
@@ -763,7 +809,7 @@
 
     // ── MODAL ────────────────────────────────────────────────────
     function openModal(id) {
-      const p = PRODUCTS.find(x => x.id === id)
+      const p = PRODUCTS.find(x => String(x.id) === String(id))
       if (!p) return
       activeProduct = p
       galleryIndex  = 0
