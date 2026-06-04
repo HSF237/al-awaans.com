@@ -699,10 +699,14 @@
     async function loadProducts() {
       renderLoading()
       try {
-        const snap = await db.collection('products').orderBy('sortOrder').get()
-        PRODUCTS = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+        // source:'server' bypasses local cache so fresh data always loads
+        const snap = await db.collection('products').get({ source: 'server' })
+        PRODUCTS = snap.docs
+          .map(d => ({ id: d.id, ...d.data() }))
+          .sort((a, b) => (a.sortOrder ?? 99) - (b.sortOrder ?? 99))
+        if (PRODUCTS.length === 0) throw new Error('empty')
       } catch (err) {
-        // Firestore not configured yet — fall back to placeholder data
+        // Fall back to placeholder if Firestore is unavailable or empty
         PRODUCTS = PRODUCTS_PLACEHOLDER.map(p => ({ ...p, id: String(p.id) }))
       }
       updateCounts()
