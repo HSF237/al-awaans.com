@@ -2,811 +2,826 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Al Awaans Online Shop</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Al Awaans — Online Store</title>
+  <meta name="description" content="Shop smartphones, smartwatches, tablets and accessories in Abu Dhabi. Al Awaans Online Store." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <style>
-    /* Global Styling */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Arial', sans-serif;
-      scroll-behavior: smooth;
+    /* ── RESET & ROOT ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #080808;
+      --surface:    #101010;
+      --surface-2:  #181818;
+      --gold:       #C49A38;
+      --gold-light: #D4AA48;
+      --gold-dim:   rgba(196,154,56,0.1);
+      --gold-border:rgba(196,154,56,0.22);
+      --text:       #F0F0F0;
+      --text-2:     #888;
+      --text-3:     #444;
+      --border:     rgba(255,255,255,0.07);
+      --radius:     10px;
+      --radius-lg:  14px;
     }
+
+    html { scroll-behavior: smooth; }
 
     body {
-      background: #ffffff;
-      color: #b30000;
-      text-align: center;
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      min-height: 100vh;
     }
 
-    /* Header Styling */
-    header {
-      background: linear-gradient(to right, #ff0000, #b30000);
-      color: white;
-      padding: 40px;
-      font-size: 30px;
-      font-weight: bold;
-      text-shadow: 2px 2px 5px rgba(255, 0, 0, 0.5);
-      box-shadow: 0px 5px 20px rgba(255, 0, 0, 0.3);
-    }
+    a { text-decoration: none; color: inherit; }
+    img { display: block; max-width: 100%; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; }
 
-    /* Navigation */
-    nav {
-      margin: 20px 0;
-    }
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--text-3); border-radius: 3px; }
 
-    button {
-      background: linear-gradient(to right, #ff3333, #cc0000);
-      color: white;
-      padding: 12px 25px;
-      border: none;
-      margin: 10px;
-      cursor: pointer;
-      font-size: 18px;
-      border-radius: 8px;
-      transition: all 0.4s ease-in-out;
-      box-shadow: 0px 5px 15px rgba(255, 0, 0, 0.3);
-    }
-
-    button:hover {
-      background: linear-gradient(to right, #cc0000, #ff3333);
-      transform: scale(1.1);
-      box-shadow: 0px 10px 20px rgba(255, 0, 0, 0.6);
-    }
-
-    /* Search Bar */
-    #search-bar {
-      padding: 12px;
-      width: 80%;
-      max-width: 400px;
-      font-size: 18px;
-      border: 2px solid #ff4d4d;
-      border-radius: 5px;
-      margin-bottom: 20px;
-      text-align: center;
-      background: #fff;
-      color: #cc0000;
-      transition: all 0.3s ease-in-out;
-    }
-
-    #search-bar:focus {
-      border-color: #e60000;
-      box-shadow: 0px 0px 10px rgba(255, 0, 0, 0.7);
-      outline: none;
-    }
-
-    /* Product Section */
-    #products {
-      margin-top: 30px;
-      padding: 30px;
-      background: #fff0f0;
-      box-shadow: 0px 10px 30px rgba(255, 0, 0, 0.2);
-      border-radius: 15px;
-      width: 90%;
-      max-width: 1200px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .product-list {
+    /* ── NAVBAR ── */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      height: 60px;
+      background: rgba(8,8,8,0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
       display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 20px;
+      align-items: center;
+      padding: 0 20px;
+      gap: 16px;
     }
 
-    .product {
-      background: #ffffff;
-      padding: 20px;
-      border-radius: 10px;
-      width: 220px;
-      text-align: center;
-      transition: transform 0.4s ease-in-out, box-shadow 0.3s ease-in-out;
-      box-shadow: 0px 5px 15px rgba(255, 0, 0, 0.1);
-      border: 2px solid #ff1a1a;
+    .nav-back {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      color: var(--text-2);
+      transition: color .2s;
+      flex-shrink: 0;
     }
+    .nav-back:hover { color: var(--text); }
+    .nav-back svg { width: 14px; height: 14px; }
 
-    .product:hover {
-      transform: scale(1.05);
-      box-shadow: 0px 10px 30px rgba(255, 0, 0, 0.4);
+    .nav-divider { width: 1px; height: 20px; background: var(--border); flex-shrink: 0; }
+
+    .nav-logo {
+      font-size: 1.1rem;
+      font-weight: 900;
+      letter-spacing: -0.4px;
+      flex-shrink: 0;
     }
+    .nav-logo span { color: var(--gold); }
 
-    .product img {
+    .nav-spacer { flex: 1; }
+
+    .nav-search-wrap {
+      position: relative;
+      flex: 1;
+      max-width: 320px;
+    }
+    .nav-search-wrap svg {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 15px; height: 15px;
+      color: var(--text-3);
+      pointer-events: none;
+    }
+    #search {
       width: 100%;
-      border-radius: 10px;
-      transition: transform 0.3s ease-in-out;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px 8px 36px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.85rem;
+      outline: none;
+      transition: border-color .2s;
+    }
+    #search:focus { border-color: var(--gold-border); }
+    #search::placeholder { color: var(--text-3); }
+
+    .nav-wa {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #25D366;
+      color: #fff;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 7px 14px;
+      border-radius: 8px;
+      transition: opacity .2s;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+    .nav-wa:hover { opacity: 0.88; }
+    .nav-wa svg { width: 15px; height: 15px; }
+
+    /* hide text on very small screens */
+    @media (max-width: 480px) {
+      .nav-wa-text { display: none; }
+      .nav-back-text { display: none; }
+      .nav-search-wrap { max-width: 160px; }
     }
 
-    .product:hover img {
-      transform: scale(1.1);
+    /* ── FILTER BAR ── */
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 20px;
+      overflow-x: auto;
+      border-bottom: 1px solid var(--border);
+      scrollbar-width: none;
+    }
+    .filter-bar::-webkit-scrollbar { display: none; }
+
+    .filter-btn {
+      flex-shrink: 0;
+      padding: 7px 16px;
+      border-radius: 100px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-2);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      transition: all .2s;
+    }
+    .filter-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.15); }
+    .filter-btn.active {
+      background: var(--gold);
+      color: #000;
+      border-color: var(--gold);
     }
 
-    .product h3 {
-      margin-top: 10px;
-      color: #cc0000;
+    .filter-count {
+      font-size: 0.68rem;
+      background: var(--gold-dim);
+      color: var(--gold);
+      padding: 1px 6px;
+      border-radius: 100px;
+      margin-left: 4px;
     }
-
-    .product p {
-      font-size: 16px;
-      color: #333;
-    }
-
-    /* Contact Section */
-    #contact {
-      display: none;
-      margin-top: 30px;
-      padding: 30px;
-      background: #fff0f0;
-      box-shadow: 0px 10px 30px rgba(255, 0, 0, 0.2);
-      border-radius: 15px;
-      width: 90%;
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    #contact h2 {
-      color: #cc0000;
-      margin-bottom: 10px;
-    }
-
-    #contact p {
-      font-size: 20px;
-      font-weight: bold;
-      margin: 10px 0;
+    .filter-btn.active .filter-count {
+      background: rgba(0,0,0,0.2);
       color: #000;
     }
 
-    /* Footer */
-    footer {
-      background: #b30000;
-      color: white;
-      padding: 15px;
-      margin-top: 20px;
-      font-size: 16px;
-      box-shadow: 0px -5px 15px rgba(255, 0, 0, 0.3);
-    }
-  </style>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0; padding: 0;
-      background: red;
+    /* ── MAIN CONTENT ── */
+    .main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 28px 20px 60px;
     }
 
-    header {
-      background-color: #333;
-      color: white;
-      padding: 10px;
-      text-align: center;
-    }
-
-    nav {
+    /* Section header */
+    .section-head {
       display: flex;
-      justify-content: center;
-      background-color: #444;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .section-head h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+    .section-head span {
+      font-size: 0.78rem;
+      color: var(--text-3);
     }
 
-    nav button {
-      background: none;
-      border: none;
-      color: white;
-      padding: 10px 20px;
+    /* ── PRODUCT GRID ── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    @media (min-width: 580px)  { .grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (min-width: 860px)  { .grid { grid-template-columns: repeat(4, 1fr); } }
+    @media (min-width: 1100px) { .grid { grid-template-columns: repeat(5, 1fr); } }
+
+    /* ── PRODUCT CARD ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
       cursor: pointer;
-    }
-
-    #search-bar {
-      width: 80%;
-      padding: 10px;
-      margin: 10px auto;
-      display: block;
-      font-size: 16px;
-    }
-
-    #products {
-      display: none;
-      padding: 20px;
+      transition: border-color .25s, transform .25s;
       display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      justify-content: center;
+      flex-direction: column;
+    }
+    .card:hover {
+      border-color: var(--gold-border);
+      transform: translateY(-3px);
     }
 
-    .product {
-      background: whitesmoke;
-      border-radius: 10px;
-      padding: 15px;
+    .card-img {
+      aspect-ratio: 1;
+      overflow: hidden;
+      background: var(--surface-2);
+      position: relative;
+    }
+    .card-img img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform .45s ease;
+    }
+    .card:hover .card-img img { transform: scale(1.06); }
+
+    .card-badge {
+      position: absolute;
+      top: 8px; left: 8px;
+      background: var(--gold);
+      color: #000;
+      font-size: 0.58rem;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      padding: 3px 7px;
+      border-radius: 4px;
+    }
+
+    .card-body {
+      padding: 12px 12px 14px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .card-cat {
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+    .card-name {
+      font-size: 0.85rem;
+      font-weight: 700;
+      line-height: 1.25;
+      color: var(--text);
+    }
+    .card-btn {
+      margin-top: auto;
+      padding-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-2);
+      transition: color .2s;
+    }
+    .card:hover .card-btn { color: var(--gold); }
+    .card-btn svg { width: 13px; height: 13px; }
+
+    /* ── EMPTY STATE ── */
+    .empty {
+      grid-column: 1 / -1;
       text-align: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      width: 200px;
+      padding: 60px 20px;
+      color: var(--text-3);
     }
+    .empty p { font-size: 0.9rem; margin-top: 8px; }
 
-    .product img {
-      width: 100%;
-      height: auto;
-      border-radius: 8px;
-    }
-
-    .product h3 {
-      margin: 10px 0 5px;
-    }
-
-    .product p {
-      margin: 0 0 10px;
-    }
-
-    .product button {
-      background-color: #008CBA;
-      color: white;
-      border: none;
-      padding: 8px 15px;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    #contact {
-      display: none;
-      padding: 20px;
-      text-align: center;
-    }
-
-    #product-modal {
+    /* ── MODAL ── */
+    .modal-overlay {
       display: none;
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background-color: rgba(0, 0, 0, 0.8);
-      z-index: 1000;
-      justify-content: center;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 500;
       align-items: center;
+      justify-content: center;
+      padding: 16px;
+      backdrop-filter: blur(6px);
     }
+    .modal-overlay.open { display: flex; }
 
-    #product-modal .modal-content {
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      max-width: 600px;
-      width: 90%;
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      width: 100%;
+      max-width: 560px;
+      max-height: 90vh;
+      overflow-y: auto;
       position: relative;
-      text-align: center;
+      animation: modalIn .28s cubic-bezier(0.22,1,0.36,1);
+    }
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.93) translateY(16px); }
+      to   { opacity: 1; transform: none; }
     }
 
-    #modal-images {
+    .modal-close {
+      position: absolute;
+      top: 14px; right: 14px;
+      width: 32px; height: 32px;
+      background: var(--surface-2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-2);
+      transition: color .2s, background .2s;
+      z-index: 1;
+    }
+    .modal-close:hover { color: var(--text); background: var(--border); }
+    .modal-close svg { width: 16px; height: 16px; }
+
+    /* Image gallery */
+    .modal-gallery {
+      position: relative;
+      aspect-ratio: 4/3;
+      background: var(--surface-2);
+      overflow: hidden;
+      border-radius: 18px 18px 0 0;
+    }
+    .modal-gallery img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+    .modal-gallery img.active { display: block; }
+
+    .gallery-nav {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      pointer-events: none;
+    }
+    .gallery-btn {
+      width: 32px; height: 32px;
+      background: rgba(8,8,8,0.7);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text);
+      pointer-events: all;
+      transition: background .2s;
+    }
+    .gallery-btn:hover { background: rgba(8,8,8,0.9); }
+    .gallery-btn svg { width: 16px; height: 16px; }
+    .gallery-btn.hidden { opacity: 0; pointer-events: none; }
+
+    .gallery-dots {
+      position: absolute;
+      bottom: 10px; left: 0; right: 0;
+      display: flex;
+      justify-content: center;
+      gap: 5px;
+    }
+    .gallery-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.35);
+      transition: background .2s;
+    }
+    .gallery-dot.active { background: var(--gold); }
+
+    .modal-body { padding: 20px; }
+
+    .modal-cat {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 6px;
+    }
+    .modal-title {
+      font-size: 1.3rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 12px;
+    }
+    .modal-desc {
+      font-size: 0.875rem;
+      color: var(--text-2);
+      line-height: 1.75;
+      margin-bottom: 20px;
+    }
+    .modal-price-note {
+      font-size: 0.75rem;
+      color: var(--text-3);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 18px;
+    }
+
+    .modal-actions {
       display: flex;
       gap: 10px;
-      overflow-x: auto;
-      margin-bottom: 10px;
+      flex-wrap: wrap;
     }
+    .btn-wa {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: #25D366;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.88rem;
+      padding: 12px 16px;
+      border-radius: var(--radius);
+      transition: opacity .2s;
+      min-width: 140px;
+    }
+    .btn-wa:hover { opacity: 0.88; }
+    .btn-wa svg { width: 18px; height: 18px; }
 
-    #modal-images img {
-      width: 100px;
-      border-radius: 8px;
+    .btn-call {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: var(--surface-2);
+      color: var(--text);
+      font-weight: 600;
+      font-size: 0.88rem;
+      padding: 12px 16px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      transition: border-color .2s;
     }
+    .btn-call:hover { border-color: rgba(255,255,255,0.2); }
+    .btn-call svg { width: 16px; height: 16px; }
 
-    .close-btn {
-      position: absolute;
-      right: 15px;
-      top: 10px;
-      font-size: 24px;
-      cursor: pointer;
+    /* ── FOOTER ── */
+    footer {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 32px 20px;
+      text-align: center;
     }
+    .footer-logo { font-size: 1.1rem; font-weight: 900; margin-bottom: 8px; }
+    .footer-logo span { color: var(--gold); }
+    .footer-info { font-size: 0.8rem; color: var(--text-3); line-height: 1.8; }
+    .footer-info a { color: var(--text-2); transition: color .2s; }
+    .footer-info a:hover { color: var(--gold); }
+    .footer-copy { font-size: 0.72rem; color: var(--text-3); margin-top: 16px; }
   </style>
 </head>
 <body>
 
-  <section id="contact">
-    <h2>Contact Us</h2>
-    <p>Email:mhrfshh@gmail.com</p>
-    <p>Phone:+971 58 989 2367 or +971 56 961 3435</p>
-    <p>Location:Al Awaans Online Shop, UAE</p>
-  </section>
-  
+  <!-- ── NAVBAR ── -->
+  <header class="navbar">
+    <!-- Back to main site — update href once main site is live -->
+    <a href="#" class="nav-back" id="back-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M19 12H5M5 12l7 7M5 12l7-7"/>
+      </svg>
+      <span class="nav-back-text">Main Site</span>
+    </a>
 
-  <header>
-    <h1>Al Awaans Online Shop</h1>
+    <div class="nav-divider"></div>
+
+    <a href="#" class="nav-logo"><span>Al </span>Awaans</a>
+
+    <div class="nav-spacer"></div>
+
+    <div class="nav-search-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input type="text" id="search" placeholder="Search products…" autocomplete="off" />
+    </div>
+
+    <a href="https://wa.me/971589892367" target="_blank" rel="noreferrer" class="nav-wa">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+      </svg>
+      <span class="nav-wa-text">WhatsApp</span>
+    </a>
   </header>
 
-  <nav>
-    <button onclick="showProducts()">Products</button>
-    <button onclick="showContact()">Contact</button>
-  </nav>
+  <!-- ── CATEGORY FILTER ── -->
+  <div class="filter-bar" id="filter-bar">
+    <button class="filter-btn active" data-cat="all">
+      All <span class="filter-count" id="count-all">0</span>
+    </button>
+    <button class="filter-btn" data-cat="smartphones">
+      Smartphones <span class="filter-count" id="count-smartphones">0</span>
+    </button>
+    <button class="filter-btn" data-cat="smartwatches">
+      Smartwatches <span class="filter-count" id="count-smartwatches">0</span>
+    </button>
+    <button class="filter-btn" data-cat="tablets">
+      Tablets <span class="filter-count" id="count-tablets">0</span>
+    </button>
+    <button class="filter-btn" data-cat="accessories">
+      Accessories <span class="filter-count" id="count-accessories">0</span>
+    </button>
+  </div>
 
-  <input type="text" id="search-bar" onkeyup="searchProducts()" placeholder="Search for products..." />
+  <!-- ── MAIN ── -->
+  <main class="main">
+    <div class="section-head">
+      <h2 id="section-title">All Products</h2>
+      <span id="result-count"></span>
+    </div>
+    <div class="grid" id="grid"></div>
+  </main>
 
-  <section id="products">
-    <h2>Available Products</h2>
-    <div class="product-list" id="product-container">
-  
-      <div class="product"
-        data-name="Apple Watch Series 9"
-        data-price="AED 0000"
-        data-images="9.webp"
-        data-description="Advanced health and fitness tracking smartwatch by Apple.">
-        <img src="9.webp" alt="Apple Watch Series 9" />
-        <h3>Apple Watch Series 9</h3>
-        <p>AED 0000</p>
-        <button onclick="openModal(this)">Know More</button>
-      </div>
-  
-      <div class="product"
-        data-name="Samsung Galaxy Watch 6"
-        data-price="AED 0000"
-        data-images="6.webp"
-        data-description="Smartwatch with advanced health tracking by Samsung.">
-        <img src="6.webp" alt="Samsung Galaxy Watch 6" />
-        <h3>Samsung Galaxy Watch 6</h3>
-        <p>AED 0000</p>
-        <button onclick="openModal(this)">Know More</button>
-      </div>
-  
-      <div class="product"
-        data-name="Xiaomi Smart Band 8"
-        data-price="AED 0000"
-        data-images="smart.webp"
-        data-description="Affordable and stylish fitness band with many features.">
-        <img src="smart.webp" alt="Xiaomi Smart Band 8" />
-        <h3>Xiaomi Smart Band 8</h3>
-        <p>AED 0000</p>
-        <button onclick="openModal(this)">Know More</button>
-      </div>
-  
-      <div class="product"
-        data-name="Google Pixel Watch 2"
-        data-price="AED 0000"
-        data-images="2.webp"
-        data-description="Google’s smartwatch with Fitbit integration.">
-        <img src="2.webp" alt="Google Pixel Watch 2" />
-        <h3>Google Pixel Watch 2</h3>
-        <p>AED 0000</p>
-        <button onclick="openModal(this)">Know More</button>
-      </div>
-  
-      <div class="product"
-        data-name="Xiaomi 14 Ultra"
-        data-price="AED 0000"
-        data-images="14.jpeg"
-        data-description="Xiaomi’s flagship phone with Leica camera and powerful specs.">
-        <img src="14.jpeg" alt="Xiaomi 14 Ultra" />
-        <h3>Xiaomi 14 Ultra</h3>
-        <p>AED 0000</p>
-        <button onclick="openModal(this)">Know More</button>
-      </div>
-  
-      <div class="product"
-        data-name="Realme GT 5 Pro"
-        data-price="AED 0000"
-        data-images="5.jpeg"
-        data-description="Powerful Realme flagship with cutting-edge features.">
-        <img src="5.jpeg" alt="Realme GT 5 Pro" />
-        <h3>Realme GT 5 Pro</h3>
-        <p>AED 0000</p>
-        <button onclick="openModal(this)">Know More</button>
-      </div>
-  
-      <div class="product"
-        data-name="Vivo X100 Pro"
-        data-price="AED 0000"
-        data-images="100.jpeg"
-        data-description="Photography-focused premium smartphone by Vivo.">
-        <img src="100.jpeg" alt="Vivo X100 Pro" />
-        <h3>Vivo X100 Pro</h3>
-        <p>AED 0000</p>
-        <button onclick="openModal(this)">Know More</button>
-      </div>
-  
-      <div class="product"
-        data-name="Asus ROG Phone 8"
-        data-price="AED 0000"
-        data-images="asus.jpeg"
-        data-description="Gaming smartphone with RGB lighting and top-tier specs.">
-        <img src="asus.jpeg" alt="Asus ROG Phone 8" />
-        <h3>Asus ROG Phone 8</h3>
-        <p>AED 0000</p>
-        <button onclick="openModal(this)">Know More</button>
-      </div>
-  
-      <div class="product"
-        data-name="Redmi Pad Pro 5G"
-        data-price="AED 0000"
-        data-images="5g.webp"
-        data-description="Affordable tablet with 5G support and large display.">
-        <img src="5g.webp" alt="Redmi Pad Pro 5G" />
-        <h3>Redmi Pad Pro 5G</h3>
-        <p>AED 0000</p>
-        <button onclick="openModal(this)">Know More</button>
-      </div>
-  
-      <div class="product"
-        data-name="Apple iPad (10th Generation)"
-        data-price="AED 0000"
-        data-images="ipad.webp"
-        data-description="Latest iPad with improved performance and new design.">
-        <img src="ipad.webp" alt="Apple iPad (10th Generation)" />
-        <h3>Apple iPad (10th Generation)</h3>
-        <p>AED 0000</p>
-        <button onclick="openModal(this)">Know More</button>
+  <!-- ── MODAL ── -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal" id="modal">
+      <button class="modal-close" id="modal-close" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+
+      <div class="modal-gallery" id="modal-gallery">
+        <div class="gallery-nav">
+          <button class="gallery-btn hidden" id="gallery-prev" aria-label="Previous">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <button class="gallery-btn hidden" id="gallery-next" aria-label="Next">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+          </button>
+        </div>
+        <div class="gallery-dots" id="gallery-dots"></div>
       </div>
 
-      <div class="product"
-  data-name="Xiaomi Pad 6"
-  data-price="AED 0000"
-  data-images="pad6.webp"
-  data-description="High-performance tablet by Xiaomi with a sleek display.">
-  <img src="pad6.webp" alt="Xiaomi Pad 6">
-  <h3>Xiaomi Pad 6</h3>
-  <p>AED 0000</p>
-  <button onclick="openModal(this)">Know More</button>
-</div>
-
-<div class="product"
-  data-name="Xiaomi Pad 7"
-  data-price="AED 0000"
-  data-images="pad7.webp"
-  data-description="Next-gen Xiaomi tablet with enhanced features.">
-  <img src="pad7.webp" alt="Xiaomi Pad 7">
-  <h3>Xiaomi Pad 7</h3>
-  <p>AED 0000</p>
-  <button onclick="openModal(this)">Know More</button>
-</div>
-
-<div class="product"
-  data-name="iPhone 14"
-  data-price="AED 0000"
-  data-images="15promax.webp"
-  data-description="Apple iPhone 14 with great performance and camera.">
-  <img src="15promax.webp" alt="iPhone 14">
-  <h3>iPhone 14</h3>
-  <p>AED 0000</p>
-  <button onclick="openModal(this)">Know More</button>
-</div>
-
-<div class="product"
-  data-name="Samsung Galaxy S22"
-  data-price="AED 0000"
-  data-images="22.webp"
-  data-description="Compact flagship phone with powerful performance.">
-  <img src="22.webp" alt="Samsung Galaxy S22">
-  <h3>Samsung Galaxy S22</h3>
-  <p>AED 0000</p>
-  <button onclick="openModal(this)">Know More</button>
-</div>
-
-<div class="product"
-  data-name="iPhone 14 Pro"
-  data-price="AED 0000"
-  data-images="15promax.webp"
-  data-description="Enhanced performance and Pro camera system.">
-  <img src="15promax.webp" alt="iPhone 14 Pro">
-  <h3>iPhone 14 Pro</h3>
-  <p>AED 0000</p>
-  <button onclick="openModal(this)">Know More</button>
-</div>
-
-<div class="product"
-  data-name="Samsung Galaxy S22 Ultra"
-  data-price="AED 0000"
-  data-images="22ultra.jpeg"
-  data-description="S Pen support and powerful zoom camera.">
-  <img src="22ultra.jpeg" alt="Samsung Galaxy S22 Ultra">
-  <h3>Samsung Galaxy S22 Ultra</h3>
-  <p>AED 0000</p>
-  <button onclick="openModal(this)">Know More</button>
-</div>
-
-<div class="product"
-  data-name="iPhone 14 Pro Max"
-  data-price="AED 0000"
-  data-images="15promax.webp"
-  data-description="Apple's largest and most powerful iPhone 14.">
-  <img src="15promax.webp" alt="iPhone 14 Pro Max">
-  <h3>iPhone 14 Pro Max</h3>
-  <p>AED 0000</p>
-  <button onclick="openModal(this)">Know More</button>
-</div>
-
-<div class="product"
-  data-name="Samsung Galaxy S23"
-  data-price="AED 0000"
-  data-images="23.webp"
-  data-description="Latest S-series phone with improved chipset.">
-  <img src="23.webp" alt="Samsung Galaxy S23">
-  <h3>Samsung Galaxy S23</h3>
-  <p>AED 0000</p>
-  <button onclick="openModal(this)">Know More</button>
-</div>
-
-<div class="product"
-  data-name="iPhone 15"
-  data-price="AED 0000"
-  data-images="15promax.webp"
-  data-description="New design and better camera with Dynamic Island.">
-  <img src="15promax.webp" alt="iPhone 15">
-  <h3>iPhone 15</h3>
-  <p>AED 0000</p>
-  <button onclick="openModal(this)">Know More</button>
-</div>
-
-<div class="product"
-  data-name="Samsung Galaxy S23 Ultra"
-  data-price="AED 0000"
-  data-images="23ultra.webp"
-  data-description="200MP camera with long battery and great performance.">
-  <img src="23ultra.webp" alt="Samsung Galaxy S23 Ultra">
-  <h3>Samsung Galaxy S23 Ultra</h3>
-  <p>AED 0000</p>
-  <button onclick="openModal(this)">Know More</button>
-</div>
-
-<div class="product"
-  data-name="iPhone 15 Pro"
-  data-price="AED 0000"
-  data-images="15promax.webp"
-  data-description="Lightweight titanium frame with A17 Pro chip.">
-  <img src="15promax.webp" alt="iPhone 15 Pro">
-  <h3>iPhone 15 Pro</h3>
-  <p>AED 0000</p>
-  <button onclick="openModal(this)">Know More</button>
-</div>
-
-<div class="product"
-  data-name="Samsung Galaxy S24"
-  data-price="AED 0000"
-  data-images="24.webp"
-  data-description="AI-powered Galaxy phone with enhanced battery life.">
-  <img src="24.webp" alt="Samsung Galaxy S24">
-  <h3>Samsung Galaxy S24</h3>
-  <p>AED 0000</p>
-  <button onclick="openModal(this)">Know More</button>
-</div>
-
-<div class="product"
-  data-name="iPhone 15 Pro Max"
-  data-price="AED 0000"
-  data-images="15promax.webp"
-  data-description="Apple's best iPhone with periscope zoom and titanium body.">
-  <img src="15promax.webp" alt="iPhone 15 Pro Max">
-  <h3>iPhone 15 Pro Max</h3>
-  <p>AED 0000</p>
-  <button onclick="openModal(this)">Know More</button>
-</div>
-
-<div class="product"
-  data-name="Samsung Galaxy S24 Ultra"
-  data-price="AED 0000"
-  data-images="24ultra.webp"
-  data-description="Top-tier Galaxy Ultra with S Pen and AI camera.">
-  <img src="24ultra.webp" alt="Samsung Galaxy S24 Ultra">
-  <h3>Samsung Galaxy S24 Ultra</h3>
-  <p>AED 0000</p>
-  <button onclick="openModal(this)">Know More</button>
-</div>
-
-<div class="product"
-  data-name="Samsung Galaxy S25"
-  data-price="AED 0000"
-  data-images="25.webp"
-  data-description="Futuristic phone design and improved thermal control.">
-  <img src="25.webp" alt="Samsung Galaxy S25">
-  <h3>Samsung Galaxy S25</h3>
-  <p>AED 0000</p>
-  <button onclick="openModal(this)">Know More</button>
-</div>
-
-<div class="product"
-  data-name="Samsung Galaxy S25 Ultra"
-  data-price="AED 0000"
-  data-images="25ultra.webp"
-  data-description="Next-gen Galaxy Ultra with AI, zoom and gaming performance.">
-  <img src="25ultra.webp" alt="Samsung Galaxy S25 Ultra">
-  <h3>Samsung Galaxy S25 Ultra</h3>
-  <p>AED 0000</p>
-  <button onclick="openModal(this)">Know More</button>
-</div>
-
-<div class="product"
-  data-name="Redmi Pad SE"
-  data-price="AED 0000"
-  data-images="SE.webp"
-  data-description="Budget tablet with big display and long battery.">
-  <img src="SE.webp" alt="Redmi Pad SE">
-  <h3>Redmi Pad SE</h3>
-  <p>AED 0000</p>
-  <button onclick="openModal(this)">Know More</button>
-</div>
-  
-<div class="product"
-  data-name="G shock casio "
-  data-price="AED 0000"
-  data-images="InShot_20250423_100918852.jpg"
-  data-description="Unbreakable style meets unstoppable performance. G-Shock by Casio built to endure designed to impress.">
-  <img src="InShot_20250423_100918852.jpg" alt="Samsung Galaxy S25 Ultra">
-  <h3>G shock casio</h3>
-  <p>AED 0000</p>
-  <button onclick="openModal(this)">Know More</button>
-</div>
-  <div class="product"
-  data-name="G shock casio"
-  data-price="AED 0000"
-  data-images="InShot_20250423_100828737.jpg"
-  data-description="Unbreakable style meets unstoppable performance. G-Shock by Casio built to endure designed to impress.">
-  <img src="InShot_20250423_100828737.jpg" alt="Samsung Galaxy S25 Ultra">
-  <h3>G shock casio</h3>
-  <p>AED 0000</p>
-  <button onclick="openModal(this)">Know More</button>
-</div>
-  <div class="product"
-  data-name="G shock casio"
-  data-price="AED 0000"
-  data-images="InShot_20250423_100848015.jpg"
-  data-description="Unbreakable style meets unstoppable performance. G-Shock by Casio built to endure designed to impress.">
-  <img src="InShot_20250423_100848015.jpg" alt="Samsung Galaxy S25 Ultra">
-  <h3>G shock casio</h3>
-  <p>AED 0000</p>
-  <button onclick="openModal(this)">Know More</button>
-</div>
-  <div class="product"
-  data-name="G shock casio"
-  data-price="AED 0000"
-  data-images="InShot_20250423_100931622.jpg"
-  data-description="Unbreakable style meets unstoppable performance. G-Shock by Casio built to endure designed to impress.">
-  <img src="InShot_20250423_100931622.jpg" alt="Samsung Galaxy S25 Ultra">
-  <h3>G shock casio</h3>
-  <p>AED 0000</p>
-  <button onclick="openModal(this)">Know More</button>
-</div>
-  <div class="product"
-  data-name="G shock casio"
-  data-price="AED 0000"
-  data-images="InShot_20250423_100945930.jpg"
-  data-description="Unbreakable style meets unstoppable performance. G-Shock by Casio built to endure designed to impress.">
-  <img src="InShot_20250423_100945930.jpg" alt="Samsung Galaxy S25 Ultra">
-  <h3>G shock casio</h3>
-  <p>AED 0000</p>
-  <button onclick="openModal(this)">Know More</button>
-</div>
-      
-  
-<section id="contact">
-  <h2>Contact Us</h2>
-  <p>Phone: +971 58 989 2367 or +971 56 961 3435</p>
-  <p>Email:mhrfshh@gmail.com</p>
-  <p>Location:AL AWAANS ONLINE SHOP UAE</p>
-</section>
-
-  <!-- Product Modal -->
-  <div id="product-modal">
-    <div class="modal-content">
-      <span class="close-btn" onclick="closeModal()">&times;</span>
-      <h2 id="modal-title"></h2>
-      <div id="modal-images"></div>
-      <p id="modal-price" style="font-size: 18px; font-weight: bold;"></p>
-      <p id="modal-description" style="font-size: 15px;"></p>
+      <div class="modal-body">
+        <p class="modal-cat"  id="modal-cat"></p>
+        <h2 class="modal-title" id="modal-title"></h2>
+        <p class="modal-desc"  id="modal-desc"></p>
+        <p class="modal-price-note">
+          Pricing changes frequently. Contact us on WhatsApp or call for the latest price and availability.
+        </p>
+        <div class="modal-actions">
+          <a class="btn-wa" id="modal-wa" target="_blank" rel="noreferrer">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+            </svg>
+            WhatsApp Us
+          </a>
+          <a class="btn-call" href="tel:+971569613435">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 12a19.79 19.79 0 01-3-8.59A2 2 0 012.06 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
+            </svg>
+            Call Us
+          </a>
+        </div>
+      </div>
     </div>
   </div>
 
+  <!-- ── FOOTER ── */
+  <footer>
+    <p class="footer-logo"><span>Al </span>Awaans</p>
+    <div class="footer-info">
+      <p><a href="tel:+971569613435">+971 56 961 3435</a> &nbsp;·&nbsp; <a href="tel:+971589892367">+971 58 989 2367</a></p>
+      <p><a href="mailto:mhrfshh@gmail.com">mhrfshh@gmail.com</a></p>
+      <p>Abu Dhabi, UAE</p>
+    </div>
+    <p class="footer-copy">© 2025 Al Awaans Online Store</p>
+  </footer>
+
   <script>
-    function showProducts() {
-      document.getElementById("products").style.display = "flex";
-      document.getElementById("contact").style.display = "none";
-      window.scrollTo({ top: document.getElementById("products").offsetTop - 50, behavior: 'smooth' });
+    // ── PRODUCT DATA ──────────────────────────────────────────────
+    const PRODUCTS = [
+      // SMARTPHONES
+      { id: 1,  cat: 'smartphones', badge: 'New',  name: 'iPhone 16 Pro Max',      imgs: ['16promax.webp'],                         desc: "Apple's most powerful iPhone. A18 Pro chip, titanium build, 48 MP main camera with 5× periscope zoom, and an immersive 6.9″ Super Retina XDR display." },
+      { id: 2,  cat: 'smartphones', badge: 'New',  name: 'iPhone 16 Pro',          imgs: ['16pro.webp'],                            desc: "A18 Pro chip, titanium frame, Action Button, and a versatile triple-camera system in a compact pro form factor." },
+      { id: 3,  cat: 'smartphones', badge: 'New',  name: 'iPhone 16',              imgs: ['16.webp'],                               desc: "The latest standard iPhone — A18 chip, Camera Control button, and up to 2× optical zoom in a refined aluminium design." },
+      { id: 4,  cat: 'smartphones', badge: null,   name: 'Samsung Galaxy S25 Ultra',imgs: ['s25ultra1.jpg'],                        desc: "The ultimate Galaxy. Snapdragon 8 Elite, built-in S Pen, 200 MP camera, and AI-powered features across every app." },
+      { id: 5,  cat: 'smartphones', badge: null,   name: 'Samsung Galaxy S25',     imgs: ['s251.jpg','s252.jpg'],                   desc: "Snapdragon 8 Elite power in a slim design. Galaxy AI features, a refined triple camera, and a vivid 6.2″ display." },
+      { id: 6,  cat: 'smartphones', badge: null,   name: 'iPhone 15 Pro Max',      imgs: ['15promax.webp','15promax.jpg','15promax2.webp'], desc: "Titanium body, A17 Pro chip, and a 5× optical zoom periscope camera. The iPhone that changed the Pro line." },
+      { id: 7,  cat: 'smartphones', badge: null,   name: 'Samsung Galaxy S24 Ultra',imgs: ['s24ultra.jpg','s24ultra2.jpeg'],         desc: "Snapdragon 8 Gen 3, titanium frame, 200 MP camera with 10× optical zoom, and an integrated S Pen." },
+      { id: 8,  cat: 'smartphones', badge: null,   name: 'Samsung Galaxy S24',     imgs: ['s241.webp','s242.webp'],                 desc: "Galaxy AI features packed into a compact flagship. Snapdragon 8 Gen 3, a bright 6.2″ Dynamic AMOLED display." },
+      { id: 9,  cat: 'smartphones', badge: null,   name: 'iPhone 15 Pro',          imgs: ['15proios.webp','15proios2.png'],          desc: "Lightweight titanium frame, A17 Pro chip, Action Button, and a 48 MP triple-camera system." },
+      { id: 10, cat: 'smartphones', badge: null,   name: 'Samsung Galaxy S23 Ultra',imgs: ['s23ultra.jpg','s23ultra2.webp'],         desc: "200 MP camera, built-in S Pen, Snapdragon 8 Gen 2 for Galaxy, and a massive 5000 mAh battery." },
+      { id: 11, cat: 'smartphones', badge: null,   name: 'Samsung Galaxy S23',     imgs: ['s23sam.avif','s23sam2.webp'],             desc: "Compact powerhouse — Snapdragon 8 Gen 2, a 50 MP triple camera, and all-day battery in a premium glass build." },
+      { id: 12, cat: 'smartphones', badge: null,   name: 'iPhone 14 Pro Max',      imgs: ['14promax.webp','14promax2.avif'],         desc: "Dynamic Island, A16 Bionic chip, Always-On display, and a 48 MP main camera with Photonic Engine processing." },
+      { id: 13, cat: 'smartphones', badge: null,   name: 'Samsung Galaxy S22 Ultra',imgs: ['s22ultra.jpg','s22ultra2.jpg'],          desc: "S Pen integrated into the body, Exynos 2200 with AMD GPU, and a 108 MP camera with 10× optical zoom." },
+      { id: 14, cat: 'smartphones', badge: null,   name: 'Samsung Galaxy S22',     imgs: ['galaxys22.webp','galaxys222.webp'],       desc: "Flagship performance in a slim build. Bright 6.1″ display, Exynos 2200, and a refined triple-camera array." },
+      { id: 15, cat: 'smartphones', badge: null,   name: 'iPhone 14 Pro',          imgs: ['iphone14pro.png','iphone14pro2.jpg'],     desc: "First iPhone with Dynamic Island and Always-On display. A16 Bionic chip and a 48 MP main camera." },
+      { id: 16, cat: 'smartphones', badge: null,   name: 'iPhone 14',              imgs: ['iphone14.jpg','iphone142.webp'],          desc: "A15 Bionic chip, Crash Detection, Emergency SOS via satellite, and an impressive dual-camera system." },
+      { id: 17, cat: 'smartphones', badge: null,   name: 'Xiaomi 14 Ultra',        imgs: ['14.jpeg'],                               desc: "Co-engineered with Leica. A quad-camera system with a 1-inch sensor, Snapdragon 8 Gen 3, and a stunning AMOLED display." },
+      { id: 18, cat: 'smartphones', badge: null,   name: 'Realme GT 5 Pro',        imgs: ['gt5pro.avif','gt5proback.webp'],          desc: "Snapdragon 8 Gen 3 at an accessible price. 240 W super-fast charging, 50 MP Sony camera, and a smooth 144 Hz display." },
+      { id: 19, cat: 'smartphones', badge: null,   name: 'Vivo X100 Pro',          imgs: ['100.jpeg'],                              desc: "Zeiss optics, 50 MP main camera with a 1-inch sensor, Dimensity 9300, and 100 W FlashCharge." },
+      { id: 20, cat: 'smartphones', badge: null,   name: 'ASUS ROG Phone 8',       imgs: ['rogphone.jpg','rogphoneback.jpg'],        desc: "The ultimate gaming smartphone. Snapdragon 8 Gen 3, 165 Hz AMOLED display, 65 W charging, and AeroActive Cooler support." },
+
+      // SMARTWATCHES
+      { id: 21, cat: 'smartwatches', badge: null, name: 'Apple Watch Series 9',    imgs: ['9.webp','applewatchback.webp','applwtchsrs9side-view.jpg'], desc: "Double Tap gesture, S9 chip, always-on Retina display, advanced health sensors including blood oxygen and ECG, and up to 18 hours of battery life." },
+      { id: 22, cat: 'smartwatches', badge: null, name: 'Samsung Galaxy Watch 6',  imgs: ['6.webp','galaxywatch6back.webp'],         desc: "Sapphire crystal glass, advanced sleep coaching, body composition analysis, and Google Wear OS 4 with a sleek round design." },
+      { id: 23, cat: 'smartwatches', badge: null, name: 'Google Pixel Watch 2',    imgs: ['pixelwatch2.png','pixelwatchback.webp'],  desc: "Fitbit health tracking built in. Continuous heart rate monitoring, safety check, and the best of Google on your wrist." },
+
+      // TABLETS
+      { id: 24, cat: 'tablets', badge: null, name: 'Apple iPad (10th Gen)',        imgs: ['ipad.webp','ipad.jpeg','ipadback.webp'],  desc: "A14 Bionic chip, 10.9″ Liquid Retina display, USB-C, a landscape front camera for FaceTime, and compatibility with Apple Pencil." },
+      { id: 25, cat: 'tablets', badge: null, name: 'Redmi Pad Pro 5G',             imgs: ['5g.webp'],                               desc: "5G connectivity, Snapdragon 7s Gen 2, a 12.1″ 144 Hz display, and a 10 000 mAh battery — serious productivity at a great price." },
+      { id: 26, cat: 'tablets', badge: null, name: 'Xiaomi Pad 7',                 imgs: ['pad7.webp'],                             desc: "Snapdragon 7+ Gen 3, a 144 Hz 11.2″ display, Dolby Vision, and a large battery built for work and entertainment." },
+      { id: 27, cat: 'tablets', badge: null, name: 'Xiaomi Pad 6',                 imgs: ['pad6.webp'],                             desc: "Snapdragon 870, 11″ 144 Hz display, Dolby Vision, and quad speakers — a premium productivity and media tablet." },
+      { id: 28, cat: 'tablets', badge: null, name: 'Redmi Pad SE',                 imgs: ['SE.webp','redpadse1.jpg','redpadse2.png'], desc: "Budget-friendly 11″ tablet with a 90 Hz display, Snapdragon 680, 8000 mAh battery, and Dolby Atmos speakers." },
+      { id: 29, cat: 'tablets', badge: null, name: 'Redmi Pad',                    imgs: ['redmipad.avif','redmipadback.png'],       desc: "Helio G99, a stunning 10.61″ 90 Hz display, 8000 mAh battery, and quad Dolby Atmos speakers. Great value for any user." },
+
+      // ACCESSORIES
+      { id: 30, cat: 'accessories', badge: null, name: 'G-Shock Casio — Model 1', imgs: ['InShot_20250423_100918852.jpg'],          desc: "Unbreakable style meets unstoppable performance. Shock-resistant, water-resistant, and built to endure whatever you throw at it." },
+      { id: 31, cat: 'accessories', badge: null, name: 'G-Shock Casio — Model 2', imgs: ['InShot_20250423_100828737.jpg'],          desc: "Classic G-Shock toughness with a bold design. 200 M water resistance, multi-band atomic timekeeping, and solar power." },
+      { id: 32, cat: 'accessories', badge: null, name: 'G-Shock Casio — Model 3', imgs: ['InShot_20250423_100848015.jpg'],          desc: "Premium G-Shock with full-auto LED backlight, shock-resistant structure, and world time for 48 cities." },
+      { id: 33, cat: 'accessories', badge: null, name: 'G-Shock Casio — Model 4', imgs: ['InShot_20250423_100931622.jpg'],          desc: "Rugged G-Shock built for outdoor adventures. Altimeter, barometer, thermometer, and compass in one tough watch." },
+      { id: 34, cat: 'accessories', badge: null, name: 'G-Shock Casio — Model 5', imgs: ['InShot_20250423_100945930.jpg'],          desc: "Limited-edition G-Shock colourway. Signature 200 M water resistance, 5-year battery, and iconic square case." },
+    ]
+
+    // ── CATEGORY LABELS ──────────────────────────────────────────
+    const CAT_LABEL = {
+      smartphones:  'Smartphone',
+      smartwatches: 'Smartwatch',
+      tablets:      'Tablet',
+      accessories:  'Accessory',
     }
 
-    function showContact() {
-      document.getElementById("products").style.display = "none";
-      document.getElementById("contact").style.display = "block";
-      window.scrollTo({ top: document.getElementById("contact").offsetTop - 50, behavior: 'smooth' });
+    // ── STATE ────────────────────────────────────────────────────
+    let activeCategory = 'all'
+    let searchQuery    = ''
+    let activeProduct  = null
+    let galleryIndex   = 0
+
+    // ── INIT ─────────────────────────────────────────────────────
+    function init() {
+      updateCounts()
+      render()
+
+      // filter buttons
+      document.getElementById('filter-bar').addEventListener('click', e => {
+        const btn = e.target.closest('[data-cat]')
+        if (!btn) return
+        activeCategory = btn.dataset.cat
+        searchQuery = ''
+        document.getElementById('search').value = ''
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'))
+        btn.classList.add('active')
+        render()
+      })
+
+      // search
+      document.getElementById('search').addEventListener('input', e => {
+        searchQuery = e.target.value.trim().toLowerCase()
+        render()
+      })
+
+      // modal close
+      document.getElementById('modal-close').addEventListener('click', closeModal)
+      document.getElementById('modal-overlay').addEventListener('click', e => {
+        if (e.target === document.getElementById('modal-overlay')) closeModal()
+      })
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') closeModal()
+      })
+
+      // gallery nav
+      document.getElementById('gallery-prev').addEventListener('click', () => setGallery(galleryIndex - 1))
+      document.getElementById('gallery-next').addEventListener('click', () => setGallery(galleryIndex + 1))
     }
 
-    function contactWhatsApp() {
-      window.location.href = "https://wa.me/+971589892367";
+    // ── UPDATE COUNTS ────────────────────────────────────────────
+    function updateCounts() {
+      const cats = ['all', 'smartphones', 'smartwatches', 'tablets', 'accessories']
+      cats.forEach(cat => {
+        const el = document.getElementById('count-' + cat)
+        if (!el) return
+        el.textContent = cat === 'all'
+          ? PRODUCTS.length
+          : PRODUCTS.filter(p => p.cat === cat).length
+      })
     }
 
-    function searchProducts() {
-      let input = document.getElementById("search-bar").value.toLowerCase();
-      document.querySelectorAll(".product").forEach(product => {
-        const name = product.getAttribute("data-name").toLowerCase();
-        product.style.display = name.includes(input) ? "block" : "none";
-      });
+    // ── FILTERED PRODUCTS ────────────────────────────────────────
+    function filtered() {
+      return PRODUCTS.filter(p => {
+        const catMatch = activeCategory === 'all' || p.cat === activeCategory
+        const searchMatch = !searchQuery || p.name.toLowerCase().includes(searchQuery)
+        return catMatch && searchMatch
+      })
     }
 
-    function openModal(button) {
-      const product = button.closest(".product");
-      const title = product.getAttribute("data-name");
-      const price = product.getAttribute("data-price");
-      const description = product.getAttribute("data-description");
-      const images = product.getAttribute("data-images").split(",");
+    // ── RENDER GRID ──────────────────────────────────────────────
+    function render() {
+      const list = filtered()
+      const grid = document.getElementById('grid')
 
-      document.getElementById("modal-title").textContent = title;
-      document.getElementById("modal-price").textContent = price;
-      document.getElementById("modal-description").textContent = description;
+      // section header
+      const catNames = { all: 'All Products', smartphones: 'Smartphones', smartwatches: 'Smartwatches', tablets: 'Tablets', accessories: 'Accessories' }
+      document.getElementById('section-title').textContent = searchQuery
+        ? `Search: "${document.getElementById('search').value}"`
+        : catNames[activeCategory]
+      document.getElementById('result-count').textContent = list.length + ' item' + (list.length !== 1 ? 's' : '')
 
-      const imageContainer = document.getElementById("modal-images");
-      imageContainer.innerHTML = "";
-      images.forEach(src => {
-        let img = document.createElement("img");
-        img.src = src.trim();
-        imageContainer.appendChild(img);
-      });
+      if (list.length === 0) {
+        grid.innerHTML = `<div class="empty"><p>No products found.</p><p>Try a different search term or category.</p></div>`
+        return
+      }
 
-      document.getElementById("product-modal").style.display = "flex";
+      grid.innerHTML = list.map(p => `
+        <div class="card" onclick="openModal(${p.id})" role="button" tabindex="0">
+          <div class="card-img">
+            <img src="${p.imgs[0]}" alt="${p.name}" loading="lazy" />
+            ${p.badge ? `<span class="card-badge">${p.badge}</span>` : ''}
+          </div>
+          <div class="card-body">
+            <span class="card-cat">${CAT_LABEL[p.cat]}</span>
+            <p class="card-name">${p.name}</p>
+            <div class="card-btn">
+              View Details
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+          </div>
+        </div>
+      `).join('')
+    }
+
+    // ── MODAL ────────────────────────────────────────────────────
+    function openModal(id) {
+      const p = PRODUCTS.find(x => x.id === id)
+      if (!p) return
+      activeProduct = p
+      galleryIndex  = 0
+
+      document.getElementById('modal-cat').textContent   = CAT_LABEL[p.cat]
+      document.getElementById('modal-title').textContent = p.name
+      document.getElementById('modal-desc').textContent  = p.desc
+
+      const waText = `Hi, I'm interested in the ${p.name}. Can you give me the price and availability?`
+      document.getElementById('modal-wa').href = `https://wa.me/971589892367?text=${encodeURIComponent(waText)}`
+
+      // build gallery
+      const gallery = document.getElementById('modal-gallery')
+      const oldImgs = gallery.querySelectorAll('img')
+      oldImgs.forEach(img => img.remove())
+
+      p.imgs.forEach((src, i) => {
+        const img = document.createElement('img')
+        img.src = src
+        img.alt = p.name
+        if (i === 0) img.classList.add('active')
+        gallery.insertBefore(img, gallery.querySelector('.gallery-nav'))
+      })
+
+      setGallery(0)
+      document.getElementById('modal-overlay').classList.add('open')
+      document.body.style.overflow = 'hidden'
+    }
+
+    function setGallery(idx) {
+      if (!activeProduct) return
+      const imgs = document.querySelectorAll('#modal-gallery img')
+      const n    = imgs.length
+      galleryIndex = Math.max(0, Math.min(idx, n - 1))
+
+      imgs.forEach((img, i) => img.classList.toggle('active', i === galleryIndex))
+
+      document.getElementById('gallery-prev').classList.toggle('hidden', galleryIndex === 0)
+      document.getElementById('gallery-next').classList.toggle('hidden', galleryIndex >= n - 1)
+
+      // dots
+      const dotsEl = document.getElementById('gallery-dots')
+      if (n <= 1) { dotsEl.innerHTML = ''; return }
+      dotsEl.innerHTML = Array.from({ length: n }, (_, i) =>
+        `<span class="gallery-dot${i === galleryIndex ? ' active' : ''}"></span>`
+      ).join('')
     }
 
     function closeModal() {
-      document.getElementById("product-modal").style.display = "none";
+      document.getElementById('modal-overlay').classList.remove('open')
+      document.body.style.overflow = ''
+      activeProduct = null
     }
 
-    window.addEventListener("click", function(e) {
-      const modal = document.getElementById("product-modal");
-      if (e.target === modal) closeModal();
-    });
+    // ── START ────────────────────────────────────────────────────
+    init()
   </script>
-<script>
-  function showProducts() {
-    document.getElementById("products").style.display = "block";
-    document.getElementById("contact").style.display = "none";
-  }
-
-  function showContact() {
-    document.getElementById("products").style.display = "none";
-    document.getElementById("contact").style.display = "block";
-  }
-</script>
-<script>
-  function showProducts() {
-    document.getElementById("products").style.display = "block";
-    document.getElementById("contact").style.display = "none";
-  }
-
-  function showContact() {
-    document.getElementById("products").style.display = "none";
-    document.getElementById("contact").style.display = "block";
-  }
-
-  function searchProducts() {
-    const input = document.getElementById("search-bar").value.toLowerCase();
-    const products = document.querySelectorAll(".product");
-
-    products.forEach(product => {
-      const name = product.querySelector("h3").innerText.toLowerCase();
-      if (name.includes(input)) {
-        product.style.display = "block";
-      } else {
-        product.style.display = "none";
-      }
-    });
-  }
-
-  function openModal(button) {
-    const product = button.closest(".product");
-    const name = product.getAttribute("data-name");
-    const price = product.getAttribute("data-price");
-    const image = product.getAttribute("data-images");
-    const description = product.getAttribute("data-description");
-
-    let modalHTML = `
-      <div class="modal-content">
-        <span class="close-btn" onclick="closeModal()">&times;</span>
-        <h2>${name}</h2>
-        <p><strong>Price:</strong> ${price}</p>
-        <img src="${image}" style="width: 100%; border-radius: 10px;" />
-        <p>${description}</p>
-      </div>
-    `;
-
-    const modal = document.getElementById("product-modal");
-    modal.innerHTML = modalHTML;
-    modal.style.display = "flex";
-  }
-
-  function closeModal() {
-    document.getElementById("product-modal").style.display = "none";
-  }
-</script>
-
-
-
-
 
 </body>
 </html>
