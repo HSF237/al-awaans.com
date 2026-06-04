@@ -9,9 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
 
-  <!-- Firebase compat SDK -->
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <!-- no SDK needed for public reads — we use the REST API directly -->
 
   <style>
     /* ── RESET & ROOT ── */
@@ -619,21 +617,8 @@
   </footer>
 
   <script>
-    // ════════════════════════════════════════════════════════
-    //  FIREBASE CONFIG — must match admin.html config
-    // ════════════════════════════════════════════════════════
-    const firebaseConfig = {
-      apiKey:            "AIzaSyBsl-eTRzq-eT3tEj_jcNdVn5jimAmjVe8",
-      authDomain:        "alawaans-87424.firebaseapp.com",
-      projectId:         "alawaans-87424",
-      storageBucket:     "alawaans-87424.firebasestorage.app",
-      messagingSenderId: "462909428236",
-      appId:             "1:462909428236:web:bfca313b09779d87e0d429"
-    }
-    // ════════════════════════════════════════════════════════
-
-    firebase.initializeApp(firebaseConfig)
-    const db = firebase.firestore()
+    // Firestore project ID
+    const FS_PROJECT = 'alawaans-87424'
 
     // ── PRODUCT DATA (loaded from Firestore) ─────────────────────
     const PRODUCTS_PLACEHOLDER = [
@@ -695,18 +680,33 @@
     let activeProduct  = null
     let galleryIndex   = 0
 
-    // ── LOAD FROM FIRESTORE ──────────────────────────────────────
+    // ── LOAD FROM FIRESTORE (REST API — no SDK, no caching) ─────
     async function loadProducts() {
       renderLoading()
       try {
-        // source:'server' bypasses local cache so fresh data always loads
-        const snap = await db.collection('products').get({ source: 'server' })
-        PRODUCTS = snap.docs
-          .map(d => ({ id: d.id, ...d.data() }))
-          .sort((a, b) => (a.sortOrder ?? 99) - (b.sortOrder ?? 99))
-        if (PRODUCTS.length === 0) throw new Error('empty')
+        const url = `https://firestore.googleapis.com/v1/projects/${FS_PROJECT}/databases/(default)/documents/products?pageSize=200`
+        const res  = await fetch(url)
+        if (!res.ok) throw new Error('HTTP ' + res.status)
+        const json = await res.json()
+
+        if (!json.documents || json.documents.length === 0) throw new Error('empty')
+
+        PRODUCTS = json.documents.map(doc => {
+          const f  = doc.fields || {}
+          const id = doc.name.split('/').pop()
+          return {
+            id,
+            name:      f.name?.stringValue  || '',
+            cat:       f.cat?.stringValue   || '',
+            badge:     f.badge?.stringValue || null,
+            desc:      f.desc?.stringValue  || '',
+            imgs:      (f.imgs?.arrayValue?.values || []).map(v => v.stringValue),
+            sortOrder: Number(f.sortOrder?.integerValue ?? f.sortOrder?.doubleValue ?? 99),
+          }
+        }).sort((a, b) => a.sortOrder - b.sortOrder)
+
       } catch (err) {
-        // Fall back to placeholder if Firestore is unavailable or empty
+        // Fallback to placeholder if rules not set or network fails
         PRODUCTS = PRODUCTS_PLACEHOLDER.map(p => ({ ...p, id: String(p.id) }))
       }
       updateCounts()
