@@ -680,37 +680,49 @@
     let activeProduct  = null
     let galleryIndex   = 0
 
-    // ── LOAD FROM FIRESTORE (REST API — no SDK, no caching) ─────
+    // ── LOAD PRODUCTS ────────────────────────────────────────────
     async function loadProducts() {
-      renderLoading()
-      try {
-        const url = `https://firestore.googleapis.com/v1/projects/${FS_PROJECT}/databases/(default)/documents/products?pageSize=200`
-        const res  = await fetch(url)
-        if (!res.ok) throw new Error('HTTP ' + res.status)
-        const json = await res.json()
-
-        if (!json.documents || json.documents.length === 0) throw new Error('empty')
-
-        PRODUCTS = json.documents.map(doc => {
-          const f  = doc.fields || {}
-          const id = doc.name.split('/').pop()
-          return {
-            id,
-            name:      f.name?.stringValue  || '',
-            cat:       f.cat?.stringValue   || '',
-            badge:     f.badge?.stringValue || null,
-            desc:      f.desc?.stringValue  || '',
-            imgs:      (f.imgs?.arrayValue?.values || []).map(v => v.stringValue),
-            sortOrder: Number(f.sortOrder?.integerValue ?? f.sortOrder?.doubleValue ?? 99),
-          }
-        }).sort((a, b) => a.sortOrder - b.sortOrder)
-
-      } catch (err) {
-        // Fallback to placeholder if rules not set or network fails
-        PRODUCTS = PRODUCTS_PLACEHOLDER.map(p => ({ ...p, id: String(p.id) }))
-      }
+      // Step 1: show placeholder immediately — store is never blank
+      PRODUCTS = PRODUCTS_PLACEHOLDER.map(function(p) {
+        return Object.assign({}, p, { id: String(p.id) })
+      })
       updateCounts()
       render()
+
+      // Step 2: try to pull live data from Firestore REST API
+      try {
+        var url = 'https://firestore.googleapis.com/v1/projects/' + FS_PROJECT + '/databases/(default)/documents/products?pageSize=200'
+        var res  = await fetch(url)
+        if (!res.ok) return
+        var json = await res.json()
+        if (!json.documents || !json.documents.length) return
+
+        var live = []
+        for (var i = 0; i < json.documents.length; i++) {
+          var doc = json.documents[i]
+          var f   = doc.fields || {}
+          var arr = (f.imgs && f.imgs.arrayValue && f.imgs.arrayValue.values) ? f.imgs.arrayValue.values : []
+          live.push({
+            id:        doc.name.split('/').pop(),
+            name:      (f.name  && f.name.stringValue)  || '',
+            cat:       (f.cat   && f.cat.stringValue)   || '',
+            badge:     (f.badge && f.badge.stringValue)  || null,
+            desc:      (f.desc  && f.desc.stringValue)  || '',
+            imgs:      arr.map(function(v){ return v.stringValue }),
+            sortOrder: Number((f.sortOrder && (f.sortOrder.integerValue || f.sortOrder.doubleValue)) || 99)
+          })
+        }
+        live.sort(function(a,b){ return a.sortOrder - b.sortOrder })
+
+        // Only update if we got real data
+        if (live.length > 0) {
+          PRODUCTS = live
+          updateCounts()
+          render()
+        }
+      } catch (e) {
+        // placeholder already showing, nothing to do
+      }
     }
 
     function renderLoading() {
