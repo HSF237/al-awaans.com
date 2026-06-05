@@ -158,10 +158,20 @@
     /* ── MAIN ── */
     .main { max-width: 1200px; margin: 0 auto; padding: 22px 14px 60px; }
     .section-head {
-      display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 18px;
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 18px; gap: 10px; flex-wrap: wrap;
     }
     .section-head h2 { font-size: 1rem; font-weight: 700; letter-spacing: -0.3px; }
-    .section-head span { font-size: 0.78rem; color: var(--text-3); }
+    .section-head-right { display: flex; align-items: center; gap: 8px; }
+    .section-count { font-size: 0.78rem; color: var(--text-3); }
+    .sort-select {
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: 8px; padding: 6px 10px;
+      color: var(--text); font-family: inherit; font-size: 0.78rem;
+      outline: none; cursor: pointer; transition: border-color .2s;
+    }
+    .sort-select:focus { border-color: var(--gold-border); }
+    .sort-select option { background: var(--surface-2); }
 
     /* ── GRID ── */
     .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 11px; }
@@ -425,6 +435,15 @@
     .pv-nav-heart.liked { border-color: rgba(231,76,60,0.5); background: rgba(231,76,60,0.1); }
     .pv-nav-heart.liked svg { fill: #e74c3c; stroke: #e74c3c; }
     .pv-nav-heart:not(.liked) svg { fill: none; stroke: var(--text-2); }
+    .pv-nav-share {
+      width: 36px; height: 36px; background: var(--surface);
+      border: 1px solid var(--border); border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: all .2s; flex-shrink: 0;
+      color: var(--text-2);
+    }
+    .pv-nav-share:hover { border-color: var(--gold-border); color: var(--gold); }
+    .pv-nav-share svg { width: 16px; height: 16px; }
 
     /* Gallery */
     .pv-gallery {
@@ -676,6 +695,12 @@
           <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
         </svg>
       </button>
+      <button class="pv-nav-share" id="pv-nav-share" onclick="shareProduct()" title="Share">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+          <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+        </svg>
+      </button>
     </div>
 
     <div class="pv-gallery" id="pv-gallery">
@@ -756,7 +781,15 @@
   <main class="main">
     <div class="section-head">
       <h2 id="section-title">All Products</h2>
-      <span id="result-count"></span>
+      <div class="section-head-right">
+        <span class="section-count" id="result-count"></span>
+        <select class="sort-select" id="sort-select">
+          <option value="default">Default</option>
+          <option value="az">Name A → Z</option>
+          <option value="za">Name Z → A</option>
+          <option value="new">New Arrivals</option>
+        </select>
+      </div>
     </div>
     <div class="grid" id="grid"></div>
   </main>
@@ -827,6 +860,7 @@
     var PRODUCTS       = []
     var activeCategory = 'all'
     var searchQuery    = ''
+    var sortMode       = 'default'
     var pvProduct      = null
     var pvGalleryIdx   = 0
     var pvSelectedStar = 0
@@ -1123,6 +1157,38 @@
       document.querySelectorAll('.rev-star-btn').forEach(function(b) { b.classList.remove('active') })
     }
 
+    // ── SHARE PRODUCT ─────────────────────────────────────────────
+    function shareProduct() {
+      if (!pvProduct) return
+      var url  = 'https://hsf237.github.io/al-awaans.com/?p=' + pvProduct.id
+      var text = 'Check out ' + pvProduct.name + ' at Al Awaans Online Store!'
+      if (navigator.share) {
+        navigator.share({ title: pvProduct.name, text: text, url: url }).catch(function(){})
+      } else {
+        navigator.clipboard.writeText(url).then(function() {
+          showShareToast('Link copied!')
+        }).catch(function() {
+          var waUrl = 'https://wa.me/?text=' + encodeURIComponent(text + '\n' + url)
+          window.open(waUrl, '_blank')
+        })
+      }
+    }
+
+    var shareToastTimer
+    function showShareToast(msg) {
+      var t = document.getElementById('share-toast')
+      if (!t) {
+        t = document.createElement('div')
+        t.id = 'share-toast'
+        t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#222;border:1px solid rgba(255,255,255,0.1);border-radius:100px;padding:10px 20px;font-size:0.82rem;color:#f0f0f0;z-index:9999;transition:transform .3s cubic-bezier(0.22,1,0.36,1);white-space:nowrap'
+        document.body.appendChild(t)
+      }
+      t.textContent = '✓ ' + msg
+      t.style.transform = 'translateX(-50%) translateY(0)'
+      clearTimeout(shareToastTimer)
+      shareToastTimer = setTimeout(function() { t.style.transform = 'translateX(-50%) translateY(80px)' }, 2200)
+    }
+
     // ── HELPERS ───────────────────────────────────────────────────
     function escHtml(str) {
       return String(str)
@@ -1171,13 +1237,17 @@
       updateLikedCount()
     }
 
-    // ── FILTER ────────────────────────────────────────────────────
+    // ── FILTER + SORT ─────────────────────────────────────────────
     function filtered() {
-      return PRODUCTS.filter(function(p) {
+      var list = PRODUCTS.filter(function(p) {
         if (activeCategory === 'liked') return isLiked(p.id)
         return (activeCategory === 'all' || p.cat === activeCategory) &&
                (!searchQuery || p.name.toLowerCase().includes(searchQuery))
       })
+      if (sortMode === 'az') list = list.slice().sort(function(a,b){ return a.name.localeCompare(b.name) })
+      else if (sortMode === 'za') list = list.slice().sort(function(a,b){ return b.name.localeCompare(a.name) })
+      else if (sortMode === 'new') list = list.slice().reverse()
+      return list
     }
 
     // ── RENDER GRID ───────────────────────────────────────────────
@@ -1253,6 +1323,11 @@
         if (activeCategory !== 'liked') { searchQuery = ''; document.getElementById('search').value = '' }
         document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active') })
         btn.classList.add('active')
+        render()
+      })
+
+      document.getElementById('sort-select').addEventListener('change', function(e) {
+        sortMode = e.target.value
         render()
       })
 

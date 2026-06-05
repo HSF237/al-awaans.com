@@ -307,6 +307,75 @@
     }
     .empty-state p { font-size: 0.88rem; margin-top: 8px; }
 
+    /* ── ANALYTICS SECTION ── */
+    .analytics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .an-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+    }
+    .an-card .an-num {
+      font-size: 1.7rem; font-weight: 800; letter-spacing: -1px;
+      color: var(--gold); line-height: 1;
+    }
+    .an-card .an-lbl {
+      font-size: 0.68rem; color: var(--text-3);
+      text-transform: uppercase; letter-spacing: 1px; margin-top: 5px;
+    }
+    .an-card.green .an-num { color: var(--green); }
+    .an-card.blue  .an-num { color: #5b9bd5; }
+
+    /* Section tabs */
+    .admin-tabs {
+      display: flex; gap: 4px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+    .admin-tab {
+      padding: 9px 18px; font-size: 0.82rem; font-weight: 600;
+      color: var(--text-3); background: none; border: none;
+      border-bottom: 2px solid transparent; cursor: pointer;
+      transition: color .2s, border-color .2s; margin-bottom: -1px;
+    }
+    .admin-tab:hover { color: var(--text); }
+    .admin-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* Orders */
+    .order-form-row {
+      display: grid; grid-template-columns: 1fr 1fr 1fr auto;
+      gap: 10px; align-items: end; margin-bottom: 18px;
+    }
+    @media (max-width: 600px) { .order-form-row { grid-template-columns: 1fr 1fr; } }
+    .orders-table {
+      width: 100%; border-collapse: collapse;
+    }
+    .orders-table th {
+      font-size: 0.67rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 1.5px; color: var(--text-3);
+      padding: 0 14px 10px; text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .orders-table td {
+      padding: 12px 14px; border-bottom: 1px solid var(--border);
+      font-size: 0.85rem; vertical-align: middle;
+    }
+    .orders-table tr:last-child td { border-bottom: none; }
+    .orders-table tr:hover td { background: rgba(255,255,255,0.015); }
+    .aed-badge {
+      font-size: 0.72rem; font-weight: 700; color: var(--green);
+      background: rgba(82,192,122,0.1); border: 1px solid rgba(82,192,122,0.2);
+      padding: 2px 7px; border-radius: 4px;
+    }
+
     /* Seed banner */
     .seed-banner {
       background: var(--gold-dim);
@@ -500,59 +569,115 @@
 
     <div class="admin-main">
 
-      <!-- Stats -->
-      <div class="stats-row" id="stats-row">
-        <div class="stat-chip"><span class="num" id="stat-total">0</span><span class="lbl">Total</span></div>
-        <div class="stat-chip"><span class="num" id="stat-phones">0</span><span class="lbl">Phones</span></div>
-        <div class="stat-chip"><span class="num" id="stat-watches">0</span><span class="lbl">Watches</span></div>
-        <div class="stat-chip"><span class="num" id="stat-tablets">0</span><span class="lbl">Tablets</span></div>
-        <div class="stat-chip"><span class="num" id="stat-acc">0</span><span class="lbl">Accessories</span></div>
+      <!-- Analytics overview -->
+      <div class="analytics-grid">
+        <div class="an-card"><div class="an-num" id="an-products">0</div><div class="an-lbl">Products</div></div>
+        <div class="an-card green"><div class="an-num" id="an-orders">0</div><div class="an-lbl">Orders Logged</div></div>
+        <div class="an-card blue"><div class="an-num" id="an-revenue">0</div><div class="an-lbl">Total Revenue (AED)</div></div>
+        <div class="an-card"><div class="an-num" id="an-phones">0</div><div class="an-lbl">Smartphones</div></div>
+        <div class="an-card"><div class="an-num" id="an-watches">0</div><div class="an-lbl">Watches</div></div>
+        <div class="an-card"><div class="an-num" id="an-tablets">0</div><div class="an-lbl">Tablets</div></div>
+        <div class="an-card"><div class="an-num" id="an-acc">0</div><div class="an-lbl">Accessories</div></div>
       </div>
 
-      <!-- Seed banner (hidden after first product added) -->
-      <div class="seed-banner" id="seed-banner" style="display:none">
-        <p><strong>Store is empty.</strong> Add products manually or seed with all default Al Awaans products at once.</p>
-        <button class="btn btn-gold btn-sm" id="seed-btn">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
-          Seed Default Products
-        </button>
+      <!-- Section tabs -->
+      <div class="admin-tabs">
+        <button class="admin-tab active" data-tab="products">Products</button>
+        <button class="admin-tab" data-tab="orders">Orders</button>
       </div>
 
-      <!-- Toolbar -->
-      <div class="toolbar">
-        <h2 id="admin-section-title">All Products</h2>
-        <div class="toolbar-right">
-          <button class="btn btn-gold" id="add-btn">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-            Add Product
+      <!-- ── PRODUCTS TAB ── -->
+      <div class="tab-panel active" id="tab-products">
+
+        <!-- Seed banner -->
+        <div class="seed-banner" id="seed-banner" style="display:none">
+          <p><strong>Store is empty.</strong> Add products manually or seed with all default Al Awaans products at once.</p>
+          <button class="btn btn-gold btn-sm" id="seed-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+            Seed Default Products
           </button>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+          <h2 id="admin-section-title">All Products</h2>
+          <div class="toolbar-right">
+            <button class="btn btn-gold" id="add-btn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+              Add Product
+            </button>
+          </div>
+        </div>
+
+        <!-- Category filter -->
+        <div class="cat-filter">
+          <button class="cat-btn active" data-cat="all">All</button>
+          <button class="cat-btn" data-cat="smartphones">Smartphones</button>
+          <button class="cat-btn" data-cat="smartwatches">Smartwatches</button>
+          <button class="cat-btn" data-cat="tablets">Tablets</button>
+          <button class="cat-btn" data-cat="accessories">Accessories</button>
+        </div>
+
+        <!-- Product list -->
+        <div style="overflow-x:auto">
+          <table class="product-table">
+            <thead>
+              <tr>
+                <th style="width:60px"></th>
+                <th>Product</th>
+                <th>Category</th>
+                <th>Badge</th>
+                <th style="width:140px"></th>
+              </tr>
+            </thead>
+            <tbody id="product-tbody"></tbody>
+          </table>
         </div>
       </div>
 
-      <!-- Category filter -->
-      <div class="cat-filter">
-        <button class="cat-btn active" data-cat="all">All</button>
-        <button class="cat-btn" data-cat="smartphones">Smartphones</button>
-        <button class="cat-btn" data-cat="smartwatches">Smartwatches</button>
-        <button class="cat-btn" data-cat="tablets">Tablets</button>
-        <button class="cat-btn" data-cat="accessories">Accessories</button>
+      <!-- ── ORDERS TAB ── -->
+      <div class="tab-panel" id="tab-orders">
+        <div class="toolbar">
+          <h2>Log a New Order</h2>
+        </div>
+        <div class="order-form-row">
+          <div class="field">
+            <label>Customer Name *</label>
+            <input type="text" id="o-customer" placeholder="e.g. Ahmed Al Rashid" />
+          </div>
+          <div class="field">
+            <label>Product(s) *</label>
+            <input type="text" id="o-product" placeholder="e.g. iPhone 16 Pro Max" />
+          </div>
+          <div class="field">
+            <label>Amount (AED) *</label>
+            <input type="number" id="o-amount" placeholder="e.g. 3200" min="0" />
+          </div>
+          <button class="btn btn-gold" id="o-save-btn" style="height:40px;align-self:end">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            Log Order
+          </button>
+        </div>
+
+        <div style="overflow-x:auto">
+          <table class="orders-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Customer</th>
+                <th>Product(s)</th>
+                <th>Amount</th>
+                <th style="width:80px"></th>
+              </tr>
+            </thead>
+            <tbody id="orders-tbody"></tbody>
+          </table>
+        </div>
+        <div id="orders-empty" style="text-align:center;padding:50px 20px;color:var(--text-3);font-size:0.85rem;display:none">
+          No orders logged yet. Use the form above to record each WhatsApp order.
+        </div>
       </div>
 
-      <!-- Product list -->
-      <div style="overflow-x:auto">
-        <table class="product-table">
-          <thead>
-            <tr>
-              <th style="width:60px"></th>
-              <th>Product</th>
-              <th>Category</th>
-              <th>Badge</th>
-              <th style="width:140px"></th>
-            </tr>
-          </thead>
-          <tbody id="product-tbody"></tbody>
-        </table>
-      </div>
     </div>
   </div>
 
@@ -710,6 +835,7 @@
         updateStats()
         renderTable()
         checkSeedBanner()
+        loadOrders()
       } catch (err) {
         console.error(err)
         showToast('Failed to load products.', 'error')
@@ -718,11 +844,104 @@
 
     // ── STATS ──────────────────────────────────────────────
     function updateStats() {
-      document.getElementById('stat-total').textContent   = products.length
-      document.getElementById('stat-phones').textContent  = products.filter(p => p.cat === 'smartphones').length
-      document.getElementById('stat-watches').textContent = products.filter(p => p.cat === 'smartwatches').length
-      document.getElementById('stat-tablets').textContent = products.filter(p => p.cat === 'tablets').length
-      document.getElementById('stat-acc').textContent     = products.filter(p => p.cat === 'accessories').length
+      document.getElementById('an-products').textContent = products.length
+      document.getElementById('an-phones').textContent   = products.filter(p => p.cat === 'smartphones').length
+      document.getElementById('an-watches').textContent  = products.filter(p => p.cat === 'smartwatches').length
+      document.getElementById('an-tablets').textContent  = products.filter(p => p.cat === 'tablets').length
+      document.getElementById('an-acc').textContent      = products.filter(p => p.cat === 'accessories').length
+    }
+
+    // ── TABS ───────────────────────────────────────────────
+    document.querySelector('.admin-tabs').addEventListener('click', e => {
+      const btn = e.target.closest('[data-tab]')
+      if (!btn) return
+      document.querySelectorAll('.admin-tab').forEach(b => b.classList.remove('active'))
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'))
+      btn.classList.add('active')
+      document.getElementById('tab-' + btn.dataset.tab).classList.add('active')
+      if (btn.dataset.tab === 'orders') loadOrders()
+    })
+
+    // ── ORDERS ─────────────────────────────────────────────
+    var orders = []
+
+    async function loadOrders() {
+      try {
+        const snap = await db.collection('orders').orderBy('createdAt', 'desc').get()
+        orders = snap.docs.map(d => ({ _id: d.id, ...d.data() }))
+        renderOrders()
+        updateOrderStats()
+      } catch(err) {
+        showToast('Could not load orders.', 'error')
+      }
+    }
+
+    function updateOrderStats() {
+      const total = orders.reduce((s, o) => s + (Number(o.amount) || 0), 0)
+      document.getElementById('an-orders').textContent  = orders.length
+      document.getElementById('an-revenue').textContent = total.toLocaleString()
+    }
+
+    function renderOrders() {
+      const tbody = document.getElementById('orders-tbody')
+      const empty = document.getElementById('orders-empty')
+      if (!orders.length) {
+        tbody.innerHTML = ''
+        empty.style.display = ''
+        return
+      }
+      empty.style.display = 'none'
+      tbody.innerHTML = orders.map(o => {
+        const date = o.createdAt && o.createdAt.toDate
+          ? o.createdAt.toDate().toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' })
+          : '—'
+        return `<tr>
+          <td style="color:var(--text-3);font-size:0.78rem">${date}</td>
+          <td style="font-weight:600">${escAdmin(o.customer)}</td>
+          <td style="color:var(--text-2)">${escAdmin(o.product)}</td>
+          <td><span class="aed-badge">AED ${Number(o.amount || 0).toLocaleString()}</span></td>
+          <td><button class="btn btn-red btn-sm" onclick="deleteOrder('${o._id}')">Delete</button></td>
+        </tr>`
+      }).join('')
+    }
+
+    document.getElementById('o-save-btn').addEventListener('click', async () => {
+      const customer = document.getElementById('o-customer').value.trim()
+      const product  = document.getElementById('o-product').value.trim()
+      const amount   = parseFloat(document.getElementById('o-amount').value) || 0
+      if (!customer || !product) { showToast('Customer name and product are required.', 'error'); return }
+      const btn = document.getElementById('o-save-btn')
+      btn.disabled = true
+      try {
+        await db.collection('orders').add({
+          customer, product, amount,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        })
+        document.getElementById('o-customer').value = ''
+        document.getElementById('o-product').value  = ''
+        document.getElementById('o-amount').value   = ''
+        showToast('Order logged!', 'success')
+        await loadOrders()
+      } catch(err) {
+        showToast('Failed to save order.', 'error')
+      } finally {
+        btn.disabled = false
+      }
+    })
+
+    async function deleteOrder(id) {
+      if (!confirm('Delete this order record?')) return
+      try {
+        await db.collection('orders').doc(id).delete()
+        showToast('Order deleted.', 'success')
+        await loadOrders()
+      } catch(err) {
+        showToast('Delete failed.', 'error')
+      }
+    }
+
+    function escAdmin(str) {
+      return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
     }
 
     // ── SEED BANNER ────────────────────────────────────────
