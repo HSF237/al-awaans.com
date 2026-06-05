@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Al Awaans — Online Store</title>
-  <meta name="description" content="Shop smartphones, smartwatches, tablets and accessories in Abu Dhabi. Al Awaans Online Store." />
+  <title>Leens Computers and Mobiles — Online Store</title>
+  <meta name="description" content="Shop smartphones, smartwatches, tablets and accessories in Abu Dhabi. Leens Computers and Mobiles." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
@@ -977,7 +977,7 @@
       <p><a href="mailto:Leensshabiya@gmail.com">Leensshabiya@gmail.com</a></p>
       <p><a href="https://maps.google.com/?q=Shabiya+11+Musaffah+Abu+Dhabi" target="_blank" rel="noreferrer">Shabiya 11, Musaffah, Abu Dhabi</a></p>
     </div>
-    <p class="footer-copy">© 2025 Al Awaans · Leens Computers and Mobiles · Abu Dhabi, UAE</p>
+    <p class="footer-copy">© 2025 Leens · Leens Computers and Mobiles · Abu Dhabi, UAE</p>
   </footer>
 
   <script>
@@ -1186,13 +1186,13 @@
       var lines = CART.map(function(c) {
         return '• ' + c.name + (c.qty > 1 ? ' ×' + c.qty : '')
       }).join('\n')
-      var msg = '🛒 *New Order — Al Awaans*\n\n'
+      var msg = '🛒 *New Order — Leens*\n\n'
         + '*Items:*\n' + lines + '\n\n'
         + '*Name:* ' + name + '\n'
         + '*Phone:* ' + phone + '\n'
         + '*Address:* ' + address
       if (notes) msg += '\n*Notes:* ' + notes
-      msg += '\n\n_Sent from Al Awaans Online Store_'
+      msg += '\n\n_Sent from Leens Computers and Mobiles_'
       window.open('https://wa.me/971569613435?text=' + encodeURIComponent(msg), '_blank')
       CART = []; saveCart(); updateCartBadge(); closeCheckout()
     }
@@ -1528,8 +1528,8 @@
     // ── SHARE PRODUCT ─────────────────────────────────────────────
     function shareProduct() {
       if (!pvProduct) return
-      var url  = 'https://hsf237.github.io/al-awaans.com/?p=' + pvProduct.id
-      var text = 'Check out ' + pvProduct.name + ' at Al Awaans Online Store!'
+      var url  = 'https://store.leens.online/?p=' + pvProduct.id
+      var text = 'Check out ' + pvProduct.name + ' at Leens Computers and Mobiles!'
       if (navigator.share) {
         navigator.share({ title: pvProduct.name, text: text, url: url }).catch(function(){})
       } else {
