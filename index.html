@@ -605,7 +605,7 @@
     </div>
   </div>
 
-  <!-- ── FOOTER ── */
+  <!-- FOOTER -->
   <footer>
     <p class="footer-logo"><span>Al </span>Awaans</p>
     <div class="footer-info">
@@ -617,6 +617,13 @@
   </footer>
 
   <script>
+    // Catch any JS errors and show them in the grid for debugging
+    window.onerror = function(msg, src, line) {
+      var g = document.getElementById('grid')
+      if (g) g.innerHTML = '<div style="padding:24px;color:#e05252;font-size:13px;font-family:monospace">JS Error (line ' + line + '): ' + msg + '</div>'
+      return false
+    }
+
     // Firestore project ID
     const FS_PROJECT = 'alawaans-87424'
 
