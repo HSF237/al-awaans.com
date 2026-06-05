@@ -861,67 +861,72 @@
       btn.textContent = '…'
       btn.disabled = true
 
-      const STOP = new Set(['the','a','an','and','or','for','of','with','in','to','is','by','on','at','from','be','as','it','its','are','was','were','that','this','has','have','will','can','all','pro','max','plus','ultra','se','mini','gt','rs','note','series','gen','new','edition'])
       const BRANDS = ['apple','samsung','xiaomi','google','asus','realme','vivo','casio','redmi','oneplus','oppo','huawei','sony','nokia','motorola','lenovo','honor','infinix','tecno','itel','jbl','anker','baseus','spigen','belkin','otterbox']
       const CAT_KEYWORDS = {
-        smartphones:  ['smartphone','mobile','phone','android','ios','cell phone','handset','mobile phone'],
-        smartwatches: ['smartwatch','watch','wearable','fitness tracker','smart band','wristwatch'],
-        tablets:      ['tablet','ipad','tab','slate','android tablet'],
-        accessories:  ['accessory','accessories','mobile accessory','phone accessory','gadget'],
+        smartphones:  ['smartphone','mobile phone','phone','android','ios'],
+        smartwatches: ['smartwatch','smart watch','wearable','fitness tracker'],
+        tablets:      ['tablet','android tablet','ipad'],
+        accessories:  ['mobile accessory','phone accessory','accessories'],
       }
+      // Words that should never be keywords — generic adjectives, verbs, filler
+      const JUNK = new Set(['the','a','an','and','or','for','of','with','in','to','is','by','on','at','from','be','as','it','its','are','was','were','that','this','has','have','will','can','all','new','best','great','top','most','powerful','amazing','latest','super','fast','high','good','big','small','slim','thin','light','smart','full','true','real','wide','deep','sharp','bright','clear','pure','rich','long','more','very','also','just','only','even','than','our','your','their','we','us','they','he','she','but','not','no','yes','let','get','use','using','used','comes','come','built','build','design','makes','make','feel','feels','look','looks','support','supports','features','feature','offers','offer','includes','include','perfect','ideal','great','excellent'])
 
       const keywords = new Set()
-
-      // 1. Detect brand
       const nameLow = name.toLowerCase()
       const descLow = desc.toLowerCase()
+
+      // 1. Detect brand from name (exact match only — no plurals)
       let detectedBrand = null
       for (const b of BRANDS) {
-        if (nameLow.includes(b) || descLow.includes(b)) {
-          detectedBrand = b
-          keywords.add(b)
-          break
+        if (nameLow.includes(b)) { detectedBrand = b; keywords.add(b); break }
+      }
+      // fallback: check description
+      if (!detectedBrand) {
+        for (const b of BRANDS) {
+          if (descLow.includes(b)) { detectedBrand = b; keywords.add(b); break }
         }
       }
 
-      // 2. Extract meaningful words from name (skip stop words, keep 2+ char)
-      const nameWords = name.split(/[\s\-\/,]+/).map(w => w.toLowerCase().replace(/[^a-z0-9]/g,''))
-      for (const w of nameWords) {
-        if (w.length >= 2 && !STOP.has(w)) keywords.add(w)
+      // 2. All words from product NAME (most reliable source)
+      const nameParts = name.split(/[\s\-\/,]+/)
+      for (const w of nameParts) {
+        const wl = w.toLowerCase().replace(/[^a-z0-9]/g,'')
+        if (wl.length >= 2 && !JUNK.has(wl)) keywords.add(wl)
       }
 
-      // 3. Add full model name (lowercase)
+      // 3. Full product name as one keyword
       keywords.add(nameLow.trim())
 
-      // 4. Extract meaningful words from description
-      if (desc) {
-        const descWords = descLow.split(/[\s\-\/,\.]+/).map(w => w.replace(/[^a-z0-9]/g,''))
-        for (const w of descWords) {
-          if (w.length >= 4 && !STOP.has(w)) keywords.add(w)
-        }
+      // 4. Sliding 2-word combos from name (e.g. "iphone 16", "16 pro", "pro max")
+      for (let i = 0; i < nameParts.length - 1; i++) {
+        const combo = (nameParts[i] + ' ' + nameParts[i+1]).toLowerCase().trim()
+        if (combo.length >= 4) keywords.add(combo)
       }
 
-      // 5. Category keywords (pick 2)
-      const catKws = CAT_KEYWORDS[cat] || []
-      catKws.slice(0, 2).forEach(k => keywords.add(k))
+      // 5. From description — ONLY extract spec codes: things like "a18", "48mp", "6.9", model numbers
+      if (desc) {
+        const specTokens = descLow.match(/\b([a-z]\d+|\d+[a-z]+|\d+\.\d+[a-z]*)\b/g) || []
+        specTokens.forEach(t => { if (t.length >= 2) keywords.add(t) })
+      }
 
-      // 6. Badge
-      if (badge) keywords.add(badge.toLowerCase())
+      // 6. Category keywords (2 terms)
+      ;(CAT_KEYWORDS[cat] || []).slice(0, 2).forEach(k => keywords.add(k))
 
       // 7. Brand + category combo (e.g. "samsung phone")
-      if (detectedBrand && cat !== 'accessories') {
-        const catLabel = cat.replace('smart','')
-        keywords.add(detectedBrand + ' ' + catLabel)
+      if (detectedBrand) {
+        const label = { smartphones:'phone', smartwatches:'watch', tablets:'tablet', accessories:'accessory' }[cat] || cat
+        keywords.add(detectedBrand + ' ' + label)
       }
 
-      // 8. Trim to best 10 — prefer shorter, more specific terms
+      // 8. Pick best 10: full name first, then single words, then combos
+      const priority = (k) => {
+        if (k === nameLow) return 0
+        if (!k.includes(' ') && k.length >= 3) return 1
+        return 2
+      }
       const sorted = [...keywords]
-        .filter(k => k.length >= 2)
-        .sort((a, b) => {
-          const aScore = (a.includes(' ') ? 1 : 0) + (a === nameLow ? -2 : 0)
-          const bScore = (b.includes(' ') ? 1 : 0) + (b === nameLow ? -2 : 0)
-          return aScore - bScore
-        })
+        .filter(k => k.length >= 2 && !JUNK.has(k))
+        .sort((a,b) => priority(a) - priority(b))
         .slice(0, 10)
 
       document.getElementById('f-keywords').value = sorted.join(', ')
