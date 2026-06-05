@@ -324,7 +324,13 @@
       text-transform: uppercase; color: var(--gold);
     }
     .card-name { font-size: 0.82rem; font-weight: 700; line-height: 1.25; }
-    .card-actions { display: flex; gap: 6px; margin-top: 8px; }
+    .card-price {
+      font-size: 0.82rem; font-weight: 800; color: var(--gold); margin-top: 2px;
+    }
+    .card-price.ask {
+      font-size: 0.72rem; font-weight: 500; color: var(--text-3);
+    }
+    .card-actions { display: flex; gap: 6px; margin-top: 6px; }
     .btn-atc {
       flex: 1; display: flex; align-items: center; justify-content: center; gap: 5px;
       background: var(--gold); color: #000; font-size: 0.72rem; font-weight: 700;
@@ -604,7 +610,16 @@
       line-height: 1.2; margin-bottom: 13px;
     }
     .pv-desc {
-      font-size: 0.88rem; color: var(--text-2); line-height: 1.8; margin-bottom: 18px;
+      font-size: 0.88rem; color: var(--text-2); line-height: 1.8; margin-bottom: 14px;
+    }
+    .pv-price {
+      font-size: 1.5rem; font-weight: 900; color: var(--gold);
+      letter-spacing: -0.5px; margin-bottom: 16px;
+    }
+    .pv-price.ask {
+      font-size: 0.85rem; font-weight: 500; color: var(--text-3);
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: 8px; padding: 9px 13px; display: inline-block;
     }
     .pv-price-note {
       font-size: 0.76rem; color: var(--text-3);
@@ -822,7 +837,7 @@
       <p class="pv-cat" id="pv-cat"></p>
       <h1 class="pv-title" id="pv-title"></h1>
       <p class="pv-desc" id="pv-desc"></p>
-      <p class="pv-price-note">Pricing changes frequently — contact us on WhatsApp for the latest price and availability.</p>
+      <p class="pv-price" id="pv-price"></p>
 
       <div class="pv-actions">
         <button class="btn-gold" id="pv-buy-now">Buy Now</button>
@@ -1193,6 +1208,14 @@
       document.getElementById('pv-cat').textContent       = CAT_LABEL[p.cat] || p.cat
       document.getElementById('pv-title').textContent     = p.name
       document.getElementById('pv-desc').textContent      = p.desc
+      var priceEl = document.getElementById('pv-price')
+      if (p.price && p.price > 0) {
+        priceEl.textContent = 'AED ' + Number(p.price).toLocaleString()
+        priceEl.className   = 'pv-price'
+      } else {
+        priceEl.textContent = 'Price varies — contact us for the latest quote'
+        priceEl.className   = 'pv-price ask'
+      }
       document.getElementById('pv-nav-heart').classList.toggle('liked', isLiked(p.id))
 
       var waText = 'Hi, I\'m interested in the ' + p.name + '. Can you share the price and availability?'
@@ -1620,6 +1643,9 @@
           '<div class="card-body">' +
             '<span class="card-cat">' + (CAT_LABEL[p.cat] || p.cat) + '</span>' +
             '<p class="card-name">' + escHtml(p.name) + '</p>' +
+            (p.price && p.price > 0
+              ? '<p class="card-price">AED ' + Number(p.price).toLocaleString() + '</p>'
+              : '<p class="card-price ask">Contact for price</p>') +
             '<div class="card-actions">' +
               '<button class="btn-atc" onclick="addToCart(\'' + p.id + '\')">' +
                 '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>' +
