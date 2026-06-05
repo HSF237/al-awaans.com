@@ -721,9 +721,14 @@
           <p class="form-hint">One URL per line. Use direct image links (jpg, webp, png). First URL is shown as the thumbnail.<br>Tip: right-click any image online → "Copy image address".</p>
         </div>
         <div class="field">
-          <label>Search Keywords <span style="color:var(--text-3);font-weight:400">(optional)</span></label>
+          <label style="display:flex;align-items:center;justify-content:space-between">
+            <span>Search Keywords <span style="color:var(--text-3);font-weight:400">(optional)</span></span>
+            <button type="button" class="btn btn-ghost btn-sm" id="gen-kw-btn" onclick="generateKeywords()" style="font-size:0.72rem;padding:4px 10px;border-radius:6px;gap:5px">
+              ✦ Auto-Generate
+            </button>
+          </label>
           <input type="text" id="f-keywords" placeholder="e.g. iphone, ios, apple, 16 pro, flagship" />
-          <p class="form-hint">Comma-separated. These help customers find this product when searching. Include brand, model variations, and common terms.</p>
+          <p class="form-hint" id="kw-hint">Comma-separated. These help customers find this product when searching. Include brand, model variations, and common terms.</p>
         </div>
         <div class="field">
           <label>Price (AED) <span style="color:var(--text-3);font-weight:400">(optional)</span></label>
@@ -836,6 +841,96 @@
 
     // ── LOGOUT ─────────────────────────────────────────────
     document.getElementById('logout-btn').addEventListener('click', () => auth.signOut())
+
+    // ── AUTO KEYWORD GENERATOR ─────────────────────────────
+    function generateKeywords() {
+      const name  = document.getElementById('f-name').value.trim()
+      const desc  = document.getElementById('f-desc').value.trim()
+      const cat   = document.getElementById('f-cat').value
+      const badge = document.getElementById('f-badge').value.trim()
+      const btn   = document.getElementById('gen-kw-btn')
+      const hint  = document.getElementById('kw-hint')
+
+      if (!name) {
+        hint.textContent = '⚠ Enter a product name first, then generate keywords.'
+        hint.style.color = '#e05252'
+        setTimeout(() => { hint.textContent = 'Comma-separated. These help customers find this product when searching. Include brand, model variations, and common terms.'; hint.style.color = '' }, 3000)
+        return
+      }
+
+      btn.textContent = '…'
+      btn.disabled = true
+
+      const STOP = new Set(['the','a','an','and','or','for','of','with','in','to','is','by','on','at','from','be','as','it','its','are','was','were','that','this','has','have','will','can','all','pro','max','plus','ultra','se','mini','gt','rs','note','series','gen','new','edition'])
+      const BRANDS = ['apple','samsung','xiaomi','google','asus','realme','vivo','casio','redmi','oneplus','oppo','huawei','sony','nokia','motorola','lenovo','honor','infinix','tecno','itel','jbl','anker','baseus','spigen','belkin','otterbox']
+      const CAT_KEYWORDS = {
+        smartphones:  ['smartphone','mobile','phone','android','ios','cell phone','handset','mobile phone'],
+        smartwatches: ['smartwatch','watch','wearable','fitness tracker','smart band','wristwatch'],
+        tablets:      ['tablet','ipad','tab','slate','android tablet'],
+        accessories:  ['accessory','accessories','mobile accessory','phone accessory','gadget'],
+      }
+
+      const keywords = new Set()
+
+      // 1. Detect brand
+      const nameLow = name.toLowerCase()
+      const descLow = desc.toLowerCase()
+      let detectedBrand = null
+      for (const b of BRANDS) {
+        if (nameLow.includes(b) || descLow.includes(b)) {
+          detectedBrand = b
+          keywords.add(b)
+          break
+        }
+      }
+
+      // 2. Extract meaningful words from name (skip stop words, keep 2+ char)
+      const nameWords = name.split(/[\s\-\/,]+/).map(w => w.toLowerCase().replace(/[^a-z0-9]/g,''))
+      for (const w of nameWords) {
+        if (w.length >= 2 && !STOP.has(w)) keywords.add(w)
+      }
+
+      // 3. Add full model name (lowercase)
+      keywords.add(nameLow.trim())
+
+      // 4. Extract meaningful words from description
+      if (desc) {
+        const descWords = descLow.split(/[\s\-\/,\.]+/).map(w => w.replace(/[^a-z0-9]/g,''))
+        for (const w of descWords) {
+          if (w.length >= 4 && !STOP.has(w)) keywords.add(w)
+        }
+      }
+
+      // 5. Category keywords (pick 2)
+      const catKws = CAT_KEYWORDS[cat] || []
+      catKws.slice(0, 2).forEach(k => keywords.add(k))
+
+      // 6. Badge
+      if (badge) keywords.add(badge.toLowerCase())
+
+      // 7. Brand + category combo (e.g. "samsung phone")
+      if (detectedBrand && cat !== 'accessories') {
+        const catLabel = cat.replace('smart','')
+        keywords.add(detectedBrand + ' ' + catLabel)
+      }
+
+      // 8. Trim to best 10 — prefer shorter, more specific terms
+      const sorted = [...keywords]
+        .filter(k => k.length >= 2)
+        .sort((a, b) => {
+          const aScore = (a.includes(' ') ? 1 : 0) + (a === nameLow ? -2 : 0)
+          const bScore = (b.includes(' ') ? 1 : 0) + (b === nameLow ? -2 : 0)
+          return aScore - bScore
+        })
+        .slice(0, 10)
+
+      document.getElementById('f-keywords').value = sorted.join(', ')
+      btn.textContent = '✦ Auto-Generate'
+      btn.disabled = false
+      hint.textContent = '✓ ' + sorted.length + ' keywords generated — review and edit as needed.'
+      hint.style.color = '#52c07a'
+      setTimeout(() => { hint.textContent = 'Comma-separated. These help customers find this product when searching. Include brand, model variations, and common terms.'; hint.style.color = '' }, 4000)
+    }
 
     // ── LOAD PRODUCTS ──────────────────────────────────────
     async function loadProducts() {
