@@ -155,6 +155,104 @@
     }
     .filter-btn[data-cat="liked"].active .filter-count { background: rgba(0,0,0,0.2); color: #fff; }
 
+    /* ── FILTER BUTTON ── */
+    .filter-open-btn {
+      flex-shrink: 0; display: flex; align-items: center; gap: 5px;
+      padding: 7px 13px; border-radius: 100px;
+      font-size: 0.78rem; font-weight: 600; color: var(--text-2);
+      background: var(--surface); border: 1px solid var(--border); transition: all .2s;
+      position: relative;
+    }
+    .filter-open-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.15); }
+    .filter-open-btn.has-filters { border-color: var(--gold-border); color: var(--gold); background: var(--gold-dim); }
+    .filter-open-btn svg { width: 13px; height: 13px; }
+    .filter-active-dot {
+      position: absolute; top: -3px; right: -3px;
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--gold); border: 2px solid var(--bg); display: none;
+    }
+    .filter-open-btn.has-filters .filter-active-dot { display: block; }
+
+    /* Active filter chips row */
+    .active-chips {
+      display: none; flex-wrap: wrap; gap: 6px;
+      padding: 8px 14px; border-bottom: 1px solid var(--border);
+    }
+    .active-chips.show { display: flex; }
+    .chip {
+      display: flex; align-items: center; gap: 4px;
+      background: var(--gold-dim); border: 1px solid var(--gold-border);
+      color: var(--gold); font-size: 0.72rem; font-weight: 600;
+      padding: 4px 10px; border-radius: 100px; cursor: pointer; transition: all .2s;
+    }
+    .chip:hover { background: rgba(196,154,56,0.2); }
+    .chip svg { width: 11px; height: 11px; }
+    .chip-clear-all {
+      background: var(--surface-2); border-color: var(--border); color: var(--text-3);
+    }
+    .chip-clear-all:hover { color: var(--text); border-color: rgba(255,255,255,0.2); background: var(--surface-3); }
+
+    /* ── FILTER PANEL (bottom sheet) ── */
+    .fp-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+      z-index: 450; opacity: 0; pointer-events: none;
+      transition: opacity .28s; backdrop-filter: blur(4px);
+    }
+    .fp-overlay.open { opacity: 1; pointer-events: all; }
+    .fp-sheet {
+      position: fixed; left: 0; right: 0; bottom: 0;
+      background: var(--surface); border-top: 1px solid var(--border);
+      border-radius: 18px 18px 0 0;
+      z-index: 451; padding-bottom: env(safe-area-inset-bottom, 16px);
+      transform: translateY(100%);
+      transition: transform .32s cubic-bezier(0.22,1,0.36,1);
+      max-height: 85vh; overflow-y: auto;
+    }
+    .fp-sheet.open { transform: none; }
+    .fp-handle {
+      width: 40px; height: 4px; background: var(--text-3);
+      border-radius: 2px; margin: 12px auto 0;
+    }
+    .fp-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 18px; border-bottom: 1px solid var(--border);
+    }
+    .fp-head h3 { font-size: 0.93rem; font-weight: 700; }
+    .fp-clear-btn {
+      font-size: 0.78rem; font-weight: 600; color: var(--text-3);
+      background: none; border: none; cursor: pointer; transition: color .2s;
+    }
+    .fp-clear-btn:hover { color: var(--gold); }
+    .fp-body { padding: 16px 18px; display: flex; flex-direction: column; gap: 20px; }
+    .fp-section-title {
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 1.8px;
+      text-transform: uppercase; color: var(--text-3); margin-bottom: 10px;
+    }
+    .fp-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+    .fp-chip {
+      padding: 7px 14px; border-radius: 100px; font-size: 0.8rem; font-weight: 600;
+      color: var(--text-2); background: var(--surface-2); border: 1px solid var(--border);
+      cursor: pointer; transition: all .2s;
+    }
+    .fp-chip:hover { color: var(--text); border-color: rgba(255,255,255,0.18); }
+    .fp-chip.active { background: var(--gold); color: #000; border-color: var(--gold); }
+
+    /* Price range */
+    .fp-price-row { display: flex; align-items: center; gap: 10px; }
+    .fp-price-row input {
+      flex: 1; background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: 8px; padding: 9px 12px; color: var(--text);
+      font-family: inherit; font-size: 0.85rem; outline: none; transition: border-color .2s;
+    }
+    .fp-price-row input:focus { border-color: var(--gold-border); }
+    .fp-price-row input::placeholder { color: var(--text-3); }
+    .fp-price-sep { color: var(--text-3); font-size: 0.85rem; flex-shrink: 0; }
+
+    .fp-foot {
+      padding: 12px 18px 18px; border-top: 1px solid var(--border);
+      display: flex; gap: 10px;
+    }
+
     /* ── MAIN ── */
     .main { max-width: 1200px; margin: 0 auto; padding: 22px 14px 60px; }
     .section-head {
@@ -775,6 +873,50 @@
     <button class="filter-btn" data-cat="tablets">Tablets <span class="filter-count" id="count-tablets">0</span></button>
     <button class="filter-btn" data-cat="accessories">Accessories <span class="filter-count" id="count-accessories">0</span></button>
     <button class="filter-btn" data-cat="liked">♥ Liked <span class="filter-count" id="count-liked">0</span></button>
+    <button class="filter-open-btn" id="filter-open-btn" onclick="openFilterPanel()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="10" y1="18" x2="14" y2="18"/>
+      </svg>
+      Filter
+      <span class="filter-active-dot"></span>
+    </button>
+  </div>
+
+  <!-- Active filter chips -->
+  <div class="active-chips" id="active-chips"></div>
+
+  <!-- ── FILTER PANEL ── -->
+  <div class="fp-overlay" id="fp-overlay" onclick="if(event.target===this)closeFilterPanel()"></div>
+  <div class="fp-sheet" id="fp-sheet">
+    <div class="fp-handle"></div>
+    <div class="fp-head">
+      <h3>Filter Products</h3>
+      <button class="fp-clear-btn" onclick="clearAllFilters()">Clear all</button>
+    </div>
+    <div class="fp-body">
+      <div>
+        <p class="fp-section-title">Brand</p>
+        <div class="fp-chips" id="fp-brands"></div>
+      </div>
+      <div>
+        <p class="fp-section-title">Tag</p>
+        <div class="fp-chips" id="fp-badges"></div>
+      </div>
+      <div id="fp-price-section">
+        <p class="fp-section-title">Price Range (AED)</p>
+        <div class="fp-price-row">
+          <input type="number" id="fp-min" placeholder="Min" min="0" />
+          <span class="fp-price-sep">—</span>
+          <input type="number" id="fp-max" placeholder="Max" min="0" />
+        </div>
+      </div>
+    </div>
+    <div class="fp-foot">
+      <button class="btn-gold" style="flex:1;border:none;cursor:pointer;font-family:inherit" onclick="applyFilters()">
+        Show Results
+      </button>
+      <button class="btn-outline" style="cursor:pointer;font-family:inherit" onclick="closeFilterPanel()">Cancel</button>
+    </div>
   </div>
 
   <!-- ── MAIN ── -->
@@ -856,11 +998,25 @@
       tablets: 'Tablet', accessories: 'Accessory',
     }
 
+    // ── KNOWN BRANDS ──────────────────────────────────────────────
+    var KNOWN_BRANDS = ['Apple','Samsung','Xiaomi','Google','ASUS','Realme','Vivo','Casio','Redmi','OnePlus','Oppo']
+
+    function getProductBrand(p) {
+      var name = (p.name || '').toLowerCase()
+      var kws  = (p.keywords || []).map(function(k){ return k.toLowerCase() })
+      for (var i = 0; i < KNOWN_BRANDS.length; i++) {
+        var b = KNOWN_BRANDS[i].toLowerCase()
+        if (name.includes(b) || kws.indexOf(b) !== -1) return KNOWN_BRANDS[i]
+      }
+      return null
+    }
+
     // ── STATE ──────────────────────────────────────────────────────
     var PRODUCTS       = []
     var activeCategory = 'all'
     var searchQuery    = ''
     var sortMode       = 'default'
+    var activeFilters  = { brands: [], badges: [], minPrice: '', maxPrice: '' }
     var pvProduct      = null
     var pvGalleryIdx   = 0
     var pvSelectedStar = 0
@@ -1157,6 +1313,119 @@
       document.querySelectorAll('.rev-star-btn').forEach(function(b) { b.classList.remove('active') })
     }
 
+    // ── FILTER PANEL ──────────────────────────────────────────────
+    function openFilterPanel() {
+      // Build brand chips from available products
+      var brandsInStore = []
+      PRODUCTS.forEach(function(p) {
+        var b = getProductBrand(p)
+        if (b && brandsInStore.indexOf(b) === -1) brandsInStore.push(b)
+      })
+      brandsInStore.sort()
+      document.getElementById('fp-brands').innerHTML = brandsInStore.map(function(b) {
+        var active = activeFilters.brands.indexOf(b) !== -1
+        return '<button class="fp-chip' + (active ? ' active' : '') + '" data-brand="' + b + '">' + b + '</button>'
+      }).join('')
+
+      // Build badge chips
+      var badgesInStore = []
+      PRODUCTS.forEach(function(p) {
+        if (p.badge && badgesInStore.indexOf(p.badge) === -1) badgesInStore.push(p.badge)
+      })
+      document.getElementById('fp-badges').innerHTML = badgesInStore.length
+        ? badgesInStore.map(function(b) {
+            var active = activeFilters.badges.indexOf(b) !== -1
+            return '<button class="fp-chip' + (active ? ' active' : '') + '" data-badge="' + b + '">' + b + '</button>'
+          }).join('')
+        : '<span style="font-size:0.8rem;color:var(--text-3)">No tags available</span>'
+
+      // Restore price inputs
+      document.getElementById('fp-min').value = activeFilters.minPrice
+      document.getElementById('fp-max').value = activeFilters.maxPrice
+
+      document.getElementById('fp-overlay').classList.add('open')
+      document.getElementById('fp-sheet').classList.add('open')
+      document.body.style.overflow = 'hidden'
+    }
+
+    function closeFilterPanel() {
+      document.getElementById('fp-overlay').classList.remove('open')
+      document.getElementById('fp-sheet').classList.remove('open')
+      document.body.style.overflow = ''
+    }
+
+    function applyFilters() {
+      // Read brand chips
+      var brands = []
+      document.querySelectorAll('#fp-brands .fp-chip.active').forEach(function(c) {
+        brands.push(c.dataset.brand)
+      })
+      // Read badge chips
+      var badges = []
+      document.querySelectorAll('#fp-badges .fp-chip.active').forEach(function(c) {
+        badges.push(c.dataset.badge)
+      })
+      activeFilters.brands   = brands
+      activeFilters.badges   = badges
+      activeFilters.minPrice = document.getElementById('fp-min').value
+      activeFilters.maxPrice = document.getElementById('fp-max').value
+      closeFilterPanel()
+      render()
+      renderActiveChips()
+    }
+
+    function clearAllFilters() {
+      activeFilters = { brands: [], badges: [], minPrice: '', maxPrice: '' }
+      document.querySelectorAll('.fp-chip').forEach(function(c) { c.classList.remove('active') })
+      document.getElementById('fp-min').value = ''
+      document.getElementById('fp-max').value = ''
+      closeFilterPanel()
+      render()
+      renderActiveChips()
+    }
+
+    function renderActiveChips() {
+      var chips = []
+      activeFilters.brands.forEach(function(b) { chips.push({ label: b, type: 'brand', val: b }) })
+      activeFilters.badges.forEach(function(b) { chips.push({ label: 'Tag: ' + b, type: 'badge', val: b }) })
+      if (activeFilters.minPrice) chips.push({ label: 'Min AED ' + activeFilters.minPrice, type: 'minPrice', val: '' })
+      if (activeFilters.maxPrice) chips.push({ label: 'Max AED ' + activeFilters.maxPrice, type: 'maxPrice', val: '' })
+
+      var container = document.getElementById('active-chips')
+      var btn       = document.getElementById('filter-open-btn')
+
+      if (!chips.length) {
+        container.classList.remove('show')
+        btn.classList.remove('has-filters')
+        return
+      }
+      btn.classList.add('has-filters')
+      container.classList.add('show')
+      container.innerHTML = chips.map(function(c) {
+        return '<span class="chip" onclick="removeFilter(\'' + c.type + '\',\'' + c.val + '\')">' +
+          c.label +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>' +
+        '</span>'
+      }).join('') +
+      '<span class="chip chip-clear-all" onclick="clearAllFilters()">Clear all</span>'
+    }
+
+    function removeFilter(type, val) {
+      if (type === 'brand')    activeFilters.brands   = activeFilters.brands.filter(function(b){ return b !== val })
+      if (type === 'badge')    activeFilters.badges   = activeFilters.badges.filter(function(b){ return b !== val })
+      if (type === 'minPrice') activeFilters.minPrice = ''
+      if (type === 'maxPrice') activeFilters.maxPrice = ''
+      render()
+      renderActiveChips()
+    }
+
+    // Toggle chips inside filter panel
+    document.addEventListener('click', function(e) {
+      var chip = e.target.closest('.fp-chip')
+      if (!chip) return
+      chip.classList.toggle('active')
+    })
+
     // ── SHARE PRODUCT ─────────────────────────────────────────────
     function shareProduct() {
       if (!pvProduct) return
@@ -1212,6 +1481,7 @@
         for (var i = 0; i < json.documents.length; i++) {
           var doc = json.documents[i], f = doc.fields || {}
           var arr = (f.imgs && f.imgs.arrayValue && f.imgs.arrayValue.values) ? f.imgs.arrayValue.values : []
+          var kwArr = (f.keywords && f.keywords.arrayValue && f.keywords.arrayValue.values) ? f.keywords.arrayValue.values : []
           live.push({
             id:        doc.name.split('/').pop(),
             name:      (f.name  && f.name.stringValue)  || '',
@@ -1219,6 +1489,8 @@
             badge:     (f.badge && f.badge.stringValue)  || null,
             desc:      (f.desc  && f.desc.stringValue)  || '',
             imgs:      arr.map(function(v) { return v.stringValue }),
+            keywords:  kwArr.map(function(v) { return v.stringValue }),
+            price:     Number((f.price && (f.price.integerValue || f.price.doubleValue)) || 0),
             sortOrder: Number((f.sortOrder && (f.sortOrder.integerValue || f.sortOrder.doubleValue)) || 99)
           })
         }
@@ -1238,11 +1510,32 @@
     }
 
     // ── FILTER + SORT ─────────────────────────────────────────────
+    function matchesSearch(p, q) {
+      if (!q) return true
+      if (p.name.toLowerCase().includes(q)) return true
+      if (p.desc && p.desc.toLowerCase().includes(q)) return true
+      if (p.keywords && p.keywords.some(function(k){ return k.toLowerCase().includes(q) })) return true
+      return false
+    }
+
     function filtered() {
       var list = PRODUCTS.filter(function(p) {
         if (activeCategory === 'liked') return isLiked(p.id)
-        return (activeCategory === 'all' || p.cat === activeCategory) &&
-               (!searchQuery || p.name.toLowerCase().includes(searchQuery))
+        if (!(activeCategory === 'all' || p.cat === activeCategory)) return false
+        if (!matchesSearch(p, searchQuery)) return false
+        // brand filter
+        if (activeFilters.brands.length) {
+          var brand = getProductBrand(p)
+          if (!brand || activeFilters.brands.indexOf(brand) === -1) return false
+        }
+        // badge filter
+        if (activeFilters.badges.length) {
+          if (!p.badge || activeFilters.badges.indexOf(p.badge) === -1) return false
+        }
+        // price filter (requires p.price field)
+        if (activeFilters.minPrice !== '' && p.price && p.price < Number(activeFilters.minPrice)) return false
+        if (activeFilters.maxPrice !== '' && p.price && p.price > Number(activeFilters.maxPrice)) return false
+        return true
       })
       if (sortMode === 'az') list = list.slice().sort(function(a,b){ return a.name.localeCompare(b.name) })
       else if (sortMode === 'za') list = list.slice().sort(function(a,b){ return b.name.localeCompare(a.name) })
