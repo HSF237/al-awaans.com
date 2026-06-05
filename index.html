@@ -9,16 +9,14 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
 
-  <!-- no SDK needed for public reads — we use the REST API directly -->
-
   <style>
-    /* ── RESET & ROOT ── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
       --bg:         #080808;
       --surface:    #101010;
       --surface-2:  #181818;
+      --surface-3:  #202020;
       --gold:       #C49A38;
       --gold-light: #D4AA48;
       --gold-dim:   rgba(196,154,56,0.1);
@@ -32,7 +30,6 @@
     }
 
     html { scroll-behavior: smooth; }
-
     body {
       font-family: 'Inter', -apple-system, sans-serif;
       background: var(--bg);
@@ -41,12 +38,10 @@
       overflow-x: hidden;
       min-height: 100vh;
     }
-
     a { text-decoration: none; color: inherit; }
     img { display: block; max-width: 100%; }
     button { font-family: inherit; cursor: pointer; border: none; background: none; }
 
-    /* ── SCROLLBAR ── */
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
     ::-webkit-scrollbar-thumb { background: var(--text-3); border-radius: 3px; }
@@ -56,442 +51,506 @@
       position: sticky;
       top: 0;
       z-index: 200;
-      height: 60px;
-      background: rgba(8,8,8,0.92);
+      background: rgba(8,8,8,0.96);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      padding: 0 20px;
-      gap: 16px;
     }
-
-    .nav-back {
+    .nav-row {
+      height: 56px;
       display: flex;
       align-items: center;
-      gap: 6px;
-      font-size: 0.78rem;
-      color: var(--text-2);
-      transition: color .2s;
-      flex-shrink: 0;
+      padding: 0 14px;
+      gap: 10px;
+    }
+    .nav-back {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 0.78rem; color: var(--text-2);
+      transition: color .2s; flex-shrink: 0;
     }
     .nav-back:hover { color: var(--text); }
-    .nav-back svg { width: 14px; height: 14px; }
-
-    .nav-divider { width: 1px; height: 20px; background: var(--border); flex-shrink: 0; }
-
+    .nav-back svg { width: 16px; height: 16px; }
+    .nav-divider { width: 1px; height: 18px; background: var(--border); flex-shrink: 0; }
     .nav-logo {
-      font-size: 1.1rem;
-      font-weight: 900;
-      letter-spacing: -0.4px;
-      flex-shrink: 0;
+      font-size: 1.05rem; font-weight: 900; letter-spacing: -0.4px; flex-shrink: 0;
     }
     .nav-logo span { color: var(--gold); }
-
     .nav-spacer { flex: 1; }
-
-    .nav-search-wrap {
-      position: relative;
-      flex: 1;
-      max-width: 320px;
+    .nav-cart {
+      position: relative; width: 38px; height: 38px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; display: flex; align-items: center; justify-content: center;
+      color: var(--text-2); cursor: pointer; transition: all .2s; flex-shrink: 0;
     }
-    .nav-search-wrap svg {
-      position: absolute;
-      left: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 15px; height: 15px;
-      color: var(--text-3);
-      pointer-events: none;
+    .nav-cart:hover { border-color: var(--gold-border); color: var(--gold); }
+    .nav-cart svg { width: 17px; height: 17px; }
+    .cart-badge {
+      position: absolute; top: -7px; right: -7px;
+      background: var(--gold); color: #000; font-size: 0.58rem; font-weight: 800;
+      min-width: 18px; height: 18px; border-radius: 9px;
+      display: none; align-items: center; justify-content: center;
+      padding: 0 4px; border: 2px solid var(--bg);
+      transition: transform .2s;
     }
-    #search {
-      width: 100%;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 8px 12px 8px 36px;
-      color: var(--text);
-      font-family: inherit;
-      font-size: 0.85rem;
-      outline: none;
-      transition: border-color .2s;
-    }
-    #search:focus { border-color: var(--gold-border); }
-    #search::placeholder { color: var(--text-3); }
-
+    .cart-badge.show { display: flex; }
     .nav-wa {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: #25D366;
-      color: #fff;
-      font-size: 0.78rem;
-      font-weight: 600;
-      padding: 7px 14px;
-      border-radius: 8px;
-      transition: opacity .2s;
-      flex-shrink: 0;
-      white-space: nowrap;
+      display: flex; align-items: center; gap: 6px;
+      background: #25D366; color: #fff;
+      font-size: 0.78rem; font-weight: 600;
+      padding: 8px 13px; border-radius: 8px;
+      transition: opacity .2s; flex-shrink: 0; white-space: nowrap;
     }
     .nav-wa:hover { opacity: 0.88; }
     .nav-wa svg { width: 15px; height: 15px; }
 
-    /* hide text on very small screens */
+    /* Search bar — full width below nav row */
+    .nav-search-row { padding: 0 12px 10px; }
+    .nav-search-wrap { position: relative; width: 100%; }
+    .nav-search-wrap svg {
+      position: absolute; left: 13px; top: 50%;
+      transform: translateY(-50%);
+      width: 16px; height: 16px; color: var(--text-3); pointer-events: none;
+    }
+    #search {
+      width: 100%;
+      background: var(--surface-2);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 11px 14px 11px 42px;
+      color: var(--text); font-family: inherit; font-size: 0.9rem;
+      outline: none; transition: border-color .2s, box-shadow .2s;
+    }
+    #search:focus {
+      border-color: var(--gold-border);
+      box-shadow: 0 0 0 3px rgba(196,154,56,0.08);
+    }
+    #search::placeholder { color: var(--text-3); }
+
     @media (max-width: 480px) {
       .nav-wa-text { display: none; }
       .nav-back-text { display: none; }
-      .nav-search-wrap { max-width: 160px; }
     }
 
     /* ── FILTER BAR ── */
     .filter-bar {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 16px 20px;
-      overflow-x: auto;
-      border-bottom: 1px solid var(--border);
-      scrollbar-width: none;
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 14px; overflow-x: auto;
+      border-bottom: 1px solid var(--border); scrollbar-width: none;
     }
     .filter-bar::-webkit-scrollbar { display: none; }
-
     .filter-btn {
-      flex-shrink: 0;
-      padding: 7px 16px;
-      border-radius: 100px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: var(--text-2);
-      background: var(--surface);
-      border: 1px solid var(--border);
-      transition: all .2s;
+      flex-shrink: 0; padding: 7px 15px; border-radius: 100px;
+      font-size: 0.78rem; font-weight: 600; color: var(--text-2);
+      background: var(--surface); border: 1px solid var(--border); transition: all .2s;
     }
     .filter-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.15); }
-    .filter-btn.active {
-      background: var(--gold);
-      color: #000;
-      border-color: var(--gold);
-    }
-
+    .filter-btn.active { background: var(--gold); color: #000; border-color: var(--gold); }
     .filter-count {
-      font-size: 0.68rem;
-      background: var(--gold-dim);
-      color: var(--gold);
-      padding: 1px 6px;
-      border-radius: 100px;
-      margin-left: 4px;
+      font-size: 0.65rem; background: var(--gold-dim); color: var(--gold);
+      padding: 1px 6px; border-radius: 100px; margin-left: 4px;
     }
-    .filter-btn.active .filter-count {
-      background: rgba(0,0,0,0.2);
-      color: #000;
+    .filter-btn.active .filter-count { background: rgba(0,0,0,0.2); color: #000; }
+    .filter-btn[data-cat="liked"].active {
+      background: #c0392b; border-color: #c0392b; color: #fff;
     }
+    .filter-btn[data-cat="liked"].active .filter-count { background: rgba(0,0,0,0.2); color: #fff; }
 
-    /* ── MAIN CONTENT ── */
-    .main {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 28px 20px 60px;
-    }
-
-    /* Section header */
+    /* ── MAIN ── */
+    .main { max-width: 1200px; margin: 0 auto; padding: 22px 14px 60px; }
     .section-head {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      margin-bottom: 20px;
+      display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 18px;
     }
-    .section-head h2 {
-      font-size: 1.1rem;
-      font-weight: 700;
-      letter-spacing: -0.3px;
-    }
-    .section-head span {
-      font-size: 0.78rem;
-      color: var(--text-3);
-    }
+    .section-head h2 { font-size: 1rem; font-weight: 700; letter-spacing: -0.3px; }
+    .section-head span { font-size: 0.78rem; color: var(--text-3); }
 
-    /* ── PRODUCT GRID ── */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-    }
-
+    /* ── GRID ── */
+    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 11px; }
     @media (min-width: 580px)  { .grid { grid-template-columns: repeat(3, 1fr); } }
     @media (min-width: 860px)  { .grid { grid-template-columns: repeat(4, 1fr); } }
     @media (min-width: 1100px) { .grid { grid-template-columns: repeat(5, 1fr); } }
 
     /* ── PRODUCT CARD ── */
     .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      overflow: hidden;
-      cursor: pointer;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); overflow: hidden;
       transition: border-color .25s, transform .25s;
-      display: flex;
-      flex-direction: column;
+      display: flex; flex-direction: column;
     }
-    .card:hover {
-      border-color: var(--gold-border);
-      transform: translateY(-3px);
-    }
-
+    .card:hover { border-color: var(--gold-border); transform: translateY(-3px); }
     .card-img {
-      aspect-ratio: 1;
-      overflow: hidden;
-      background: var(--surface-2);
-      position: relative;
+      aspect-ratio: 1; overflow: hidden; background: var(--surface-2);
+      position: relative; cursor: pointer;
     }
     .card-img img {
-      width: 100%; height: 100%;
-      object-fit: cover;
-      transition: transform .45s ease;
+      width: 100%; height: 100%; object-fit: cover; transition: transform .45s ease;
     }
     .card:hover .card-img img { transform: scale(1.06); }
-
     .card-badge {
-      position: absolute;
-      top: 8px; left: 8px;
-      background: var(--gold);
-      color: #000;
-      font-size: 0.58rem;
-      font-weight: 700;
-      letter-spacing: 0.8px;
-      text-transform: uppercase;
-      padding: 3px 7px;
-      border-radius: 4px;
+      position: absolute; top: 8px; left: 8px;
+      background: var(--gold); color: #000;
+      font-size: 0.58rem; font-weight: 700; letter-spacing: 0.8px;
+      text-transform: uppercase; padding: 3px 7px; border-radius: 4px;
     }
-
+    .card-heart {
+      position: absolute; top: 7px; right: 7px;
+      width: 30px; height: 30px;
+      background: rgba(8,8,8,0.72); border-radius: 50%; border: none;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: transform .15s; z-index: 2;
+      backdrop-filter: blur(4px);
+    }
+    .card-heart:hover { transform: scale(1.2); }
+    .card-heart svg { width: 14px; height: 14px; transition: fill .2s, stroke .2s; }
+    .card-heart.liked svg { fill: #e74c3c; stroke: #e74c3c; }
+    .card-heart:not(.liked) svg { fill: none; stroke: rgba(255,255,255,0.75); }
     .card-body {
-      padding: 12px 12px 14px;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
+      padding: 10px 11px 12px; flex: 1;
+      display: flex; flex-direction: column; gap: 4px;
     }
     .card-cat {
-      font-size: 0.62rem;
-      font-weight: 600;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--gold);
+      font-size: 0.6rem; font-weight: 700; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--gold);
     }
-    .card-name {
-      font-size: 0.85rem;
-      font-weight: 700;
-      line-height: 1.25;
-      color: var(--text);
+    .card-name { font-size: 0.82rem; font-weight: 700; line-height: 1.25; }
+    .card-actions { display: flex; gap: 6px; margin-top: 8px; }
+    .btn-atc {
+      flex: 1; display: flex; align-items: center; justify-content: center; gap: 5px;
+      background: var(--gold); color: #000; font-size: 0.72rem; font-weight: 700;
+      padding: 8px 8px; border-radius: 8px; border: none; cursor: pointer;
+      font-family: inherit; transition: all .2s;
     }
-    .card-btn {
-      margin-top: auto;
-      padding-top: 10px;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: var(--text-2);
-      transition: color .2s;
+    .btn-atc:hover { background: var(--gold-light); transform: translateY(-1px); }
+    .btn-atc svg { width: 12px; height: 12px; flex-shrink: 0; }
+    .btn-view {
+      display: flex; align-items: center; justify-content: center;
+      background: var(--surface-2); color: var(--text-2);
+      padding: 8px 10px; border-radius: 8px;
+      border: 1px solid var(--border); cursor: pointer; font-family: inherit; transition: all .2s;
     }
-    .card:hover .card-btn { color: var(--gold); }
-    .card-btn svg { width: 13px; height: 13px; }
+    .btn-view:hover { border-color: rgba(255,255,255,0.2); color: var(--text); }
+    .btn-view svg { width: 14px; height: 14px; }
 
     /* ── EMPTY STATE ── */
-    .empty {
-      grid-column: 1 / -1;
-      text-align: center;
-      padding: 60px 20px;
-      color: var(--text-3);
-    }
+    .empty { grid-column: 1/-1; text-align: center; padding: 60px 20px; color: var(--text-3); }
     .empty p { font-size: 0.9rem; margin-top: 8px; }
 
-    /* ── MODAL ── */
+    /* ── CART DRAWER ── */
+    .cart-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.65);
+      z-index: 400; opacity: 0; pointer-events: none;
+      transition: opacity .3s; backdrop-filter: blur(3px);
+    }
+    .cart-overlay.open { opacity: 1; pointer-events: all; }
+    .cart-drawer {
+      position: fixed; top: 0; right: 0; bottom: 0;
+      width: 100%; max-width: 390px;
+      background: var(--surface); border-left: 1px solid var(--border);
+      z-index: 401; display: flex; flex-direction: column;
+      transform: translateX(100%);
+      transition: transform .32s cubic-bezier(0.22,1,0.36,1);
+    }
+    .cart-drawer.open { transform: none; }
+    .cart-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 15px 17px; border-bottom: 1px solid var(--border);
+    }
+    .cart-head h2 { font-size: 0.92rem; font-weight: 700; }
+    .icon-btn {
+      width: 30px; height: 30px; background: var(--surface-2); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-2); cursor: pointer; border: none; transition: color .2s;
+    }
+    .icon-btn:hover { color: var(--text); }
+    .icon-btn svg { width: 14px; height: 14px; }
+    .cart-body {
+      flex: 1; overflow-y: auto; padding: 12px 13px;
+      display: flex; flex-direction: column; gap: 9px;
+    }
+    .cart-empty-msg {
+      text-align: center; padding: 50px 20px;
+      color: var(--text-3); font-size: 0.85rem; line-height: 1.8;
+    }
+    .ci-row {
+      display: flex; align-items: center; gap: 9px;
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 9px;
+    }
+    .ci-row img {
+      width: 48px; height: 48px; border-radius: 7px; object-fit: cover; flex-shrink: 0;
+    }
+    .ci-name { font-size: 0.78rem; font-weight: 600; flex: 1; line-height: 1.3; }
+    .ci-qty { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
+    .ci-qty button {
+      width: 25px; height: 25px;
+      background: var(--surface-3); border: 1px solid var(--border);
+      border-radius: 6px; color: var(--text); font-size: 0.95rem; font-weight: 700;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .2s;
+    }
+    .ci-qty button:hover { background: var(--gold-dim); color: var(--gold); }
+    .ci-qty span { font-size: 0.82rem; font-weight: 700; min-width: 16px; text-align: center; }
+    .ci-del {
+      color: var(--text-3); cursor: pointer; padding: 4px;
+      background: none; border: none; flex-shrink: 0; transition: color .2s;
+    }
+    .ci-del:hover { color: #e05252; }
+    .ci-del svg { width: 13px; height: 13px; }
+    .cart-foot {
+      padding: 11px 13px; border-top: 1px solid var(--border);
+      display: flex; flex-direction: column; gap: 9px;
+    }
+    .cart-summary-line { font-size: 0.8rem; color: var(--text-2); }
+    .cart-summary-line strong { color: var(--text); }
+
+    /* ── SHARED BUTTON STYLES ── */
+    .btn-gold {
+      display: flex; align-items: center; justify-content: center; gap: 7px;
+      background: var(--gold); color: #000;
+      font-size: 0.88rem; font-weight: 700;
+      padding: 12px 16px; border-radius: var(--radius);
+      border: none; cursor: pointer; font-family: inherit; transition: all .2s;
+    }
+    .btn-gold:hover { background: var(--gold-light); transform: translateY(-1px); }
+    .btn-outline {
+      display: flex; align-items: center; justify-content: center; gap: 7px;
+      background: var(--surface-2); color: var(--text);
+      font-size: 0.88rem; font-weight: 600;
+      padding: 12px 16px; border-radius: var(--radius);
+      border: 1px solid var(--border); cursor: pointer; font-family: inherit; transition: all .2s;
+    }
+    .btn-outline:hover { border-color: rgba(255,255,255,0.2); }
+    .btn-green {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      background: #25D366; color: #fff;
+      font-size: 0.88rem; font-weight: 700;
+      padding: 12px 16px; border-radius: var(--radius);
+      border: none; cursor: pointer; font-family: inherit; transition: opacity .2s;
+      text-decoration: none;
+    }
+    .btn-green:hover { opacity: 0.88; }
+    .btn-green svg { width: 17px; height: 17px; }
+
+    /* ── CHECKOUT MODAL ── */
     .modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.85);
-      z-index: 500;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-      backdrop-filter: blur(6px);
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.85); z-index: 500;
+      align-items: center; justify-content: center;
+      padding: 16px; backdrop-filter: blur(6px);
     }
     .modal-overlay.open { display: flex; }
-
-    .modal {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      width: 100%;
-      max-width: 560px;
-      max-height: 90vh;
-      overflow-y: auto;
-      position: relative;
-      animation: modalIn .28s cubic-bezier(0.22,1,0.36,1);
-    }
     @keyframes modalIn {
       from { opacity: 0; transform: scale(0.93) translateY(16px); }
       to   { opacity: 1; transform: none; }
     }
-
-    .modal-close {
-      position: absolute;
-      top: 14px; right: 14px;
-      width: 32px; height: 32px;
-      background: var(--surface-2);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--text-2);
-      transition: color .2s, background .2s;
-      z-index: 1;
+    .co-modal {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 18px; width: 100%; max-width: 480px;
+      max-height: 90vh; overflow-y: auto;
+      animation: modalIn .25s cubic-bezier(0.22,1,0.36,1);
     }
-    .modal-close:hover { color: var(--text); background: var(--border); }
-    .modal-close svg { width: 16px; height: 16px; }
-
-    /* Image gallery */
-    .modal-gallery {
-      position: relative;
-      aspect-ratio: 4/3;
-      background: var(--surface-2);
-      overflow: hidden;
-      border-radius: 18px 18px 0 0;
+    .co-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 15px 19px; border-bottom: 1px solid var(--border);
     }
-    .modal-gallery img {
-      width: 100%; height: 100%;
-      object-fit: cover;
-      display: none;
+    .co-head h2 { font-size: 0.93rem; font-weight: 700; }
+    .co-body { padding: 17px 19px; display: flex; flex-direction: column; gap: 13px; }
+    .co-summary {
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 11px 13px;
     }
-    .modal-gallery img.active { display: block; }
-
-    .gallery-nav {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 12px;
-      pointer-events: none;
+    .co-summary-label {
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--gold); margin-bottom: 7px;
     }
-    .gallery-btn {
-      width: 32px; height: 32px;
-      background: rgba(8,8,8,0.7);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--text);
-      pointer-events: all;
-      transition: background .2s;
+    .co-summary-items { font-size: 0.8rem; color: var(--text-2); line-height: 1.9; }
+    .co-delivery {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--gold-dim); border: 1px solid var(--gold-border);
+      border-radius: 8px; padding: 9px 13px;
+      font-size: 0.78rem; color: var(--gold); font-weight: 600;
     }
-    .gallery-btn:hover { background: rgba(8,8,8,0.9); }
-    .gallery-btn svg { width: 16px; height: 16px; }
-    .gallery-btn.hidden { opacity: 0; pointer-events: none; }
-
-    .gallery-dots {
-      position: absolute;
-      bottom: 10px; left: 0; right: 0;
-      display: flex;
-      justify-content: center;
-      gap: 5px;
+    .field label {
+      display: block; font-size: 0.73rem; font-weight: 600;
+      color: var(--text-2); margin-bottom: 5px;
     }
-    .gallery-dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.35);
-      transition: background .2s;
+    .field input, .field textarea {
+      width: 100%; background: var(--surface-2);
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 10px 12px; color: var(--text);
+      font-family: inherit; font-size: 0.85rem;
+      outline: none; transition: border-color .2s;
     }
-    .gallery-dot.active { background: var(--gold); }
-
-    .modal-body { padding: 20px; }
-
-    .modal-cat {
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 6px;
-    }
-    .modal-title {
-      font-size: 1.3rem;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-      margin-bottom: 12px;
-    }
-    .modal-desc {
-      font-size: 0.875rem;
-      color: var(--text-2);
-      line-height: 1.75;
-      margin-bottom: 20px;
-    }
-    .modal-price-note {
-      font-size: 0.75rem;
-      color: var(--text-3);
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 10px 14px;
-      margin-bottom: 18px;
+    .field input:focus, .field textarea:focus { border-color: var(--gold-border); }
+    .field input::placeholder, .field textarea::placeholder { color: var(--text-3); }
+    .field textarea { resize: none; min-height: 68px; }
+    .co-foot {
+      padding: 13px 19px; border-top: 1px solid var(--border);
+      display: flex; gap: 9px; flex-wrap: wrap;
     }
 
-    .modal-actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
+    /* ── PRODUCT FULL-SCREEN VIEW ── */
+    .pv-screen {
+      position: fixed; inset: 0; background: var(--bg);
+      z-index: 300; overflow-y: auto;
+      transform: translateX(100%);
+      transition: transform .34s cubic-bezier(0.22,1,0.36,1);
     }
-    .btn-wa {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      background: #25D366;
-      color: #fff;
-      font-weight: 700;
-      font-size: 0.88rem;
-      padding: 12px 16px;
-      border-radius: var(--radius);
-      transition: opacity .2s;
-      min-width: 140px;
-    }
-    .btn-wa:hover { opacity: 0.88; }
-    .btn-wa svg { width: 18px; height: 18px; }
+    .pv-screen.open { transform: none; }
 
-    .btn-call {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      background: var(--surface-2);
-      color: var(--text);
-      font-weight: 600;
-      font-size: 0.88rem;
-      padding: 12px 16px;
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
-      transition: border-color .2s;
+    .pv-nav {
+      position: sticky; top: 0; z-index: 10; height: 54px;
+      display: flex; align-items: center; gap: 10px; padding: 0 12px;
+      background: rgba(8,8,8,0.94); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
     }
-    .btn-call:hover { border-color: rgba(255,255,255,0.2); }
-    .btn-call svg { width: 16px; height: 16px; }
+    .pv-back {
+      width: 36px; height: 36px; background: var(--surface);
+      border: 1px solid var(--border); border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-2); cursor: pointer; transition: all .2s; flex-shrink: 0;
+    }
+    .pv-back:hover { border-color: var(--gold-border); color: var(--gold); }
+    .pv-back svg { width: 16px; height: 16px; }
+    .pv-nav-title {
+      flex: 1; font-size: 0.88rem; font-weight: 700;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .pv-nav-heart {
+      width: 36px; height: 36px; background: var(--surface);
+      border: 1px solid var(--border); border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: all .2s; flex-shrink: 0;
+    }
+    .pv-nav-heart:hover { border-color: rgba(231,76,60,0.4); }
+    .pv-nav-heart svg { width: 16px; height: 16px; transition: fill .2s, stroke .2s; }
+    .pv-nav-heart.liked { border-color: rgba(231,76,60,0.5); background: rgba(231,76,60,0.1); }
+    .pv-nav-heart.liked svg { fill: #e74c3c; stroke: #e74c3c; }
+    .pv-nav-heart:not(.liked) svg { fill: none; stroke: var(--text-2); }
+
+    /* Gallery */
+    .pv-gallery {
+      position: relative; aspect-ratio: 4/3; max-height: 340px;
+      background: var(--surface-2); overflow: hidden;
+    }
+    .pv-gallery img {
+      width: 100%; height: 100%; object-fit: cover; display: none;
+    }
+    .pv-gallery img.active { display: block; }
+    .pv-gallery-nav {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 11px; pointer-events: none;
+    }
+    .pv-gbtn {
+      width: 34px; height: 34px; background: rgba(8,8,8,0.72); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text); pointer-events: all; cursor: pointer; border: none; transition: background .2s;
+    }
+    .pv-gbtn:hover { background: rgba(8,8,8,0.92); }
+    .pv-gbtn svg { width: 15px; height: 15px; }
+    .pv-gbtn.hidden { opacity: 0; pointer-events: none; }
+    .pv-dots {
+      position: absolute; bottom: 9px; left: 0; right: 0;
+      display: flex; justify-content: center; gap: 5px;
+    }
+    .pv-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: rgba(255,255,255,0.3); transition: background .2s; cursor: pointer;
+    }
+    .pv-dot.active { background: var(--gold); }
+
+    /* Thumbnails */
+    .pv-thumbs {
+      display: flex; gap: 7px; padding: 9px 12px;
+      overflow-x: auto; scrollbar-width: none;
+      background: var(--surface-2); border-bottom: 1px solid var(--border);
+    }
+    .pv-thumbs::-webkit-scrollbar { display: none; }
+    .pv-thumb {
+      width: 52px; height: 52px; border-radius: 7px; overflow: hidden;
+      flex-shrink: 0; cursor: pointer; border: 2px solid transparent; transition: border-color .2s;
+    }
+    .pv-thumb.active { border-color: var(--gold); }
+    .pv-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* Body */
+    .pv-body { padding: 20px 16px 40px; max-width: 720px; margin: 0 auto; }
+    .pv-cat {
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--gold); margin-bottom: 7px;
+    }
+    .pv-title {
+      font-size: 1.45rem; font-weight: 800; letter-spacing: -0.5px;
+      line-height: 1.2; margin-bottom: 13px;
+    }
+    .pv-desc {
+      font-size: 0.88rem; color: var(--text-2); line-height: 1.8; margin-bottom: 18px;
+    }
+    .pv-price-note {
+      font-size: 0.76rem; color: var(--text-3);
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: 8px; padding: 10px 13px; margin-bottom: 18px;
+    }
+    .pv-actions {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-bottom: 9px;
+    }
+    .pv-wa-row { margin-bottom: 0; }
+    .pv-divider { height: 1px; background: var(--border); margin: 24px 0; }
+
+    /* ── REVIEWS ── */
+    .rev-section h3 {
+      font-size: 0.97rem; font-weight: 700; margin-bottom: 14px;
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    }
+    .rev-avg { font-size: 0.82rem; color: var(--gold); font-weight: 600; }
+    .rev-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px; }
+    .rev-card {
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 13px;
+    }
+    .rev-top {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px;
+    }
+    .rev-name { font-size: 0.82rem; font-weight: 700; }
+    .rev-date { font-size: 0.7rem; color: var(--text-3); }
+    .rev-stars { color: var(--gold); font-size: 0.82rem; letter-spacing: 1px; margin-bottom: 5px; }
+    .rev-text { font-size: 0.82rem; color: var(--text-2); line-height: 1.65; }
+    .rev-no-reviews {
+      text-align: center; padding: 22px;
+      color: var(--text-3); font-size: 0.83rem;
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: 10px; margin-bottom: 14px;
+    }
+    .rev-form {
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: 12px; padding: 15px;
+    }
+    .rev-form h4 { font-size: 0.83rem; font-weight: 700; margin-bottom: 11px; }
+    .rev-star-row { display: flex; gap: 6px; margin-bottom: 11px; }
+    .rev-star-btn {
+      font-size: 1.4rem; background: none; border: none; cursor: pointer;
+      color: var(--text-3); transition: color .15s, transform .15s; line-height: 1;
+    }
+    .rev-star-btn.active { color: var(--gold); }
+    .rev-star-btn:hover { color: var(--gold); transform: scale(1.15); }
+    .rev-form .field { margin-bottom: 9px; }
+    .btn-rev-submit {
+      background: var(--gold); color: #000; font-size: 0.8rem; font-weight: 700;
+      padding: 9px 18px; border-radius: 8px; border: none; cursor: pointer;
+      font-family: inherit; transition: background .2s;
+    }
+    .btn-rev-submit:hover { background: var(--gold-light); }
 
     /* ── FOOTER ── */
     footer {
-      background: var(--surface);
-      border-top: 1px solid var(--border);
-      padding: 32px 20px;
-      text-align: center;
+      background: var(--surface); border-top: 1px solid var(--border);
+      padding: 28px 20px; text-align: center;
     }
     .footer-logo { font-size: 1.1rem; font-weight: 900; margin-bottom: 8px; }
     .footer-logo span { color: var(--gold); }
     .footer-info { font-size: 0.8rem; color: var(--text-3); line-height: 1.8; }
     .footer-info a { color: var(--text-2); transition: color .2s; }
     .footer-info a:hover { color: var(--gold); }
-    .footer-copy { font-size: 0.72rem; color: var(--text-3); margin-top: 16px; }
+    .footer-copy { font-size: 0.72rem; color: var(--text-3); margin-top: 14px; }
 
     @keyframes pulse {
       0%, 100% { opacity: 1; }
@@ -503,51 +562,194 @@
 
   <!-- ── NAVBAR ── -->
   <header class="navbar">
-    <a href="https://al-awaans-site.vercel.app" class="nav-back" id="back-link">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M19 12H5M5 12l7 7M5 12l7-7"/>
-      </svg>
-      <span class="nav-back-text">Main Site</span>
-    </a>
-
-    <div class="nav-divider"></div>
-
-    <a href="#" class="nav-logo"><span>Al </span>Awaans</a>
-
-    <div class="nav-spacer"></div>
-
-    <div class="nav-search-wrap">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-      </svg>
-      <input type="text" id="search" placeholder="Search products…" autocomplete="off" />
+    <div class="nav-row">
+      <a href="https://al-awaans-site.vercel.app" class="nav-back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 12H5M5 12l7 7M5 12l7-7"/>
+        </svg>
+        <span class="nav-back-text">Main Site</span>
+      </a>
+      <div class="nav-divider"></div>
+      <a href="#" class="nav-logo"><span>Al </span>Awaans</a>
+      <div class="nav-spacer"></div>
+      <button class="nav-cart" id="cart-btn" aria-label="Cart">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <path d="M16 10a4 4 0 01-8 0"/>
+        </svg>
+        <span class="cart-badge" id="cart-badge">0</span>
+      </button>
+      <a href="https://wa.me/971569613435" target="_blank" rel="noreferrer" class="nav-wa">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+        <span class="nav-wa-text">WhatsApp</span>
+      </a>
     </div>
-
-    <a href="https://wa.me/971589892367" target="_blank" rel="noreferrer" class="nav-wa">
-      <svg viewBox="0 0 24 24" fill="currentColor">
-        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-      </svg>
-      <span class="nav-wa-text">WhatsApp</span>
-    </a>
+    <!-- Full-width search bar -->
+    <div class="nav-search-row">
+      <div class="nav-search-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input type="text" id="search" placeholder="Search products, brands…" autocomplete="off" />
+      </div>
+    </div>
   </header>
 
-  <!-- ── CATEGORY FILTER ── -->
+  <!-- ── CART OVERLAY + DRAWER ── -->
+  <div class="cart-overlay" id="cart-overlay"></div>
+  <div class="cart-drawer" id="cart-drawer">
+    <div class="cart-head">
+      <h2>Cart <span id="cart-head-count" style="color:var(--text-3);font-weight:400;font-size:0.78rem"></span></h2>
+      <button class="icon-btn" id="cart-drawer-close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="cart-body" id="cart-body"></div>
+    <div class="cart-foot" id="cart-foot" style="display:none">
+      <p class="cart-summary-line" id="cart-summary-line"></p>
+      <button class="btn-gold" style="width:100%" onclick="openCheckout()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        Proceed to Order
+      </button>
+    </div>
+  </div>
+
+  <!-- ── CHECKOUT MODAL ── -->
+  <div class="modal-overlay" id="checkout-overlay">
+    <div class="co-modal">
+      <div class="co-head">
+        <h2>Place Your Order</h2>
+        <button class="icon-btn" onclick="closeCheckout()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="co-body">
+        <div class="co-summary">
+          <p class="co-summary-label">Your Order</p>
+          <div class="co-summary-items" id="co-items-list"></div>
+        </div>
+        <div class="co-delivery">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+          Delivery available across all UAE
+        </div>
+        <div class="field">
+          <label>Full Name *</label>
+          <input type="text" id="co-name" placeholder="Your name" />
+        </div>
+        <div class="field">
+          <label>Phone Number *</label>
+          <input type="tel" id="co-phone" placeholder="+971 50 000 0000" />
+        </div>
+        <div class="field">
+          <label>Delivery Address *</label>
+          <input type="text" id="co-address" placeholder="Area, city, emirate — e.g. Al Reem Island, Abu Dhabi" />
+        </div>
+        <div class="field">
+          <label>Notes <span style="color:var(--text-3);font-weight:400">(optional)</span></label>
+          <textarea id="co-notes" placeholder="Colour, variant, or any other notes…"></textarea>
+        </div>
+      </div>
+      <div class="co-foot">
+        <button class="btn-gold" style="flex:1" onclick="submitOrder()">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+          </svg>
+          Send Order via WhatsApp
+        </button>
+        <button class="btn-outline" onclick="closeCheckout()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PRODUCT FULL-SCREEN VIEW ── -->
+  <div class="pv-screen" id="pv-screen">
+    <div class="pv-nav">
+      <button class="pv-back" onclick="closePV()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5M5 12l7 7M5 12l7-7"/></svg>
+      </button>
+      <span class="pv-nav-title" id="pv-nav-title"></span>
+      <button class="pv-nav-heart" id="pv-nav-heart" onclick="toggleWishlistPV()">
+        <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="pv-gallery" id="pv-gallery">
+      <div class="pv-gallery-nav">
+        <button class="pv-gbtn hidden" id="pv-prev">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <button class="pv-gbtn hidden" id="pv-next">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+      </div>
+      <div class="pv-dots" id="pv-dots"></div>
+    </div>
+    <div class="pv-thumbs" id="pv-thumbs" style="display:none"></div>
+
+    <div class="pv-body">
+      <p class="pv-cat" id="pv-cat"></p>
+      <h1 class="pv-title" id="pv-title"></h1>
+      <p class="pv-desc" id="pv-desc"></p>
+      <p class="pv-price-note">Pricing changes frequently — contact us on WhatsApp for the latest price and availability.</p>
+
+      <div class="pv-actions">
+        <button class="btn-gold" id="pv-buy-now">Buy Now</button>
+        <button class="btn-outline" id="pv-atc" style="border-color:var(--border)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:15px;height:15px;flex-shrink:0"><path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+          Add to Cart
+        </button>
+      </div>
+      <div class="pv-wa-row">
+        <a class="btn-green" id="pv-wa" target="_blank" rel="noreferrer" style="width:100%">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+          </svg>
+          Enquire on WhatsApp
+        </a>
+      </div>
+
+      <div class="pv-divider"></div>
+
+      <!-- Reviews -->
+      <div class="rev-section">
+        <h3>Customer Reviews <span class="rev-avg" id="rev-avg"></span></h3>
+        <div class="rev-list" id="rev-list"></div>
+        <div class="rev-form">
+          <h4>Write a Review</h4>
+          <div class="rev-star-row" id="rev-stars">
+            <button class="rev-star-btn" data-star="1">★</button>
+            <button class="rev-star-btn" data-star="2">★</button>
+            <button class="rev-star-btn" data-star="3">★</button>
+            <button class="rev-star-btn" data-star="4">★</button>
+            <button class="rev-star-btn" data-star="5">★</button>
+          </div>
+          <div class="field">
+            <label>Your Name *</label>
+            <input type="text" id="rev-name" placeholder="e.g. Ahmed" />
+          </div>
+          <div class="field">
+            <label>Your Review *</label>
+            <textarea id="rev-text" placeholder="Share your experience with this product…"></textarea>
+          </div>
+          <button class="btn-rev-submit" onclick="submitReview()">Post Review</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── FILTER BAR ── -->
   <div class="filter-bar" id="filter-bar">
-    <button class="filter-btn active" data-cat="all">
-      All <span class="filter-count" id="count-all">0</span>
-    </button>
-    <button class="filter-btn" data-cat="smartphones">
-      Smartphones <span class="filter-count" id="count-smartphones">0</span>
-    </button>
-    <button class="filter-btn" data-cat="smartwatches">
-      Smartwatches <span class="filter-count" id="count-smartwatches">0</span>
-    </button>
-    <button class="filter-btn" data-cat="tablets">
-      Tablets <span class="filter-count" id="count-tablets">0</span>
-    </button>
-    <button class="filter-btn" data-cat="accessories">
-      Accessories <span class="filter-count" id="count-accessories">0</span>
-    </button>
+    <button class="filter-btn active" data-cat="all">All <span class="filter-count" id="count-all">0</span></button>
+    <button class="filter-btn" data-cat="smartphones">Smartphones <span class="filter-count" id="count-smartphones">0</span></button>
+    <button class="filter-btn" data-cat="smartwatches">Smartwatches <span class="filter-count" id="count-smartwatches">0</span></button>
+    <button class="filter-btn" data-cat="tablets">Tablets <span class="filter-count" id="count-tablets">0</span></button>
+    <button class="filter-btn" data-cat="accessories">Accessories <span class="filter-count" id="count-accessories">0</span></button>
+    <button class="filter-btn" data-cat="liked">♥ Liked <span class="filter-count" id="count-liked">0</span></button>
   </div>
 
   <!-- ── MAIN ── -->
@@ -559,155 +761,390 @@
     <div class="grid" id="grid"></div>
   </main>
 
-  <!-- ── MODAL ── -->
-  <div class="modal-overlay" id="modal-overlay">
-    <div class="modal" id="modal">
-      <button class="modal-close" id="modal-close" aria-label="Close">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-          <path d="M18 6 6 18M6 6l12 12"/>
-        </svg>
-      </button>
-
-      <div class="modal-gallery" id="modal-gallery">
-        <div class="gallery-nav">
-          <button class="gallery-btn hidden" id="gallery-prev" aria-label="Previous">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
-          </button>
-          <button class="gallery-btn hidden" id="gallery-next" aria-label="Next">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
-          </button>
-        </div>
-        <div class="gallery-dots" id="gallery-dots"></div>
-      </div>
-
-      <div class="modal-body">
-        <p class="modal-cat"  id="modal-cat"></p>
-        <h2 class="modal-title" id="modal-title"></h2>
-        <p class="modal-desc"  id="modal-desc"></p>
-        <p class="modal-price-note">
-          Pricing changes frequently. Contact us on WhatsApp or call for the latest price and availability.
-        </p>
-        <div class="modal-actions">
-          <a class="btn-wa" id="modal-wa" target="_blank" rel="noreferrer">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-            </svg>
-            WhatsApp Us
-          </a>
-          <a class="btn-call" href="tel:+971569613435">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-              <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 12a19.79 19.79 0 01-3-8.59A2 2 0 012.06 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
-            </svg>
-            Call Us
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- FOOTER -->
+  <!-- ── FOOTER ── -->
   <footer>
     <p class="footer-logo"><span>Al </span>Awaans</p>
     <div class="footer-info">
       <p><a href="tel:+971569613435">+971 56 961 3435</a> &nbsp;·&nbsp; <a href="tel:+971589892367">+971 58 989 2367</a></p>
-      <p><a href="mailto:mhrfshh@gmail.com">mhrfshh@gmail.com</a></p>
+      <p><a href="mailto:Leensshabiya@gmail.com">Leensshabiya@gmail.com</a></p>
       <p><a href="https://maps.google.com/?q=Shabiya+11+Musaffah+Abu+Dhabi" target="_blank" rel="noreferrer">Shabiya 11, Musaffah, Abu Dhabi</a></p>
     </div>
     <p class="footer-copy">© 2025 Al Awaans · Leens Computers and Mobiles · Abu Dhabi, UAE</p>
   </footer>
 
   <script>
-    // Catch any JS errors and show them in the grid for debugging
     window.onerror = function(msg, src, line) {
       var g = document.getElementById('grid')
       if (g) g.innerHTML = '<div style="padding:24px;color:#e05252;font-size:13px;font-family:monospace">JS Error (line ' + line + '): ' + msg + '</div>'
       return false
     }
 
-    // Firestore project ID
     const FS_PROJECT = 'alawaans-87424'
 
-    // ── PRODUCT DATA (loaded from Firestore) ─────────────────────
     const PRODUCTS_PLACEHOLDER = [
-      // SMARTPHONES
-      { id: 1,  cat: 'smartphones', badge: 'New',  name: 'iPhone 16 Pro Max',      imgs: ['16promax.webp'],                         desc: "Apple's most powerful iPhone. A18 Pro chip, titanium build, 48 MP main camera with 5× periscope zoom, and an immersive 6.9″ Super Retina XDR display." },
-      { id: 2,  cat: 'smartphones', badge: 'New',  name: 'iPhone 16 Pro',          imgs: ['16pro.webp'],                            desc: "A18 Pro chip, titanium frame, Action Button, and a versatile triple-camera system in a compact pro form factor." },
-      { id: 3,  cat: 'smartphones', badge: 'New',  name: 'iPhone 16',              imgs: ['16.webp'],                               desc: "The latest standard iPhone — A18 chip, Camera Control button, and up to 2× optical zoom in a refined aluminium design." },
-      { id: 4,  cat: 'smartphones', badge: null,   name: 'Samsung Galaxy S25 Ultra',imgs: ['s25ultra1.jpg'],                        desc: "The ultimate Galaxy. Snapdragon 8 Elite, built-in S Pen, 200 MP camera, and AI-powered features across every app." },
-      { id: 5,  cat: 'smartphones', badge: null,   name: 'Samsung Galaxy S25',     imgs: ['s251.jpg','s252.jpg'],                   desc: "Snapdragon 8 Elite power in a slim design. Galaxy AI features, a refined triple camera, and a vivid 6.2″ display." },
-      { id: 6,  cat: 'smartphones', badge: null,   name: 'iPhone 15 Pro Max',      imgs: ['15promax.webp','15promax.jpg','15promax2.webp'], desc: "Titanium body, A17 Pro chip, and a 5× optical zoom periscope camera. The iPhone that changed the Pro line." },
-      { id: 7,  cat: 'smartphones', badge: null,   name: 'Samsung Galaxy S24 Ultra',imgs: ['s24ultra.jpg','s24ultra2.jpeg'],         desc: "Snapdragon 8 Gen 3, titanium frame, 200 MP camera with 10× optical zoom, and an integrated S Pen." },
-      { id: 8,  cat: 'smartphones', badge: null,   name: 'Samsung Galaxy S24',     imgs: ['s241.webp','s242.webp'],                 desc: "Galaxy AI features packed into a compact flagship. Snapdragon 8 Gen 3, a bright 6.2″ Dynamic AMOLED display." },
-      { id: 9,  cat: 'smartphones', badge: null,   name: 'iPhone 15 Pro',          imgs: ['15proios.webp','15proios2.png'],          desc: "Lightweight titanium frame, A17 Pro chip, Action Button, and a 48 MP triple-camera system." },
-      { id: 10, cat: 'smartphones', badge: null,   name: 'Samsung Galaxy S23 Ultra',imgs: ['s23ultra.jpg','s23ultra2.webp'],         desc: "200 MP camera, built-in S Pen, Snapdragon 8 Gen 2 for Galaxy, and a massive 5000 mAh battery." },
-      { id: 11, cat: 'smartphones', badge: null,   name: 'Samsung Galaxy S23',     imgs: ['s23sam.avif','s23sam2.webp'],             desc: "Compact powerhouse — Snapdragon 8 Gen 2, a 50 MP triple camera, and all-day battery in a premium glass build." },
-      { id: 12, cat: 'smartphones', badge: null,   name: 'iPhone 14 Pro Max',      imgs: ['14promax.webp','14promax2.avif'],         desc: "Dynamic Island, A16 Bionic chip, Always-On display, and a 48 MP main camera with Photonic Engine processing." },
-      { id: 13, cat: 'smartphones', badge: null,   name: 'Samsung Galaxy S22 Ultra',imgs: ['s22ultra.jpg','s22ultra2.jpg'],          desc: "S Pen integrated into the body, Exynos 2200 with AMD GPU, and a 108 MP camera with 10× optical zoom." },
-      { id: 14, cat: 'smartphones', badge: null,   name: 'Samsung Galaxy S22',     imgs: ['galaxys22.webp','galaxys222.webp'],       desc: "Flagship performance in a slim build. Bright 6.1″ display, Exynos 2200, and a refined triple-camera array." },
-      { id: 15, cat: 'smartphones', badge: null,   name: 'iPhone 14 Pro',          imgs: ['iphone14pro.png','iphone14pro2.jpg'],     desc: "First iPhone with Dynamic Island and Always-On display. A16 Bionic chip and a 48 MP main camera." },
-      { id: 16, cat: 'smartphones', badge: null,   name: 'iPhone 14',              imgs: ['iphone14.jpg','iphone142.webp'],          desc: "A15 Bionic chip, Crash Detection, Emergency SOS via satellite, and an impressive dual-camera system." },
-      { id: 17, cat: 'smartphones', badge: null,   name: 'Xiaomi 14 Ultra',        imgs: ['14.jpeg'],                               desc: "Co-engineered with Leica. A quad-camera system with a 1-inch sensor, Snapdragon 8 Gen 3, and a stunning AMOLED display." },
-      { id: 18, cat: 'smartphones', badge: null,   name: 'Realme GT 5 Pro',        imgs: ['gt5pro.avif','gt5proback.webp'],          desc: "Snapdragon 8 Gen 3 at an accessible price. 240 W super-fast charging, 50 MP Sony camera, and a smooth 144 Hz display." },
-      { id: 19, cat: 'smartphones', badge: null,   name: 'Vivo X100 Pro',          imgs: ['100.jpeg'],                              desc: "Zeiss optics, 50 MP main camera with a 1-inch sensor, Dimensity 9300, and 100 W FlashCharge." },
-      { id: 20, cat: 'smartphones', badge: null,   name: 'ASUS ROG Phone 8',       imgs: ['rogphone.jpg','rogphoneback.jpg'],        desc: "The ultimate gaming smartphone. Snapdragon 8 Gen 3, 165 Hz AMOLED display, 65 W charging, and AeroActive Cooler support." },
-
-      // SMARTWATCHES
-      { id: 21, cat: 'smartwatches', badge: null, name: 'Apple Watch Series 9',    imgs: ['9.webp','applewatchback.webp','applwtchsrs9side-view.jpg'], desc: "Double Tap gesture, S9 chip, always-on Retina display, advanced health sensors including blood oxygen and ECG, and up to 18 hours of battery life." },
-      { id: 22, cat: 'smartwatches', badge: null, name: 'Samsung Galaxy Watch 6',  imgs: ['6.webp','galaxywatch6back.webp'],         desc: "Sapphire crystal glass, advanced sleep coaching, body composition analysis, and Google Wear OS 4 with a sleek round design." },
-      { id: 23, cat: 'smartwatches', badge: null, name: 'Google Pixel Watch 2',    imgs: ['pixelwatch2.png','pixelwatchback.webp'],  desc: "Fitbit health tracking built in. Continuous heart rate monitoring, safety check, and the best of Google on your wrist." },
-
-      // TABLETS
-      { id: 24, cat: 'tablets', badge: null, name: 'Apple iPad (10th Gen)',        imgs: ['ipad.webp','ipad.jpeg','ipadback.webp'],  desc: "A14 Bionic chip, 10.9″ Liquid Retina display, USB-C, a landscape front camera for FaceTime, and compatibility with Apple Pencil." },
-      { id: 25, cat: 'tablets', badge: null, name: 'Redmi Pad Pro 5G',             imgs: ['5g.webp'],                               desc: "5G connectivity, Snapdragon 7s Gen 2, a 12.1″ 144 Hz display, and a 10 000 mAh battery — serious productivity at a great price." },
-      { id: 26, cat: 'tablets', badge: null, name: 'Xiaomi Pad 7',                 imgs: ['pad7.webp'],                             desc: "Snapdragon 7+ Gen 3, a 144 Hz 11.2″ display, Dolby Vision, and a large battery built for work and entertainment." },
-      { id: 27, cat: 'tablets', badge: null, name: 'Xiaomi Pad 6',                 imgs: ['pad6.webp'],                             desc: "Snapdragon 870, 11″ 144 Hz display, Dolby Vision, and quad speakers — a premium productivity and media tablet." },
-      { id: 28, cat: 'tablets', badge: null, name: 'Redmi Pad SE',                 imgs: ['SE.webp','redpadse1.jpg','redpadse2.png'], desc: "Budget-friendly 11″ tablet with a 90 Hz display, Snapdragon 680, 8000 mAh battery, and Dolby Atmos speakers." },
-      { id: 29, cat: 'tablets', badge: null, name: 'Redmi Pad',                    imgs: ['redmipad.avif','redmipadback.png'],       desc: "Helio G99, a stunning 10.61″ 90 Hz display, 8000 mAh battery, and quad Dolby Atmos speakers. Great value for any user." },
-
-      // ACCESSORIES
-      { id: 30, cat: 'accessories', badge: null, name: 'G-Shock Casio — Model 1', imgs: ['InShot_20250423_100918852.jpg'],          desc: "Unbreakable style meets unstoppable performance. Shock-resistant, water-resistant, and built to endure whatever you throw at it." },
-      { id: 31, cat: 'accessories', badge: null, name: 'G-Shock Casio — Model 2', imgs: ['InShot_20250423_100828737.jpg'],          desc: "Classic G-Shock toughness with a bold design. 200 M water resistance, multi-band atomic timekeeping, and solar power." },
-      { id: 32, cat: 'accessories', badge: null, name: 'G-Shock Casio — Model 3', imgs: ['InShot_20250423_100848015.jpg'],          desc: "Premium G-Shock with full-auto LED backlight, shock-resistant structure, and world time for 48 cities." },
-      { id: 33, cat: 'accessories', badge: null, name: 'G-Shock Casio — Model 4', imgs: ['InShot_20250423_100931622.jpg'],          desc: "Rugged G-Shock built for outdoor adventures. Altimeter, barometer, thermometer, and compass in one tough watch." },
-      { id: 34, cat: 'accessories', badge: null, name: 'G-Shock Casio — Model 5', imgs: ['InShot_20250423_100945930.jpg'],          desc: "Limited-edition G-Shock colourway. Signature 200 M water resistance, 5-year battery, and iconic square case." },
+      { id: 1,  cat: 'smartphones', badge: 'New',  name: 'iPhone 16 Pro Max',       imgs: ['16promax.webp'],                                   desc: "Apple's most powerful iPhone. A18 Pro chip, titanium build, 48 MP main camera with 5× periscope zoom, and an immersive 6.9″ Super Retina XDR display." },
+      { id: 2,  cat: 'smartphones', badge: 'New',  name: 'iPhone 16 Pro',           imgs: ['16pro.webp'],                                      desc: "A18 Pro chip, titanium frame, Action Button, and a versatile triple-camera system in a compact pro form factor." },
+      { id: 3,  cat: 'smartphones', badge: 'New',  name: 'iPhone 16',               imgs: ['16.webp'],                                         desc: "The latest standard iPhone — A18 chip, Camera Control button, and up to 2× optical zoom in a refined aluminium design." },
+      { id: 4,  cat: 'smartphones', badge: null,   name: 'Samsung Galaxy S25 Ultra', imgs: ['s25ultra1.jpg'],                                   desc: "The ultimate Galaxy. Snapdragon 8 Elite, built-in S Pen, 200 MP camera, and AI-powered features across every app." },
+      { id: 5,  cat: 'smartphones', badge: null,   name: 'Samsung Galaxy S25',       imgs: ['s251.jpg','s252.jpg'],                             desc: "Snapdragon 8 Elite power in a slim design. Galaxy AI features, a refined triple camera, and a vivid 6.2″ display." },
+      { id: 6,  cat: 'smartphones', badge: null,   name: 'iPhone 15 Pro Max',        imgs: ['15promax.webp','15promax.jpg','15promax2.webp'],    desc: "Titanium body, A17 Pro chip, and a 5× optical zoom periscope camera. The iPhone that changed the Pro line." },
+      { id: 7,  cat: 'smartphones', badge: null,   name: 'Samsung Galaxy S24 Ultra', imgs: ['s24ultra.jpg','s24ultra2.jpeg'],                   desc: "Snapdragon 8 Gen 3, titanium frame, 200 MP camera with 10× optical zoom, and an integrated S Pen." },
+      { id: 8,  cat: 'smartphones', badge: null,   name: 'Samsung Galaxy S24',       imgs: ['s241.webp','s242.webp'],                           desc: "Galaxy AI features packed into a compact flagship. Snapdragon 8 Gen 3, a bright 6.2″ Dynamic AMOLED display." },
+      { id: 9,  cat: 'smartphones', badge: null,   name: 'iPhone 15 Pro',            imgs: ['15proios.webp','15proios2.png'],                   desc: "Lightweight titanium frame, A17 Pro chip, Action Button, and a 48 MP triple-camera system." },
+      { id: 10, cat: 'smartphones', badge: null,   name: 'Samsung Galaxy S23 Ultra', imgs: ['s23ultra.jpg','s23ultra2.webp'],                   desc: "200 MP camera, built-in S Pen, Snapdragon 8 Gen 2 for Galaxy, and a massive 5000 mAh battery." },
+      { id: 11, cat: 'smartphones', badge: null,   name: 'Samsung Galaxy S23',       imgs: ['s23sam.avif','s23sam2.webp'],                      desc: "Compact powerhouse — Snapdragon 8 Gen 2, a 50 MP triple camera, and all-day battery in a premium glass build." },
+      { id: 12, cat: 'smartphones', badge: null,   name: 'iPhone 14 Pro Max',        imgs: ['14promax.webp','14promax2.avif'],                  desc: "Dynamic Island, A16 Bionic chip, Always-On display, and a 48 MP main camera with Photonic Engine processing." },
+      { id: 13, cat: 'smartphones', badge: null,   name: 'Samsung Galaxy S22 Ultra', imgs: ['s22ultra.jpg','s22ultra2.jpg'],                    desc: "S Pen integrated into the body, Exynos 2200 with AMD GPU, and a 108 MP camera with 10× optical zoom." },
+      { id: 14, cat: 'smartphones', badge: null,   name: 'Samsung Galaxy S22',       imgs: ['galaxys22.webp','galaxys222.webp'],                desc: "Flagship performance in a slim build. Bright 6.1″ display, Exynos 2200, and a refined triple-camera array." },
+      { id: 15, cat: 'smartphones', badge: null,   name: 'iPhone 14 Pro',            imgs: ['iphone14pro.png','iphone14pro2.jpg'],              desc: "First iPhone with Dynamic Island and Always-On display. A16 Bionic chip and a 48 MP main camera." },
+      { id: 16, cat: 'smartphones', badge: null,   name: 'iPhone 14',                imgs: ['iphone14.jpg','iphone142.webp'],                   desc: "A15 Bionic chip, Crash Detection, Emergency SOS via satellite, and an impressive dual-camera system." },
+      { id: 17, cat: 'smartphones', badge: null,   name: 'Xiaomi 14 Ultra',          imgs: ['14.jpeg'],                                         desc: "Co-engineered with Leica. A quad-camera system with a 1-inch sensor, Snapdragon 8 Gen 3, and a stunning AMOLED display." },
+      { id: 18, cat: 'smartphones', badge: null,   name: 'Realme GT 5 Pro',          imgs: ['gt5pro.avif','gt5proback.webp'],                   desc: "Snapdragon 8 Gen 3 at an accessible price. 240 W super-fast charging, 50 MP Sony camera, and a smooth 144 Hz display." },
+      { id: 19, cat: 'smartphones', badge: null,   name: 'Vivo X100 Pro',            imgs: ['100.jpeg'],                                        desc: "Zeiss optics, 50 MP main camera with a 1-inch sensor, Dimensity 9300, and 100 W FlashCharge." },
+      { id: 20, cat: 'smartphones', badge: null,   name: 'ASUS ROG Phone 8',         imgs: ['rogphone.jpg','rogphoneback.jpg'],                  desc: "The ultimate gaming smartphone. Snapdragon 8 Gen 3, 165 Hz AMOLED display, 65 W charging, and AeroActive Cooler support." },
+      { id: 21, cat: 'smartwatches', badge: null,  name: 'Apple Watch Series 9',     imgs: ['9.webp','applewatchback.webp','applwtchsrs9side-view.jpg'], desc: "Double Tap gesture, S9 chip, always-on Retina display, advanced health sensors including blood oxygen and ECG, and up to 18 hours of battery life." },
+      { id: 22, cat: 'smartwatches', badge: null,  name: 'Samsung Galaxy Watch 6',   imgs: ['6.webp','galaxywatch6back.webp'],                  desc: "Sapphire crystal glass, advanced sleep coaching, body composition analysis, and Google Wear OS 4 with a sleek round design." },
+      { id: 23, cat: 'smartwatches', badge: null,  name: 'Google Pixel Watch 2',     imgs: ['pixelwatch2.png','pixelwatchback.webp'],           desc: "Fitbit health tracking built in. Continuous heart rate monitoring, safety check, and the best of Google on your wrist." },
+      { id: 24, cat: 'tablets',      badge: null,  name: 'Apple iPad (10th Gen)',     imgs: ['ipad.webp','ipad.jpeg','ipadback.webp'],           desc: "A14 Bionic chip, 10.9″ Liquid Retina display, USB-C, a landscape front camera for FaceTime, and compatibility with Apple Pencil." },
+      { id: 25, cat: 'tablets',      badge: null,  name: 'Redmi Pad Pro 5G',         imgs: ['5g.webp'],                                         desc: "5G connectivity, Snapdragon 7s Gen 2, a 12.1″ 144 Hz display, and a 10 000 mAh battery — serious productivity at a great price." },
+      { id: 26, cat: 'tablets',      badge: null,  name: 'Xiaomi Pad 7',             imgs: ['pad7.webp'],                                       desc: "Snapdragon 7+ Gen 3, a 144 Hz 11.2″ display, Dolby Vision, and a large battery built for work and entertainment." },
+      { id: 27, cat: 'tablets',      badge: null,  name: 'Xiaomi Pad 6',             imgs: ['pad6.webp'],                                       desc: "Snapdragon 870, 11″ 144 Hz display, Dolby Vision, and quad speakers — a premium productivity and media tablet." },
+      { id: 28, cat: 'tablets',      badge: null,  name: 'Redmi Pad SE',             imgs: ['SE.webp','redpadse1.jpg','redpadse2.png'],          desc: "Budget-friendly 11″ tablet with a 90 Hz display, Snapdragon 680, 8000 mAh battery, and Dolby Atmos speakers." },
+      { id: 29, cat: 'tablets',      badge: null,  name: 'Redmi Pad',                imgs: ['redmipad.avif','redmipadback.png'],                 desc: "Helio G99, a stunning 10.61″ 90 Hz display, 8000 mAh battery, and quad Dolby Atmos speakers. Great value for any user." },
+      { id: 30, cat: 'accessories',  badge: null,  name: 'G-Shock Casio — Model 1', imgs: ['InShot_20250423_100918852.jpg'],                    desc: "Unbreakable style meets unstoppable performance. Shock-resistant, water-resistant, and built to endure whatever you throw at it." },
+      { id: 31, cat: 'accessories',  badge: null,  name: 'G-Shock Casio — Model 2', imgs: ['InShot_20250423_100828737.jpg'],                    desc: "Classic G-Shock toughness with a bold design. 200 M water resistance, multi-band atomic timekeeping, and solar power." },
+      { id: 32, cat: 'accessories',  badge: null,  name: 'G-Shock Casio — Model 3', imgs: ['InShot_20250423_100848015.jpg'],                    desc: "Premium G-Shock with full-auto LED backlight, shock-resistant structure, and world time for 48 cities." },
+      { id: 33, cat: 'accessories',  badge: null,  name: 'G-Shock Casio — Model 4', imgs: ['InShot_20250423_100931622.jpg'],                    desc: "Rugged G-Shock built for outdoor adventures. Altimeter, barometer, thermometer, and compass in one tough watch." },
+      { id: 34, cat: 'accessories',  badge: null,  name: 'G-Shock Casio — Model 5', imgs: ['InShot_20250423_100945930.jpg'],                    desc: "Limited-edition G-Shock colourway. Signature 200 M water resistance, 5-year battery, and iconic square case." },
     ]
 
-    // ── CATEGORY LABELS ──────────────────────────────────────────
     const CAT_LABEL = {
-      smartphones:  'Smartphone',
-      smartwatches: 'Smartwatch',
-      tablets:      'Tablet',
-      accessories:  'Accessory',
+      smartphones: 'Smartphone', smartwatches: 'Smartwatch',
+      tablets: 'Tablet', accessories: 'Accessory',
     }
 
-    // ── STATE ────────────────────────────────────────────────────
-    let PRODUCTS       = []
-    let activeCategory = 'all'
-    let searchQuery    = ''
-    let activeProduct  = null
-    let galleryIndex   = 0
+    // ── STATE ──────────────────────────────────────────────────────
+    var PRODUCTS       = []
+    var activeCategory = 'all'
+    var searchQuery    = ''
+    var pvProduct      = null
+    var pvGalleryIdx   = 0
+    var pvSelectedStar = 0
 
-    // ── LOAD PRODUCTS ────────────────────────────────────────────
+    // ── CART ───────────────────────────────────────────────────────
+    var CART = JSON.parse(localStorage.getItem('aw_cart') || '[]')
+
+    function saveCart() { localStorage.setItem('aw_cart', JSON.stringify(CART)) }
+
+    function addToCart(id) {
+      var p = PRODUCTS.find(function(x) { return String(x.id) === String(id) })
+      if (!p) return
+      var item = CART.find(function(c) { return c.id === String(id) })
+      if (item) { item.qty++ } else {
+        CART.push({ id: String(id), name: p.name, img: (p.imgs && p.imgs[0]) || '', qty: 1 })
+      }
+      saveCart()
+      updateCartBadge()
+      renderCart()
+      // bounce badge
+      var badge = document.getElementById('cart-badge')
+      badge.style.transform = 'scale(1.6)'
+      setTimeout(function() { badge.style.transform = '' }, 240)
+    }
+
+    function removeFromCart(id) {
+      CART = CART.filter(function(c) { return c.id !== String(id) })
+      saveCart(); updateCartBadge(); renderCart()
+    }
+
+    function changeQty(id, delta) {
+      var item = CART.find(function(c) { return c.id === String(id) })
+      if (!item) return
+      item.qty += delta
+      if (item.qty <= 0) { removeFromCart(id); return }
+      saveCart(); updateCartBadge(); renderCart()
+    }
+
+    function updateCartBadge() {
+      var total = CART.reduce(function(s, c) { return s + c.qty }, 0)
+      var badge = document.getElementById('cart-badge')
+      badge.textContent = total
+      badge.classList.toggle('show', total > 0)
+      document.getElementById('cart-head-count').textContent =
+        total > 0 ? '(' + total + ' item' + (total !== 1 ? 's' : '') + ')' : ''
+      document.getElementById('cart-summary-line').innerHTML =
+        '<strong>' + total + '</strong> item' + (total !== 1 ? 's' : '') + ' in your cart'
+      document.getElementById('cart-foot').style.display = CART.length ? '' : 'none'
+    }
+
+    function renderCart() {
+      var body = document.getElementById('cart-body')
+      if (!CART.length) {
+        body.innerHTML = '<div class="cart-empty-msg">Your cart is empty.<br>Browse products and tap <strong>Add to Cart</strong>.</div>'
+        return
+      }
+      body.innerHTML = CART.map(function(c) {
+        return '<div class="ci-row">' +
+          '<img src="' + c.img + '" alt="" onerror="this.style.display=\'none\'" />' +
+          '<span class="ci-name">' + escHtml(c.name) + '</span>' +
+          '<div class="ci-qty">' +
+            '<button onclick="changeQty(\'' + c.id + '\',-1)">−</button>' +
+            '<span>' + c.qty + '</span>' +
+            '<button onclick="changeQty(\'' + c.id + '\',1)">+</button>' +
+          '</div>' +
+          '<button class="ci-del" onclick="removeFromCart(\'' + c.id + '\')" title="Remove">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>' +
+          '</button>' +
+        '</div>'
+      }).join('')
+    }
+
+    function openCart() {
+      renderCart(); updateCartBadge()
+      document.getElementById('cart-overlay').classList.add('open')
+      document.getElementById('cart-drawer').classList.add('open')
+      document.body.style.overflow = 'hidden'
+    }
+
+    function closeCart() {
+      document.getElementById('cart-overlay').classList.remove('open')
+      document.getElementById('cart-drawer').classList.remove('open')
+      document.body.style.overflow = ''
+    }
+
+    function openCheckout() {
+      if (!CART.length) return
+      document.getElementById('co-items-list').innerHTML = CART.map(function(c) {
+        return '• ' + escHtml(c.name) + (c.qty > 1 ? ' ×' + c.qty : '')
+      }).join('<br>')
+      closeCart()
+      var ov = document.getElementById('checkout-overlay')
+      ov.style.display = 'flex'
+      setTimeout(function() { ov.classList.add('open') }, 10)
+      document.body.style.overflow = 'hidden'
+    }
+
+    function closeCheckout() {
+      var ov = document.getElementById('checkout-overlay')
+      ov.classList.remove('open')
+      setTimeout(function() { ov.style.display = 'none' }, 240)
+      document.body.style.overflow = ''
+    }
+
+    function submitOrder() {
+      var name    = document.getElementById('co-name').value.trim()
+      var phone   = document.getElementById('co-phone').value.trim()
+      var address = document.getElementById('co-address').value.trim()
+      var notes   = document.getElementById('co-notes').value.trim()
+      if (!name || !phone || !address) {
+        alert('Please fill in your name, phone number, and delivery address.')
+        return
+      }
+      var lines = CART.map(function(c) {
+        return '• ' + c.name + (c.qty > 1 ? ' ×' + c.qty : '')
+      }).join('\n')
+      var msg = '🛒 *New Order — Al Awaans*\n\n'
+        + '*Items:*\n' + lines + '\n\n'
+        + '*Name:* ' + name + '\n'
+        + '*Phone:* ' + phone + '\n'
+        + '*Address:* ' + address
+      if (notes) msg += '\n*Notes:* ' + notes
+      msg += '\n\n_Sent from Al Awaans Online Store_'
+      window.open('https://wa.me/971569613435?text=' + encodeURIComponent(msg), '_blank')
+      CART = []; saveCart(); updateCartBadge(); closeCheckout()
+    }
+
+    // ── WISHLIST ───────────────────────────────────────────────────
+    var WISHLIST = JSON.parse(localStorage.getItem('aw_wishlist') || '[]')
+
+    function saveWishlist() { localStorage.setItem('aw_wishlist', JSON.stringify(WISHLIST)) }
+    function isLiked(id) { return WISHLIST.indexOf(String(id)) !== -1 }
+
+    function toggleWishlist(id) {
+      id = String(id)
+      var idx = WISHLIST.indexOf(id)
+      if (idx === -1) { WISHLIST.push(id) } else { WISHLIST.splice(idx, 1) }
+      saveWishlist()
+      updateLikedCount()
+      var btn = document.querySelector('[data-heart="' + id + '"]')
+      if (btn) btn.classList.toggle('liked', isLiked(id))
+      if (activeCategory === 'liked') render()
+    }
+
+    function toggleWishlistPV() {
+      if (!pvProduct) return
+      toggleWishlist(pvProduct.id)
+      document.getElementById('pv-nav-heart').classList.toggle('liked', isLiked(pvProduct.id))
+    }
+
+    function updateLikedCount() {
+      var el = document.getElementById('count-liked')
+      if (el) el.textContent = WISHLIST.length
+    }
+
+    // ── PRODUCT FULL-SCREEN VIEW ───────────────────────────────────
+    function openPV(id) {
+      var p = PRODUCTS.find(function(x) { return String(x.id) === String(id) })
+      if (!p) return
+      pvProduct    = p
+      pvGalleryIdx = 0
+
+      document.getElementById('pv-nav-title').textContent = p.name
+      document.getElementById('pv-cat').textContent       = CAT_LABEL[p.cat] || p.cat
+      document.getElementById('pv-title').textContent     = p.name
+      document.getElementById('pv-desc').textContent      = p.desc
+      document.getElementById('pv-nav-heart').classList.toggle('liked', isLiked(p.id))
+
+      var waText = 'Hi, I\'m interested in the ' + p.name + '. Can you share the price and availability?'
+      document.getElementById('pv-wa').href = 'https://wa.me/971569613435?text=' + encodeURIComponent(waText)
+
+      document.getElementById('pv-buy-now').onclick = function() {
+        addToCart(p.id); closePV(); openCheckout()
+      }
+
+      var atcBtn = document.getElementById('pv-atc')
+      atcBtn.onclick = function() {
+        addToCart(p.id)
+        var orig = atcBtn.innerHTML
+        atcBtn.textContent = '✓ Added to Cart!'
+        atcBtn.style.background = 'var(--gold)'; atcBtn.style.color = '#000'; atcBtn.style.border = 'none'
+        setTimeout(function() {
+          atcBtn.innerHTML = orig
+          atcBtn.style.background = ''; atcBtn.style.color = ''; atcBtn.style.border = ''
+        }, 1300)
+      }
+
+      // Gallery
+      var gallery = document.getElementById('pv-gallery')
+      gallery.querySelectorAll('img').forEach(function(img) { img.remove() })
+      var imgs = (p.imgs && p.imgs.length) ? p.imgs : ['']
+      imgs.forEach(function(src, i) {
+        var img = document.createElement('img')
+        img.src = src; img.alt = p.name
+        if (i === 0) img.classList.add('active')
+        gallery.insertBefore(img, gallery.querySelector('.pv-gallery-nav'))
+      })
+
+      // Thumbnails
+      var thumbsEl = document.getElementById('pv-thumbs')
+      if (imgs.length <= 1) {
+        thumbsEl.style.display = 'none'
+      } else {
+        thumbsEl.style.display = ''
+        thumbsEl.innerHTML = imgs.map(function(src, i) {
+          return '<div class="pv-thumb' + (i === 0 ? ' active' : '') + '" onclick="setPVGallery(' + i + ')">' +
+            '<img src="' + src + '" alt="photo ' + (i+1) + '" />' +
+          '</div>'
+        }).join('')
+      }
+
+      setPVGallery(0)
+      renderReviews(p.id)
+
+      // Reset review form
+      document.getElementById('rev-name').value = ''
+      document.getElementById('rev-text').value = ''
+      pvSelectedStar = 0
+      document.querySelectorAll('.rev-star-btn').forEach(function(b) { b.classList.remove('active') })
+
+      var screen = document.getElementById('pv-screen')
+      screen.classList.add('open')
+      screen.scrollTop = 0
+      document.body.style.overflow = 'hidden'
+    }
+
+    function closePV() {
+      document.getElementById('pv-screen').classList.remove('open')
+      document.body.style.overflow = ''
+      pvProduct = null
+    }
+
+    function setPVGallery(idx) {
+      var imgs = document.querySelectorAll('#pv-gallery img')
+      var n = imgs.length
+      pvGalleryIdx = Math.max(0, Math.min(idx, n - 1))
+      imgs.forEach(function(img, i) { img.classList.toggle('active', i === pvGalleryIdx) })
+      document.getElementById('pv-prev').classList.toggle('hidden', pvGalleryIdx === 0)
+      document.getElementById('pv-next').classList.toggle('hidden', pvGalleryIdx >= n - 1)
+      var dotsEl = document.getElementById('pv-dots')
+      if (n <= 1) { dotsEl.innerHTML = '' } else {
+        dotsEl.innerHTML = Array.from({ length: n }, function(_, i) {
+          return '<span class="pv-dot' + (i === pvGalleryIdx ? ' active' : '') + '" onclick="setPVGallery(' + i + ')"></span>'
+        }).join('')
+      }
+      document.querySelectorAll('.pv-thumb').forEach(function(t, i) {
+        t.classList.toggle('active', i === pvGalleryIdx)
+      })
+    }
+
+    // ── REVIEWS ───────────────────────────────────────────────────
+    function getReviews(pid) { return JSON.parse(localStorage.getItem('aw_rev_' + pid) || '[]') }
+    function saveReviewsData(pid, data) { localStorage.setItem('aw_rev_' + pid, JSON.stringify(data)) }
+
+    function renderReviews(pid) {
+      var reviews = getReviews(pid)
+      var avgEl   = document.getElementById('rev-avg')
+      var listEl  = document.getElementById('rev-list')
+      if (!reviews.length) {
+        avgEl.textContent = ''
+        listEl.innerHTML  = '<div class="rev-no-reviews">No reviews yet — be the first to share your experience!</div>'
+        return
+      }
+      var avg = reviews.reduce(function(s, r) { return s + r.rating }, 0) / reviews.length
+      avgEl.textContent = '★ ' + avg.toFixed(1) + ' (' + reviews.length + ' review' + (reviews.length !== 1 ? 's' : '') + ')'
+      listEl.innerHTML = reviews.slice().reverse().map(function(r) {
+        return '<div class="rev-card">' +
+          '<div class="rev-top">' +
+            '<span class="rev-name">' + escHtml(r.name) + '</span>' +
+            '<span class="rev-date">' + r.date + '</span>' +
+          '</div>' +
+          '<div class="rev-stars">' + '★'.repeat(r.rating) + '<span style="color:var(--text-3)">' + '★'.repeat(5 - r.rating) + '</span></div>' +
+          '<p class="rev-text">' + escHtml(r.text) + '</p>' +
+        '</div>'
+      }).join('')
+    }
+
+    function submitReview() {
+      if (!pvProduct) return
+      var name = document.getElementById('rev-name').value.trim()
+      var text = document.getElementById('rev-text').value.trim()
+      if (!name || !text)       { alert('Please enter your name and review.'); return }
+      if (pvSelectedStar === 0) { alert('Please tap a star rating first.');   return }
+      var reviews = getReviews(pvProduct.id)
+      reviews.push({
+        name: name, rating: pvSelectedStar, text: text,
+        date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+      })
+      saveReviewsData(pvProduct.id, reviews)
+      renderReviews(pvProduct.id)
+      document.getElementById('rev-name').value = ''
+      document.getElementById('rev-text').value = ''
+      pvSelectedStar = 0
+      document.querySelectorAll('.rev-star-btn').forEach(function(b) { b.classList.remove('active') })
+    }
+
+    // ── HELPERS ───────────────────────────────────────────────────
+    function escHtml(str) {
+      return String(str)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+    }
+
+    // ── LOAD PRODUCTS ─────────────────────────────────────────────
     async function loadProducts() {
-      // Step 1: show placeholder immediately — store is never blank
       PRODUCTS = PRODUCTS_PLACEHOLDER.map(function(p) {
         return Object.assign({}, p, { id: String(p.id) })
       })
-      updateCounts()
-      render()
-
-      // Step 2: try to pull live data from Firestore REST API
+      updateCounts(); render()
       try {
-        var url = 'https://firestore.googleapis.com/v1/projects/' + FS_PROJECT + '/databases/(default)/documents/products?pageSize=200'
+        var url  = 'https://firestore.googleapis.com/v1/projects/' + FS_PROJECT + '/databases/(default)/documents/products?pageSize=200'
         var res  = await fetch(url)
         if (!res.ok) return
         var json = await res.json()
         if (!json.documents || !json.documents.length) return
-
         var live = []
         for (var i = 0; i < json.documents.length; i++) {
-          var doc = json.documents[i]
-          var f   = doc.fields || {}
+          var doc = json.documents[i], f = doc.fields || {}
           var arr = (f.imgs && f.imgs.arrayValue && f.imgs.arrayValue.values) ? f.imgs.arrayValue.values : []
           live.push({
             id:        doc.name.split('/').pop(),
@@ -715,179 +1152,139 @@
             cat:       (f.cat   && f.cat.stringValue)   || '',
             badge:     (f.badge && f.badge.stringValue)  || null,
             desc:      (f.desc  && f.desc.stringValue)  || '',
-            imgs:      arr.map(function(v){ return v.stringValue }),
+            imgs:      arr.map(function(v) { return v.stringValue }),
             sortOrder: Number((f.sortOrder && (f.sortOrder.integerValue || f.sortOrder.doubleValue)) || 99)
           })
         }
-        live.sort(function(a,b){ return a.sortOrder - b.sortOrder })
+        live.sort(function(a,b) { return a.sortOrder - b.sortOrder })
+        if (live.length > 0) { PRODUCTS = live; updateCounts(); render() }
+      } catch(e) {}
+    }
 
-        // Only update if we got real data
-        if (live.length > 0) {
-          PRODUCTS = live
-          updateCounts()
-          render()
-        }
-      } catch (e) {
-        // placeholder already showing, nothing to do
+    // ── COUNTS ────────────────────────────────────────────────────
+    function updateCounts() {
+      ['all','smartphones','smartwatches','tablets','accessories'].forEach(function(cat) {
+        var el = document.getElementById('count-' + cat)
+        if (el) el.textContent = cat === 'all' ? PRODUCTS.length
+          : PRODUCTS.filter(function(p) { return p.cat === cat }).length
+      })
+      updateLikedCount()
+    }
+
+    // ── FILTER ────────────────────────────────────────────────────
+    function filtered() {
+      return PRODUCTS.filter(function(p) {
+        if (activeCategory === 'liked') return isLiked(p.id)
+        return (activeCategory === 'all' || p.cat === activeCategory) &&
+               (!searchQuery || p.name.toLowerCase().includes(searchQuery))
+      })
+    }
+
+    // ── RENDER GRID ───────────────────────────────────────────────
+    function render() {
+      var list  = filtered()
+      var grid  = document.getElementById('grid')
+      var names = { all:'All Products', smartphones:'Smartphones', smartwatches:'Smartwatches',
+                    tablets:'Tablets', accessories:'Accessories', liked:'♥ Liked Products' }
+      document.getElementById('section-title').textContent = searchQuery
+        ? 'Search: "' + document.getElementById('search').value + '"'
+        : names[activeCategory]
+      document.getElementById('result-count').textContent = list.length + ' item' + (list.length !== 1 ? 's' : '')
+
+      if (!list.length) {
+        var msg = activeCategory === 'liked'
+          ? '<p>No liked products yet.</p><p>Tap the ♥ on any product to save it here.</p>'
+          : '<p>No products found.</p><p>Try a different search or category.</p>'
+        grid.innerHTML = '<div class="empty">' + msg + '</div>'
+        return
       }
+
+      grid.innerHTML = list.map(function(p) {
+        var img   = (p.imgs && p.imgs[0]) ? p.imgs[0] : ''
+        var badge = p.badge ? '<span class="card-badge">' + p.badge + '</span>' : ''
+        var liked = isLiked(p.id)
+        return '<div class="card">' +
+          '<div class="card-img" onclick="openPV(\'' + p.id + '\')">' +
+            '<img src="' + img + '" alt="' + escHtml(p.name) + '" loading="lazy" />' +
+            badge +
+            '<button class="card-heart' + (liked ? ' liked' : '') + '" data-heart="' + p.id + '" ' +
+              'onclick="event.stopPropagation();toggleWishlist(\'' + p.id + '\')" ' +
+              'title="' + (liked ? 'Remove from wishlist' : 'Save to wishlist') + '">' +
+              '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+                '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>' +
+              '</svg>' +
+            '</button>' +
+          '</div>' +
+          '<div class="card-body">' +
+            '<span class="card-cat">' + (CAT_LABEL[p.cat] || p.cat) + '</span>' +
+            '<p class="card-name">' + escHtml(p.name) + '</p>' +
+            '<div class="card-actions">' +
+              '<button class="btn-atc" onclick="addToCart(\'' + p.id + '\')">' +
+                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>' +
+                'Add to Cart' +
+              '</button>' +
+              '<button class="btn-view" onclick="openPV(\'' + p.id + '\')" title="View details">' +
+                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>' +
+              '</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>'
+      }).join('')
     }
 
-    function renderLoading() {
-      const grid = document.getElementById('grid')
-      grid.innerHTML = Array(8).fill(0).map(() => `
-        <div class="card" style="pointer-events:none">
-          <div class="card-img" style="background:var(--surface-2);animation:pulse 1.4s ease infinite"></div>
-          <div class="card-body">
-            <div style="height:10px;width:60%;background:var(--surface-2);border-radius:4px;animation:pulse 1.4s ease infinite"></div>
-            <div style="height:14px;width:85%;background:var(--surface-2);border-radius:4px;margin-top:8px;animation:pulse 1.4s ease infinite"></div>
-          </div>
-        </div>`).join('')
-    }
-
-    // ── INIT ─────────────────────────────────────────────────────
+    // ── INIT ──────────────────────────────────────────────────────
     function init() {
       loadProducts()
+      updateCartBadge()
+      renderCart()
 
-      document.getElementById('filter-bar').addEventListener('click', e => {
-        const btn = e.target.closest('[data-cat]')
+      document.getElementById('cart-btn').addEventListener('click', openCart)
+      document.getElementById('cart-overlay').addEventListener('click', closeCart)
+      document.getElementById('cart-drawer-close').addEventListener('click', closeCart)
+
+      document.getElementById('checkout-overlay').addEventListener('click', function(e) {
+        if (e.target === this) closeCheckout()
+      })
+
+      document.getElementById('filter-bar').addEventListener('click', function(e) {
+        var btn = e.target.closest('[data-cat]')
         if (!btn) return
         activeCategory = btn.dataset.cat
-        searchQuery = ''
-        document.getElementById('search').value = ''
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'))
+        if (activeCategory !== 'liked') { searchQuery = ''; document.getElementById('search').value = '' }
+        document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active') })
         btn.classList.add('active')
         render()
       })
 
-      document.getElementById('search').addEventListener('input', e => {
+      document.getElementById('search').addEventListener('input', function(e) {
         searchQuery = e.target.value.trim().toLowerCase()
+        if (searchQuery && activeCategory === 'liked') {
+          activeCategory = 'all'
+          document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active') })
+          document.querySelector('[data-cat="all"]').classList.add('active')
+        }
         render()
       })
 
-      document.getElementById('modal-close').addEventListener('click', closeModal)
-      document.getElementById('modal-overlay').addEventListener('click', e => {
-        if (e.target === document.getElementById('modal-overlay')) closeModal()
-      })
-      document.addEventListener('keydown', e => {
-        if (e.key === 'Escape') closeModal()
+      document.getElementById('pv-prev').addEventListener('click', function() { setPVGallery(pvGalleryIdx - 1) })
+      document.getElementById('pv-next').addEventListener('click', function() { setPVGallery(pvGalleryIdx + 1) })
+
+      document.getElementById('rev-stars').addEventListener('click', function(e) {
+        var btn = e.target.closest('.rev-star-btn')
+        if (!btn) return
+        pvSelectedStar = parseInt(btn.dataset.star)
+        document.querySelectorAll('.rev-star-btn').forEach(function(b) {
+          b.classList.toggle('active', parseInt(b.dataset.star) <= pvSelectedStar)
+        })
       })
 
-      document.getElementById('gallery-prev').addEventListener('click', () => setGallery(galleryIndex - 1))
-      document.getElementById('gallery-next').addEventListener('click', () => setGallery(galleryIndex + 1))
-    }
-
-    // ── UPDATE COUNTS ────────────────────────────────────────────
-    function updateCounts() {
-      const cats = ['all', 'smartphones', 'smartwatches', 'tablets', 'accessories']
-      cats.forEach(cat => {
-        const el = document.getElementById('count-' + cat)
-        if (!el) return
-        el.textContent = cat === 'all'
-          ? PRODUCTS.length
-          : PRODUCTS.filter(p => p.cat === cat).length
+      document.addEventListener('keydown', function(e) {
+        if (e.key !== 'Escape') return
+        if (document.getElementById('pv-screen').classList.contains('open')) { closePV(); return }
+        closeCart(); closeCheckout()
       })
     }
 
-    // ── FILTERED PRODUCTS ────────────────────────────────────────
-    function filtered() {
-      return PRODUCTS.filter(p => {
-        const catMatch = activeCategory === 'all' || p.cat === activeCategory
-        const searchMatch = !searchQuery || p.name.toLowerCase().includes(searchQuery)
-        return catMatch && searchMatch
-      })
-    }
-
-    // ── RENDER GRID ──────────────────────────────────────────────
-    function render() {
-      const list = filtered()
-      const grid = document.getElementById('grid')
-      const catNames = { all: 'All Products', smartphones: 'Smartphones', smartwatches: 'Smartwatches', tablets: 'Tablets', accessories: 'Accessories' }
-      document.getElementById('section-title').textContent = searchQuery
-        ? `Search: "${document.getElementById('search').value}"`
-        : catNames[activeCategory]
-      document.getElementById('result-count').textContent = list.length + ' item' + (list.length !== 1 ? 's' : '')
-
-      if (list.length === 0) {
-        grid.innerHTML = `<div class="empty"><p>No products found.</p><p>Try a different search or category.</p></div>`
-        return
-      }
-
-      grid.innerHTML = list.map(p => `
-        <div class="card" onclick="openModal('${p.id}')" role="button" tabindex="0">
-          <div class="card-img">
-            <img src="${p.imgs && p.imgs[0] ? p.imgs[0] : ''}" alt="${p.name}" loading="lazy" />
-            ${p.badge ? `<span class="card-badge">${p.badge}</span>` : ''}
-          </div>
-          <div class="card-body">
-            <span class="card-cat">${CAT_LABEL[p.cat] || p.cat}</span>
-            <p class="card-name">${p.name}</p>
-            <div class="card-btn">
-              View Details
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </div>
-          </div>
-        </div>
-      `).join('')
-    }
-
-    // ── MODAL ────────────────────────────────────────────────────
-    function openModal(id) {
-      const p = PRODUCTS.find(x => String(x.id) === String(id))
-      if (!p) return
-      activeProduct = p
-      galleryIndex  = 0
-
-      document.getElementById('modal-cat').textContent   = CAT_LABEL[p.cat]
-      document.getElementById('modal-title').textContent = p.name
-      document.getElementById('modal-desc').textContent  = p.desc
-
-      const waText = `Hi, I'm interested in the ${p.name}. Can you give me the price and availability?`
-      document.getElementById('modal-wa').href = `https://wa.me/971589892367?text=${encodeURIComponent(waText)}`
-
-      // build gallery
-      const gallery = document.getElementById('modal-gallery')
-      const oldImgs = gallery.querySelectorAll('img')
-      oldImgs.forEach(img => img.remove())
-
-      p.imgs.forEach((src, i) => {
-        const img = document.createElement('img')
-        img.src = src
-        img.alt = p.name
-        if (i === 0) img.classList.add('active')
-        gallery.insertBefore(img, gallery.querySelector('.gallery-nav'))
-      })
-
-      setGallery(0)
-      document.getElementById('modal-overlay').classList.add('open')
-      document.body.style.overflow = 'hidden'
-    }
-
-    function setGallery(idx) {
-      if (!activeProduct) return
-      const imgs = document.querySelectorAll('#modal-gallery img')
-      const n    = imgs.length
-      galleryIndex = Math.max(0, Math.min(idx, n - 1))
-
-      imgs.forEach((img, i) => img.classList.toggle('active', i === galleryIndex))
-
-      document.getElementById('gallery-prev').classList.toggle('hidden', galleryIndex === 0)
-      document.getElementById('gallery-next').classList.toggle('hidden', galleryIndex >= n - 1)
-
-      // dots
-      const dotsEl = document.getElementById('gallery-dots')
-      if (n <= 1) { dotsEl.innerHTML = ''; return }
-      dotsEl.innerHTML = Array.from({ length: n }, (_, i) =>
-        `<span class="gallery-dot${i === galleryIndex ? ' active' : ''}"></span>`
-      ).join('')
-    }
-
-    function closeModal() {
-      document.getElementById('modal-overlay').classList.remove('open')
-      document.body.style.overflow = ''
-      activeProduct = null
-    }
-
-    // ── START ────────────────────────────────────────────────────
     init()
   </script>
 
