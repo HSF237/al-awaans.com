@@ -609,6 +609,27 @@
 
     /* Body */
     .pv-body { padding: 20px 16px 40px; max-width: 720px; margin: 0 auto; }
+
+    /* ── DESKTOP PRODUCT VIEW ── */
+    @media (min-width: 768px) {
+      .pv-nav { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+      .pv-desktop-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 48px;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 32px 32px 80px;
+        align-items: start;
+      }
+      .pv-gallery {
+        aspect-ratio: 1/1; max-height: none;
+        border-radius: 16px;
+        position: sticky; top: 24px;
+      }
+      .pv-thumbs { padding: 12px 0 0; }
+      .pv-body { padding: 8px 0 0; max-width: none; margin: 0; }
+    }
     .pv-cat {
       font-size: 0.62rem; font-weight: 700; letter-spacing: 2px;
       text-transform: uppercase; color: var(--gold); margin-bottom: 7px;
@@ -828,18 +849,21 @@
       </button>
     </div>
 
-    <div class="pv-gallery" id="pv-gallery">
-      <div class="pv-gallery-nav">
-        <button class="pv-gbtn hidden" id="pv-prev">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
-        </button>
-        <button class="pv-gbtn hidden" id="pv-next">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
-        </button>
+    <div class="pv-desktop-layout">
+      <div>
+        <div class="pv-gallery" id="pv-gallery">
+          <div class="pv-gallery-nav">
+            <button class="pv-gbtn hidden" id="pv-prev">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <button class="pv-gbtn hidden" id="pv-next">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+          </div>
+          <div class="pv-dots" id="pv-dots"></div>
+        </div>
+        <div class="pv-thumbs" id="pv-thumbs" style="display:none"></div>
       </div>
-      <div class="pv-dots" id="pv-dots"></div>
-    </div>
-    <div class="pv-thumbs" id="pv-thumbs" style="display:none"></div>
 
     <div class="pv-body">
       <p class="pv-cat" id="pv-cat"></p>
@@ -890,6 +914,7 @@
         </div>
       </div>
     </div>
+    </div><!-- end pv-desktop-layout -->
   </div>
 
   <!-- ── STORE TOOLBAR ── -->
