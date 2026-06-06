@@ -661,6 +661,35 @@
     .pv-wa-row { margin-bottom: 0; }
     .pv-divider { height: 1px; background: var(--border); margin: 24px 0; }
 
+    /* ── STICKY ATC BAR ── */
+    .pv-sticky-bar {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 400;
+      background: rgba(10,10,10,0.97); backdrop-filter: blur(16px);
+      border-top: 1px solid var(--border);
+      padding: 10px 16px 14px;
+      display: flex; align-items: center; gap: 10px;
+      transform: translateY(100%);
+      transition: transform .28s cubic-bezier(0.22,1,0.36,1);
+    }
+    .pv-sticky-bar.visible { transform: none; }
+    .pv-sticky-bar-name { flex: 1; font-size: 0.78rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .pv-sticky-bar-price { font-size: 0.78rem; font-weight: 800; color: var(--gold); flex-shrink: 0; }
+    .pv-sticky-bar-btn { background: var(--gold); color: #000; border: none; border-radius: 9px; padding: 9px 18px; font-size: 0.82rem; font-weight: 700; cursor: pointer; flex-shrink: 0; white-space: nowrap; }
+    @media (min-width: 768px) { .pv-sticky-bar { display: none; } }
+
+    /* ── IMAGE ZOOM ── */
+    .pv-gallery img { cursor: zoom-in; transition: transform .3s ease; transform-origin: center; }
+    .pv-gallery img.zoomed { transform: scale(2.2); cursor: zoom-out; }
+
+    /* ── RECENTLY VIEWED ── */
+    .rv-section { padding: 0 16px 32px; }
+    .rv-title { font-size: 0.72rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-3); margin-bottom: 12px; }
+    .rv-row { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 6px; }
+    .rv-row::-webkit-scrollbar { display: none; }
+    .rv-card { flex-shrink: 0; width: 100px; cursor: pointer; }
+    .rv-card img { width: 100px; height: 100px; object-fit: cover; border-radius: 10px; border: 1px solid var(--border); display: block; }
+    .rv-card p { font-size: 0.68rem; font-weight: 600; margin-top: 5px; line-height: 1.3; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+
     /* ── REVIEWS ── */
     .rev-section h3 {
       font-size: 0.97rem; font-weight: 700; margin-bottom: 14px;
@@ -917,6 +946,13 @@
     </div><!-- end pv-desktop-layout -->
   </div>
 
+  <!-- ── STICKY ATC BAR ── -->
+  <div class="pv-sticky-bar" id="pv-sticky-bar">
+    <div class="pv-sticky-bar-name" id="pv-sticky-name"></div>
+    <div class="pv-sticky-bar-price" id="pv-sticky-price"></div>
+    <button class="pv-sticky-bar-btn" onclick="stickyATC()">+ Add to Cart</button>
+  </div>
+
   <!-- ── STORE TOOLBAR ── -->
   <div class="store-toolbar">
     <button class="filter-open-btn" id="filter-open-btn" onclick="openFilterPanel()">
@@ -993,6 +1029,12 @@
     </div>
     <div class="grid" id="grid"></div>
   </main>
+
+  <!-- ── RECENTLY VIEWED ── -->
+  <div class="rv-section" id="rv-section" style="display:none">
+    <p class="rv-title">Recently Viewed</p>
+    <div class="rv-row" id="rv-row"></div>
+  </div>
 
   <!-- ── FOOTER ── -->
   <footer>
@@ -1332,6 +1374,9 @@
       pvSelectedStar = 0
       document.querySelectorAll('.rev-star-btn').forEach(function(b) { b.classList.remove('active') })
 
+      trackRecent(p.id)
+      initStickyBar(p)
+
       var screen = document.getElementById('pv-screen')
       screen.classList.add('open')
       screen.scrollTop = 0
@@ -1341,7 +1386,73 @@
     function closePV() {
       document.getElementById('pv-screen').classList.remove('open')
       document.body.style.overflow = ''
+      document.getElementById('pv-sticky-bar').classList.remove('visible')
       pvProduct = null
+    }
+
+    // ── STICKY ATC BAR ─────────────────────────────────────────────
+    var pvActionsObserver = null
+    function initStickyBar(p) {
+      var bar = document.getElementById('pv-sticky-bar')
+      document.getElementById('pv-sticky-name').textContent = p.name
+      var finalPrice = p.price > 0 ? (p.discount > 0 ? Math.round(p.price * (1 - p.discount / 100)) : p.price) : 0
+      document.getElementById('pv-sticky-price').textContent = finalPrice > 0 ? 'AED ' + Number(finalPrice).toLocaleString() : ''
+      if (pvActionsObserver) pvActionsObserver.disconnect()
+      pvActionsObserver = new IntersectionObserver(function(entries) {
+        bar.classList.toggle('visible', !entries[0].isIntersecting)
+      }, { threshold: 0 })
+      pvActionsObserver.observe(document.getElementById('pv-atc'))
+    }
+    function stickyATC() {
+      if (!pvProduct) return
+      addToCart(pvProduct.id)
+      var btn = document.querySelector('.pv-sticky-bar-btn')
+      btn.textContent = '✓ Added!'
+      setTimeout(function() { btn.textContent = '+ Add to Cart' }, 1300)
+    }
+
+    // ── IMAGE ZOOM ─────────────────────────────────────────────────
+    var lastTap = 0
+    document.getElementById('pv-gallery').addEventListener('click', function(e) {
+      var img = e.target.closest('img')
+      if (!img || !img.classList.contains('active')) return
+      var now = Date.now()
+      if (now - lastTap < 320) {
+        img.classList.toggle('zoomed')
+      }
+      lastTap = now
+    })
+    document.getElementById('pv-gallery').addEventListener('dblclick', function(e) {
+      var img = e.target.closest('img')
+      if (img) img.classList.toggle('zoomed')
+    })
+
+    // ── RECENTLY VIEWED ────────────────────────────────────────────
+    var RECENT_KEY = 'aw_recent'
+    function trackRecent(id) {
+      var list = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]')
+      list = list.filter(function(x) { return x !== String(id) })
+      list.unshift(String(id))
+      list = list.slice(0, 8)
+      localStorage.setItem(RECENT_KEY, JSON.stringify(list))
+      renderRecent()
+    }
+    function renderRecent() {
+      var list = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]')
+      var section = document.getElementById('rv-section')
+      var row = document.getElementById('rv-row')
+      if (list.length < 2) { section.style.display = 'none'; return }
+      var items = list.map(function(id) {
+        return PRODUCTS.find(function(p) { return String(p.id) === id })
+      }).filter(Boolean).slice(0, 8)
+      if (items.length < 2) { section.style.display = 'none'; return }
+      section.style.display = ''
+      row.innerHTML = items.map(function(p) {
+        return '<div class="rv-card" onclick="openPV(\'' + p.id + '\')">' +
+          '<img src="' + (p.imgs && p.imgs[0] || '') + '" alt="' + escHtml(p.name) + '" onerror="this.style.display=\'none\'" />' +
+          '<p>' + escHtml(p.name) + '</p>' +
+        '</div>'
+      }).join('')
     }
 
     function setPVGallery(idx) {
@@ -1736,6 +1847,7 @@
       loadProducts()
       updateCartBadge()
       renderCart()
+      renderRecent()
 
       document.getElementById('cart-btn').addEventListener('click', openCart)
       document.getElementById('cart-overlay').addEventListener('click', closeCart)
